@@ -1,26 +1,305 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ─── Apercu Pro ─────────────────────────────────────────────────────────── */
+
+@font-face {
+  font-family: "Apercu Pro";
+  src: url("/fonts/ApercuPro-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
+
+@font-face {
+  font-family: "Apercu Pro";
+  src: url("/fonts/ApercuPro-Italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Apercu Pro";
+  src: url("/fonts/ApercuPro-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Apercu Pro";
+  src: url("/fonts/ApercuPro-MediumItalic.otf") format("opentype");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Apercu Pro";
+  src: url("/fonts/ApercuPro-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Apercu Pro";
+  src: url("/fonts/ApercuPro-BoldItalic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ─── Tailwind theme ─────────────────────────────────────────────────────── */
+
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  /* Font */
+  --font-sans: "Apercu Pro", Inter, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
+  --font-heading: "Apercu Pro", Inter, system-ui, sans-serif;
+
+  /* SwiftCare brand tokens → Tailwind utilities */
+  --color-brand:            var(--brand);
+  --color-brand-sub:        var(--brand-sub);
+  --color-text-main:        var(--text-main);
+  --color-text-sub:         var(--text-sub);
+  --color-elements:         var(--elements);
+  --color-bg-main:          var(--background-main);
+  --color-bg-sub:           var(--background-sub);
+  --color-success:          var(--success);
+  --color-warning:          var(--warning);
+  --color-error:            var(--error);
+
+  /* shadcn semantic tokens */
+  --color-background:                var(--background);
+  --color-foreground:                var(--foreground);
+  --color-card:                      var(--card);
+  --color-card-foreground:           var(--card-foreground);
+  --color-popover:                   var(--popover);
+  --color-popover-foreground:        var(--popover-foreground);
+  --color-primary:                   var(--primary);
+  --color-primary-foreground:        var(--primary-foreground);
+  --color-secondary:                 var(--secondary);
+  --color-secondary-foreground:      var(--secondary-foreground);
+  --color-muted:                     var(--muted);
+  --color-muted-foreground:          var(--muted-foreground);
+  --color-accent:                    var(--accent);
+  --color-accent-foreground:         var(--accent-foreground);
+  --color-destructive:               var(--destructive);
+  --color-border:                    var(--border);
+  --color-input:                     var(--input);
+  --color-ring:                      var(--ring);
+  --color-sidebar-ring:              var(--sidebar-ring);
+  --color-sidebar-border:            var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent:            var(--sidebar-accent);
+  --color-sidebar-primary-foreground:var(--sidebar-primary-foreground);
+  --color-sidebar-primary:           var(--sidebar-primary);
+  --color-sidebar-foreground:        var(--sidebar-foreground);
+  --color-sidebar:                   var(--sidebar);
+  --color-chart-5:                   var(--chart-5);
+  --color-chart-4:                   var(--chart-4);
+  --color-chart-3:                   var(--chart-3);
+  --color-chart-2:                   var(--chart-2);
+  --color-chart-1:                   var(--chart-1);
+
+  /* Radius scale */
+  --radius-sm:  calc(var(--radius) * 0.6);
+  --radius-md:  calc(var(--radius) * 0.8);
+  --radius-lg:  var(--radius);
+  --radius-xl:  calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─── Design tokens ──────────────────────────────────────────────────────── */
+
+:root {
+  /* SwiftCare brand */
+  --brand:            #008786;
+  --brand-sub:        #E6F4EF;
+  --text-main:        #111111;
+  --text-sub:         #6F6F6F;
+  --elements:         #EAEAEA;
+  --background-main:  #FFFFFF;
+  --background-sub:   #F3F3F3;
+  --success:          #23C65F;
+  --warning:          #E18246;
+  --error:            #822D34;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.10);
+
+  /* shadcn / Nova preset (neutral base, light mode) */
+  --background:               #FFFFFF;
+  --foreground:               #111111;
+  --card:                     #F3F3F3;
+  --card-foreground:          #111111;
+  --popover:                  #FFFFFF;
+  --popover-foreground:       #111111;
+  --primary:                  #008786;
+  --primary-foreground:       #FFFFFF;
+  --secondary:                #E6F4EF;
+  --secondary-foreground:     #008786;
+  --muted:                    #F3F3F3;
+  --muted-foreground:         #6F6F6F;
+  --accent:                   #E6F4EF;
+  --accent-foreground:        #008786;
+  --destructive:              #822D34;
+  --border:                   #EAEAEA;
+  --input:                    #EAEAEA;
+  --ring:                     #008786;
+  --radius:                   0.5rem;
+  --chart-1:                  #008786;
+  --chart-2:                  #23C65F;
+  --chart-3:                  #E18246;
+  --chart-4:                  #822D34;
+  --chart-5:                  #6F6F6F;
+  --sidebar:                  #F3F3F3;
+  --sidebar-foreground:       #111111;
+  --sidebar-primary:          #008786;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent:           #E6F4EF;
+  --sidebar-accent-foreground:#008786;
+  --sidebar-border:           #EAEAEA;
+  --sidebar-ring:             #008786;
+}
+
+.dark {
+  --background:               #0F0F0F;
+  --foreground:               #F3F3F3;
+  --card:                     #1A1A1A;
+  --card-foreground:          #F3F3F3;
+  --popover:                  #1A1A1A;
+  --popover-foreground:       #F3F3F3;
+  --primary:                  #00A8A7;
+  --primary-foreground:       #FFFFFF;
+  --secondary:                #1A2E2E;
+  --secondary-foreground:     #00A8A7;
+  --muted:                    #1A1A1A;
+  --muted-foreground:         #9A9A9A;
+  --accent:                   #1A2E2E;
+  --accent-foreground:        #00A8A7;
+  --destructive:              #C0464F;
+  --border:                   rgba(255,255,255,0.08);
+  --input:                    rgba(255,255,255,0.10);
+  --ring:                     #00A8A7;
+  --sidebar:                  #1A1A1A;
+  --sidebar-foreground:       #F3F3F3;
+  --sidebar-primary:          #00A8A7;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent:           #1A2E2E;
+  --sidebar-accent-foreground:#00A8A7;
+  --sidebar-border:           rgba(255,255,255,0.08);
+  --sidebar-ring:             #00A8A7;
+}
+
+/* ─── Base styles ────────────────────────────────────────────────────────── */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    font-family: "Apercu Pro", Inter, system-ui, sans-serif;
+    @apply antialiased;
+  }
+
+  body {
+    background-color: var(--background-main);
+    color: var(--text-main);
+    line-height: 1.5;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.2;
+    letter-spacing: -0.08em;
+    color: var(--text-main);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ─── Skeleton shimmer ───────────────────────────────────────────────────── */
+
+@keyframes shimmer {
+  to { background-position: -100% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    105deg,
+    var(--elements) 40%,
+    rgba(255, 255, 255, 0.6) 50%,
+    var(--elements) 60%
+  );
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  animation: shimmer 2.2s linear infinite;
+  border-radius: inherit;
+}
+
+/* ─── Page load stagger animation ───────────────────────────────────────── */
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInDown {
+  animation: fadeInDown 600ms ease-out both;
+}
+
+/* ─── Blur-up reveal for media ───────────────────────────────────────────── */
+
+.media-reveal-enter {
+  opacity: 0;
+  filter: blur(8px);
+  transform: scale(1.05);
+  transition: opacity 700ms ease-out, filter 700ms ease-out, transform 700ms ease-out;
+}
+
+.media-reveal-loaded {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+}
+
+/* ─── Motion timing utilities ────────────────────────────────────────────── */
+
+.duration-fast   { transition-duration: 150ms; }
+.duration-base   { transition-duration: 250ms; }
+.duration-slow   { transition-duration: 400ms; }
+.duration-reveal { transition-duration: 600ms; }
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--elements);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-sub);
 }

@@ -33,6 +33,11 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# Apercu Pro font files — copy from ~/Library/Fonts/ locally
+public/fonts/*.otf
+public/fonts/*.woff
+public/fonts/*.woff2
+
 # vercel
 .vercel
 

@@ -15,17 +15,20 @@ SwiftCare is a telehealth platform that feels clean, calm, and trustworthy. The 
 ## Color Tokens
 
 ```css
---brand:           #008786;  /* primary brand, mint green — CTAs, active states, links */
+--brand:           #008786;  /* primary brand, teal — CTAs, active states, links */
 --brand-sub:       #E6F4EF;  /* section backgrounds, tags, subtle highlights */
 --text-main:       #111111;  /* primary text, headings */
 --text-sub:        #6F6F6F;  /* secondary text, captions, default icon color */
---elements:        #EAEAEA;  /* dividers, borders, inactive elements */
+--elements:        #EAEAEA;  /* borders, inactive elements */
 --background-main: #FFFFFF;  /* page background */
 --background-sub:  #F3F3F3;  /* card backgrounds, focused sections */
---success:         #23C65F;  /* online indicators, checkmarks, confirmed states */
+--success:         #0F8946;  /* online indicators, checkmarks, valid field borders */
 --warning:         #E18246;  /* warning banners, cautionary text */
---error:           #822D34;  /* errors, destructive actions */
+--error:           #E24F62;  /* errors, destructive actions, invalid field borders */
 ```
+
+### Dividers
+Use `bg-elements/50` (50% opacity of `--elements`) for horizontal rule dividers — this gives a softer line on white without disappearing.
 
 ### Usage Notes
 - use `--brand` for primary buttons, active nav items, links, and key interactive elements
@@ -44,23 +47,25 @@ SwiftCare is a telehealth platform that feels clean, calm, and trustworthy. The 
 
 ### Type Scale
 
-| Name | Size | Weight | Word Spacing | Usage |
+| Name | Size | Weight | Letter Spacing | Usage |
 |---|---|---|---|---|
-| display | 48px | Bold | -0.08em | Hero headings only |
-| h1 | 40px | Bold | -0.08em | Page titles |
-| h2 | 32px | Bold | -0.08em | Section headings |
-| h3 | 24px | Medium or Bold | -0.08em | Card headings, modal titles |
+| display | 48px | Medium | -0.08em | Hero headings only |
+| h1 | 40px | Medium | -0.08em | Page titles |
+| h2 | 32px | Medium | -0.08em | Section headings |
+| h3 | 24px | Medium | -0.08em | Auth page titles, modal titles |
 | h4 | 20px | Medium | 0 | Subheadings |
 | body-lg | 18px | Regular | 0 | Emphasized body text |
 | body | 16px | Regular | 0 | Default body text |
-| body-sm | 14px | Regular | 0 | Secondary info, captions |
-| label | 12px | Medium | 0 | Form labels, tags, badges |
+| body-sm | 14px | Regular or Medium | 0 | Form labels, input text, captions, all form UI |
+| label | 12px | Regular | 0 | Secondary hints, footer links, helper text |
 
 ### Rules
+- use **Medium (500)** weight throughout forms — not Bold
 - headings use `--text-main`
 - body and secondary text use `--text-main` or `--text-sub` depending on hierarchy
 - never go below 12px
 - line height: 1.5 for body, 1.2 for headings
+- established form standard: **14px** for all visible form text (labels, inputs, descriptions, button text, helper text)
 
 ---
 
@@ -89,10 +94,12 @@ Base unit is **8px**. All spacing, padding, gap, and sizing values must be multi
 
 ```
 2px  — tags, small badges, subtle chips
-4px  — inputs, small buttons, inline elements
-8px  — cards, standard buttons, dropdowns, modals
-12px — large cards, bottom sheets (exception, for visual comfort)
+4px  — very small inline elements only
+8px  — inputs, buttons, cards, dropdowns, modals — the standard radius for all interactive elements
+12px — avoid; only if explicitly in Figma
 ```
+
+The standard is **8px (`rounded-lg`) across the board** — inputs, buttons, cards, role selection cards, all form fields.
 
 ---
 
@@ -137,34 +144,52 @@ import { Calendar, User, Stethoscope } from "lucide-react"
 
 | Variant | Background | Text | Border | Use case |
 |---|---|---|---|---|
-| Primary | `--brand` | white | none | Main CTAs |
+| Primary | `--text-main` | `--brand-sub` | none | Main form CTAs (Continue, Submit) |
+| Brand | `--brand` | white | none | Brand-colored CTAs |
 | Secondary | `--brand-sub` | `--brand` | none | Secondary actions |
 | Outline | transparent | `--text-main` | `--elements` | Tertiary actions |
 | Ghost | transparent | `--text-sub` | none | Subtle actions |
 | Destructive | `--error` | white | none | Delete, cancel |
 
-- border radius: 8px
-- padding: 12px 16px (medium), 8px 12px (small)
+- height: 40px (`h-10`)
+- border radius: 8px (`rounded-lg`)
 - font: 14px medium
+- disabled state: 40% opacity (`bg-text-main/40`), `cursor-not-allowed`
+- hover: `hover:opacity-90`
 - always show a clear hover and focus state
 
 ### Inputs
 
+- height: 40px (`h-10`)
 - border: `1px solid var(--elements)`
-- border radius: 4px
-- padding: 12px 16px
-- focus border: `1px solid var(--brand)`
+- border radius: 8px (`rounded-lg`)
+- padding: `px-4`
+- font size: 14px, medium weight
+- focus border: `1px solid var(--text-main)` — black, not brand color
+- valid border: `1px solid var(--success)` — goes green as soon as the value is valid
 - error border: `1px solid var(--error)`
 - background: `--background-main`
 - placeholder color: `--text-sub`
+- label → input gap: 6px (`gap-1.5`)
+- success icon: bare `Check` (16px, no circle background) in `--success` color
+- password eye toggle: `EyeOff` by default (hidden), `Eye` when revealed; persists until field blur
 
 ### Cards
 
-- background: `--background-sub`
+- background: `--background-main` (white) for selection/interactive cards; `--background-sub` for content cards
 - border: `1px solid var(--elements)`
-- border radius: 8px
-- padding: 24px
-- shadow: `--shadow-sm` if elevated
+- border radius: 8px (`rounded-lg`)
+- padding: 14–16px
+- shadow: `--shadow-sm` only when elevation is needed for context
+
+**Selection cards** (e.g. role picker):
+- default border: `--elements`
+- hover border: `--text-sub` (border only, no fill change)
+- selected border: `--text-main` (black)
+- error border: `--error`
+- radio indicator: 18px circle, filled dot animates in on select
+- label: 14px medium, `--text-main`
+- description: 14px regular, `--text-sub`, indented to align with label start
 
 ### Badges and Tags
 
@@ -223,6 +248,22 @@ easing:          ease-out for entrances, ease-in for exits, ease-in-out for loop
 - no bouncy or elastic animations — everything is smooth and professional
 - no animations on data-heavy tables or long lists (performance)
 
+### Page Transitions
+
+Every route change triggers `src/app/template.tsx`, which re-mounts on navigation and fires `animate-pageIn`:
+
+```css
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-pageIn {
+  animation: pageIn 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+```
+
+No packages needed — purely CSS + Next.js `template.tsx` file convention.
+
 ### Page Load Stagger Pattern
 
 ```tsx
@@ -241,6 +282,46 @@ easing:          ease-out for entrances, ease-in for exits, ease-in-out for loop
   animation: fadeInDown 600ms ease-out both;
 }
 ```
+
+---
+
+## Form Layout Patterns
+
+Established from the registration screen — use this as the baseline for all auth and form screens.
+
+### Container
+- max-width: `max-w-lg` (512px) for auth/narrow forms
+- centered on page: `min-h-screen flex items-center justify-center`
+- inner gap between sections: `gap-4` (16px)
+- sections separated by dividers: `h-px bg-elements/50`
+
+### Field Group
+```
+label (14px medium, --text-main)
+  ↕ gap-1.5 (6px)
+input (h-10, rounded-lg, border-elements)
+```
+
+### Field Border States
+| State | Border color |
+|---|---|
+| Default | `--elements` |
+| Focused | `--text-main` (black) |
+| Valid | `--success` |
+| Error | `--error` |
+
+### Password Field
+- conditions panel appears on focus or typing, collapses smoothly (`duration-500 ease-in-out`) when all conditions are met
+- condition items: 14px circle indicator (filled `--success`) + 14px text
+- border goes `--success` as soon as all conditions pass, even while focused
+- eye icon (`EyeOff` default / `Eye` revealed) stays visible until blur, then swaps to bare `Check`
+
+### Primary CTA Button
+- full width (`w-full`)
+- `h-10 rounded-lg`
+- inactive: `bg-text-main/40 cursor-not-allowed`
+- active: `bg-text-main hover:opacity-90`
+- text: 14px medium, `--brand-sub`
 
 ---
 

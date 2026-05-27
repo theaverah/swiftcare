@@ -12,11 +12,11 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "SwiftCare — Telehealth Platform",
+    default: "SwiftCare",
     template: "%s | SwiftCare",
   },
   description:
-    "Connect with doctors online. Book consultations, get prescriptions, and manage your health — all in one place.",
+    "SwiftCare — consult with licensed doctors online, book appointments, and manage your health from anywhere.",
   keywords: ["telehealth", "online doctor", "virtual consultation", "healthcare"],
 };
 

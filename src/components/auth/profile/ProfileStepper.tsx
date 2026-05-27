@@ -32,7 +32,9 @@ export function ProfileStepper({ current, maxReached, stepValid, currentValid, o
         const isValid     = stepValid[num] ?? true;
         const isCompleted = isReached && !isCurrent && isValid;
         const isInvalid   = isReached && !isCurrent && !isValid;
-        const isClickable = isReached && !isCurrent;
+        const allValidBetween = (from: number, to: number) =>
+          stepValid.slice(from, to).every(Boolean);
+        const isClickable = isReached && !isCurrent && (num < current || allValidBetween(current, num));
 
         return (
           <Fragment key={num}>
@@ -50,7 +52,7 @@ export function ProfileStepper({ current, maxReached, stepValid, currentValid, o
                 ${!isCurrent && !isCompleted && !isInvalid ? "text-text-sub" : ""}
                 ${!isCurrent && currentValid && isCompleted ? "cursor-pointer hover:text-success/80" : ""}
                 ${!isCurrent && currentValid && isInvalid   ? "cursor-pointer hover:text-error/80"   : ""}
-                ${!isCurrent && !currentValid ? "opacity-40 cursor-default" : ""}
+                ${!isReached || (num > current && !allValidBetween(current, num)) ? "opacity-40 cursor-default" : ""}
               `}
             >
               {isCompleted ? (

@@ -87,9 +87,12 @@ export function ProfileFlow() {
   const stepValidArr = [false, isStep1Valid(data), isStep2Valid(data), true, true];
 
   function goTo(next: number, dir?: "forward" | "back", allowIncomplete = false) {
-    if (!allowIncomplete && !stepValidArr[step]) {
-      setTriggerValidation((c) => c + 1);
-      return;
+    if (!allowIncomplete && next > step) {
+      const allValid = stepValidArr.slice(step, next).every(Boolean);
+      if (!allValid) {
+        setTriggerValidation((c) => c + 1);
+        return;
+      }
     }
     const resolvedDir = dir ?? (next > step ? "forward" : "back");
     setDirection(resolvedDir);

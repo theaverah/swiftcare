@@ -196,13 +196,22 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
                 ${emailBorderClass()}
               `}
             />
-            {/* Change 4: bare check, no circle */}
             {emailValid && (
               <div className="absolute right-3 top-1/2 -translate-y-1/2 animate-fadeInDown" style={{ animationDuration: "200ms" }}>
                 <FieldSuccessIcon />
               </div>
             )}
           </div>
+          {attempted && !email && (
+            <p className="text-[14px] text-error leading-normal animate-fadeInDown" style={{ animationDuration: "200ms" }}>
+              Please enter your email
+            </p>
+          )}
+          {attempted && email && !emailValid && (
+            <p className="text-[14px] text-error leading-normal animate-fadeInDown" style={{ animationDuration: "200ms" }}>
+              Please enter a valid email address
+            </p>
+          )}
         </div>
 
         {/* ── Password ────────────────────────────────────────────────── */}
@@ -254,6 +263,12 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
               )}
             </div>
           </div>
+
+          {attempted && !password && (
+            <p className="text-[14px] text-error leading-normal animate-fadeInDown mt-1.5" style={{ animationDuration: "200ms" }}>
+              Please enter a password
+            </p>
+          )}
 
           {/* Change 6: conditions collapse when all met */}
           <div

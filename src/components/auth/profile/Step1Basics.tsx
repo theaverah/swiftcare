@@ -19,6 +19,10 @@ function toTitleCase(str: string) {
   return str.replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+function sanitizeName(str: string) {
+  return str.replace(/[^a-zA-ZÀ-ÿ\s'\-]/g, "");
+}
+
 function isAtLeast13(birthday: string): boolean {
   if (!birthday) return false;
   const today = new Date();
@@ -109,7 +113,7 @@ export function Step1Basics({ data, onChange, onContinue, triggerValidation }: P
           <input
             type="text"
             value={data.firstName}
-            onChange={(e) => onChange({ firstName: toTitleCase(e.target.value) })}
+            onChange={(e) => onChange({ firstName: toTitleCase(sanitizeName(e.target.value)) })}
             onBlur={() => setFirstNameTouched(true)}
             placeholder="e.g. Maria"
             className={`w-full h-10 rounded-lg border px-4 ${firstNameValid ? "pr-10" : ""} text-[14px] text-text-main bg-white outline-none transition-colors duration-200 placeholder:text-text-sub focus:border-text-main ${firstNameError ? "border-error" : firstNameValid ? "border-success" : "border-elements"}`}
@@ -135,7 +139,7 @@ export function Step1Basics({ data, onChange, onContinue, triggerValidation }: P
           <input
             type="text"
             value={data.lastName}
-            onChange={(e) => onChange({ lastName: toTitleCase(e.target.value) })}
+            onChange={(e) => onChange({ lastName: toTitleCase(sanitizeName(e.target.value)) })}
             onBlur={() => setLastNameTouched(true)}
             placeholder="e.g. Santos"
             className={`w-full h-10 rounded-lg border px-4 ${lastNameValid ? "pr-10" : ""} text-[14px] text-text-main bg-white outline-none transition-colors duration-200 placeholder:text-text-sub focus:border-text-main ${lastNameError ? "border-error" : lastNameValid ? "border-success" : "border-elements"}`}

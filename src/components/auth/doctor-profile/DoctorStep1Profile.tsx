@@ -247,11 +247,11 @@ export function DoctorStep1Profile({ data, onChange, onContinue, triggerValidati
                 <img src={preview} alt="Profile" className="w-full h-full rounded-full object-cover" />
               ) : (
                 <div className="w-full h-full rounded-full bg-background-sub border border-elements flex items-center justify-center">
-                  <User size={28} strokeWidth={1.5} className="text-text-sub" />
+                  <User size={28} strokeWidth={1.75} className="text-text-sub" />
                 </div>
               )}
               <div className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                <Camera size={16} strokeWidth={2} className="text-white" />
+                <Camera size={16} strokeWidth={1.75} className="text-white" />
               </div>
               {uploading && (
                 <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center">
@@ -296,13 +296,14 @@ export function DoctorStep1Profile({ data, onChange, onContinue, triggerValidati
           <div className="relative">
             <input
               type="text"
+              autoComplete="off"
               value={data.firstName}
               onChange={(e) => onChange({ firstName: toTitleCase(sanitizeName(e.target.value)) })}
               onBlur={() => setFirstNameTouched(true)}
               placeholder="e.g. Maria"
               className={`w-full h-10 rounded-lg border px-4 ${firstNameValid ? "pr-10" : ""} text-[14px] text-text-main bg-white outline-none transition-colors duration-200 placeholder:text-text-sub focus:border-text-main ${firstNameError ? "border-error" : firstNameValid ? "border-success" : "border-elements"}`}
             />
-            {firstNameValid && (
+            {firstNameValid && firstNameTouched && (
               <Check size={14} strokeWidth={2.5} className="absolute right-3 top-1/2 -translate-y-1/2 text-success pointer-events-none" />
             )}
           </div>
@@ -319,13 +320,14 @@ export function DoctorStep1Profile({ data, onChange, onContinue, triggerValidati
           <div className="relative">
             <input
               type="text"
+              autoComplete="off"
               value={data.lastName}
               onChange={(e) => onChange({ lastName: toTitleCase(sanitizeName(e.target.value)) })}
               onBlur={() => setLastNameTouched(true)}
               placeholder="e.g. Santos"
               className={`w-full h-10 rounded-lg border px-4 ${lastNameValid ? "pr-10" : ""} text-[14px] text-text-main bg-white outline-none transition-colors duration-200 placeholder:text-text-sub focus:border-text-main ${lastNameError ? "border-error" : lastNameValid ? "border-success" : "border-elements"}`}
             />
-            {lastNameValid && (
+            {lastNameValid && lastNameTouched && (
               <Check size={14} strokeWidth={2.5} className="absolute right-3 top-1/2 -translate-y-1/2 text-success pointer-events-none" />
             )}
           </div>
@@ -341,6 +343,7 @@ export function DoctorStep1Profile({ data, onChange, onContinue, triggerValidati
           <label className="text-[14px] font-medium text-text-main">Birthday</label>
           <input
             type="date"
+            autoComplete="off"
             value={data.birthday}
             onChange={(e) => onChange({ birthday: e.target.value })}
             onBlur={() => setBirthdayTouched(true)}

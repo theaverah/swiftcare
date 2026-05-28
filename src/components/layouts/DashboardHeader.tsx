@@ -1,48 +1,53 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import { Bell, Search } from "lucide-react";
+import { useState } from "react";
+import Link from "next/link";
+import { Bell, Settings } from "lucide-react";
+import { useNotifications } from "@/hooks/useNotifications";
+import { NotificationsDropdown } from "@/components/patient/notifications/NotificationsDropdown";
 
-interface DashboardHeaderProps {
-  title?: string;
-}
-
-export function DashboardHeader({ title }: DashboardHeaderProps) {
-  const { data: session } = useSession();
-
-  const initials = session?.user?.name
-    ?.split(" ")
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+export function DashboardHeader() {
+  const [notifOpen, setNotifOpen] = useState(false);
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
 
   return (
-    <header className="h-16 shrink-0 flex items-center justify-between px-8 bg-bg-main border-b border-elements">
-      <div className="flex items-center gap-4">
-        {title && (
-          <h1 className="text-[18px] font-bold text-text-main">{title}</h1>
-        )}
-      </div>
-
+    <header className="h-16 shrink-0 flex items-center justify-end px-8 bg-transparent">
       <div className="flex items-center gap-3">
-        {/* Search trigger — wired up per page */}
-        <button className="flex items-center gap-2 px-3 py-2 rounded-lg border border-elements text-text-sub hover:border-brand hover:text-brand transition-colors duration-base text-[13px]">
-          <Search size={16} />
-          <span className="hidden sm:inline">Search</span>
-        </button>
 
-        {/* Notifications */}
-        <button className="relative w-9 h-9 flex items-center justify-center rounded-lg hover:bg-bg-sub transition-colors duration-base">
-          <Bell size={18} className="text-text-sub" />
-          {/* Unread dot — replace with real count later */}
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand" />
-        </button>
+        {/* Notification bell */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setNotifOpen((v) => !v)}
+            className="relative w-9 h-9 flex items-center justify-center rounded-lg text-text-main hover:bg-bg-sub transition-colors duration-200"
+            aria-label="Notifications"
+          >
+            <Bell size={20} strokeWidth={1.75} />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-error text-white text-[10px] font-medium flex items-center justify-center leading-none">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
+          </button>
 
-        {/* Avatar */}
-        <div className="w-9 h-9 rounded-full bg-brand-sub flex items-center justify-center text-brand text-[13px] font-medium select-none cursor-pointer">
-          {initials ?? "?"}
+          <NotificationsDropdown
+            notifications={notifications}
+            isOpen={notifOpen}
+            onClose={() => setNotifOpen(false)}
+            onMarkAsRead={markAsRead}
+            onMarkAllAsRead={markAllAsRead}
+          />
         </div>
+
+        {/* Settings */}
+        <Link
+          href="/patient/settings"
+          className="w-9 h-9 flex items-center justify-center rounded-lg text-text-main hover:bg-bg-sub transition-colors duration-200"
+          aria-label="Settings"
+        >
+          <Settings size={20} strokeWidth={1.75} />
+        </Link>
+
       </div>
     </header>
   );

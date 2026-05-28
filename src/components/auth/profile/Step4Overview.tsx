@@ -35,7 +35,7 @@ function Section({
     <div className={`flex flex-col gap-3 pt-4 ${noDivider ? "" : "border-t border-elements"}`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Icon size={14} strokeWidth={2.5} className={`text-text-main shrink-0 ${iconClassName ?? ""}`} />
+          <Icon size={14} strokeWidth={1.75} className={`text-text-main shrink-0 ${iconClassName ?? ""}`} />
           <span className="text-[14px] font-medium text-text-main">{title}</span>
         </div>
         <button
@@ -153,7 +153,7 @@ export function Step4Overview({ data, canFinish, onEdit, onFinish, onBack }: Pro
           disabled={saving || !canFinish}
           className="flex-3 h-10 rounded-lg bg-text-main text-[14px] font-medium tracking-[-0.176px] text-brand-sub hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {saving ? "Saving…" : "Go to my dashboard"}
+          {saving ? "Saving…" : "Complete setup"}
         </button>
       </div>
 

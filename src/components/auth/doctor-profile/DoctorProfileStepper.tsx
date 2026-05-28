@@ -51,14 +51,14 @@ export function DoctorProfileStepper({ current, maxReached, stepValid, currentVa
               `}
             >
               {isCompleted ? (
-                <Check size={14} className="text-success shrink-0" strokeWidth={2.5} />
+                <Check size={14} className="text-success shrink-0" strokeWidth={1.75} />
               ) : isInvalid ? (
-                <AlertCircle size={14} className="text-error shrink-0" strokeWidth={2.5} />
+                <AlertCircle size={14} className="text-error shrink-0" strokeWidth={1.75} />
               ) : (
                 <step.Icon
                   size={14}
                   className={`shrink-0 ${isCurrent ? "text-text-main" : "text-text-sub"}`}
-                  strokeWidth={2.5}
+                  strokeWidth={1.75}
                 />
               )}
               {step.label}

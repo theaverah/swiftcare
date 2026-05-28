@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { DoctorProfileStepper } from "./DoctorProfileStepper";
 import { DoctorStep1Profile } from "./DoctorStep1Profile";
 import { DoctorStep2ProfessionalDetails } from "./DoctorStep2ProfessionalDetails";
@@ -139,6 +140,7 @@ function isStep3Valid(d: DoctorProfileData) {
 
 export function DoctorProfileFlow() {
   const router = useRouter();
+  const { update: refreshSession } = useSession();
   const [step,              setStep]              = useState(1);
   const [maxReached,        setMaxReached]        = useState(1);
   const [data,              setData]              = useState<DoctorProfileData>(INITIAL);
@@ -209,8 +211,15 @@ export function DoctorProfileFlow() {
     sessionStorage.removeItem("doctor_profile_step");
     sessionStorage.removeItem("doctor_profile_max");
     sessionStorage.removeItem("doctor_profile_data");
-    // TODO: POST /api/doctor/profile { ...data }
-    router.push("/doctor/dashboard");
+    try {
+      await fetch("/api/doctor/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+    } catch { /* non-blocking */ }
+    await refreshSession();
+    router.push("/doctor/welcome");
   }
 
   const animClass = direction === "forward" ? "animate-stepForward" : "animate-stepBack";

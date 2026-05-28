@@ -59,7 +59,7 @@ function CheckboxItem({
           ${checked ? "bg-text-main border-text-main" : "border-elements hover:border-text-sub"}
         `}
       >
-        {checked && <Check size={10} className="text-brand-sub" strokeWidth={3} />}
+        {checked && <Check size={10} className="text-brand-sub" strokeWidth={1.75} />}
       </div>
       <span className="text-[14px] text-text-main leading-normal">{label}</span>
     </button>
@@ -126,7 +126,7 @@ function TagInput({
             onClick={() => removeTag(i)}
             className="text-text-sub hover:text-text-main transition-colors duration-150 leading-none"
           >
-            <X size={10} strokeWidth={2.5} />
+            <X size={10} strokeWidth={1.75} />
           </button>
         </span>
       ))}

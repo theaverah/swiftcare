@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
 import { RegisterStep1 } from "./RegisterStep1";
 import { RegisterStep2 } from "./RegisterStep2";
 
@@ -15,10 +16,15 @@ interface StepData {
 
 export function RegisterFlow() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [step, setStep] = useState<Step>("credentials");
   const [data, setData] = useState<StepData | null>(null);
 
   useEffect(() => {
+    if (status === "authenticated" && session?.user?.role) {
+      router.replace(session.user.role === "doctor" ? "/doctor/dashboard" : "/patient/dashboard");
+      return;
+    }
     const savedStep = sessionStorage.getItem("register_step") as Step | null;
     const savedData = sessionStorage.getItem("register_data");
     if (savedStep === "verify" && savedData) {
@@ -34,10 +40,11 @@ export function RegisterFlow() {
     setStep("verify");
   }
 
-  function handleVerified() {
+  async function handleVerified() {
     sessionStorage.removeItem("register_step");
-    const role = data?.role;
+    const { role, email, password } = data!;
     sessionStorage.removeItem("register_data");
+    await signIn("credentials", { email, password, redirect: false });
     router.push(role === "doctor" ? "/register/doctor-profile" : "/register/profile");
   }
 

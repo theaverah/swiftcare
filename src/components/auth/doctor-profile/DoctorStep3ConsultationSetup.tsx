@@ -65,7 +65,7 @@ function TimeSelect({ value, onChange, borderClass, height = "h-9" }: {
         className={`w-full ${height} rounded-lg border pl-3 pr-3 text-[14px] text-text-main bg-white flex items-center justify-between gap-2 transition-colors duration-200 ${borderClass}`}
       >
         <span className="truncate">{value}</span>
-        <ChevronDown size={14} strokeWidth={2} className={`text-text-sub shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+        <ChevronDown size={14} strokeWidth={1.75} className={`text-text-sub shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
         <div className="absolute z-50 top-full mt-1 w-full bg-white border border-elements rounded-xl shadow-lg overflow-hidden">
@@ -80,7 +80,7 @@ function TimeSelect({ value, onChange, borderClass, height = "h-9" }: {
                 }`}
               >
                 {t}
-                {t === value && <Check size={13} strokeWidth={2.5} className="text-brand shrink-0" />}
+                {t === value && <Check size={13} strokeWidth={1.75} className="text-brand shrink-0" />}
               </button>
             ))}
           </div>
@@ -249,7 +249,7 @@ export function DoctorStep3ConsultationSetup({ data, onChange, onContinue, onBac
           />
           {feeValid && (
             <div className="flex items-center pr-3 shrink-0">
-              <Check size={14} strokeWidth={2.5} className="text-success" />
+              <Check size={14} strokeWidth={1.75} className="text-success" />
             </div>
           )}
         </div>
@@ -323,7 +323,7 @@ export function DoctorStep3ConsultationSetup({ data, onChange, onContinue, onBac
                       onClick={() => addBreak(day)}
                       className="flex items-center gap-1.5 h-7 px-2.5 rounded-md border border-elements text-[13px] text-text-sub hover:border-text-sub hover:text-text-main transition-colors duration-150"
                     >
-                      <Plus size={12} strokeWidth={2.5} />
+                      <Plus size={12} strokeWidth={1.75} />
                       Add break
                     </button>
                   </div>
@@ -352,7 +352,7 @@ export function DoctorStep3ConsultationSetup({ data, onChange, onContinue, onBac
                             onClick={() => removeBreak(day, idx)}
                             className="shrink-0 text-text-sub hover:text-text-main transition-colors duration-150"
                           >
-                            <X size={14} strokeWidth={2.5} />
+                            <X size={14} strokeWidth={1.75} />
                           </button>
                         </div>
                         {err && (

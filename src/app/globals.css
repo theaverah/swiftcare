@@ -127,7 +127,7 @@
   --text-sub:         #6F6F6F;
   --elements:         #EAEAEA;
   --background-main:  #FFFFFF;
-  --background-sub:   #F3F3F3;
+  --background-sub:   #F7F7F7;
   --success:          #0F8946;
   --warning:          #E18246;
   --error:            #E24F62;
@@ -225,6 +225,20 @@
     letter-spacing: -0.08em;
     color: var(--text-main);
   }
+}
+
+/* ─── AI card border trace ───────────────────────────────────────────────── */
+
+@keyframes card-rotate-ccw {
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes glow-trace-ccw {
+  0%   { box-shadow: 0 8px 32px rgba(0,0,0,0.07),  0px  -6px 10px -2px rgba(0,135,134,0.28); }
+  25%  { box-shadow: 0 8px 32px rgba(0,0,0,0.07), -6px   0px 10px -2px rgba(0,135,134,0.28); }
+  50%  { box-shadow: 0 8px 32px rgba(0,0,0,0.07),  0px   6px 10px -2px rgba(0,135,134,0.28); }
+  75%  { box-shadow: 0 8px 32px rgba(0,0,0,0.07),  6px   0px 10px -2px rgba(0,135,134,0.28); }
+  100% { box-shadow: 0 8px 32px rgba(0,0,0,0.07),  0px  -6px 10px -2px rgba(0,135,134,0.28); }
 }
 
 /* ─── Skeleton shimmer ───────────────────────────────────────────────────── */
@@ -328,6 +342,14 @@
 .duration-reveal { transition-duration: 600ms; }
 
 /* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
 
 ::-webkit-scrollbar {
   width: 6px;

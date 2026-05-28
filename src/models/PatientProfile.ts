@@ -20,6 +20,7 @@ export interface IPatientProfile extends Document {
   currentMedications: string[];
   medicalHistory?: string;
   emergencyContact?: IEmergencyContact;
+  savedDoctors: mongoose.Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -50,6 +51,7 @@ const PatientProfileSchema = new Schema<IPatientProfile>(
       phone: { type: String },
       relationship: { type: String },
     },
+    savedDoctors: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );

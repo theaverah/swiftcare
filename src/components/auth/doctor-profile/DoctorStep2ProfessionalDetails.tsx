@@ -172,7 +172,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
             )}
           </button>
           <ChevronDown
-            size={14} strokeWidth={2.5}
+            size={14} strokeWidth={1.75}
             className={`absolute right-3 top-1/2 -translate-y-1/2 text-text-sub pointer-events-none transition-transform duration-200 ${specOpen ? "rotate-180" : ""}`}
           />
 
@@ -202,7 +202,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
                       className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors duration-150 flex items-center justify-between ${checked ? "text-brand font-medium bg-brand/5" : "text-text-main hover:bg-background-sub"}`}
                     >
                       {s}
-                      {checked && <Check size={14} strokeWidth={2.5} className="text-brand shrink-0" />}
+                      {checked && <Check size={14} strokeWidth={1.75} className="text-brand shrink-0" />}
                     </button>
                   );
                 })}
@@ -226,7 +226,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
                   onClick={() => toggleSpecialization(s)}
                   className="text-text-sub hover:text-text-main transition-colors duration-150"
                 >
-                  <X size={11} strokeWidth={2.5} />
+                  <X size={11} strokeWidth={1.75} />
                 </button>
               </span>
             ))}
@@ -256,7 +256,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
             className={`${inputBase} ${prcValid ? "pr-10" : ""} focus:border-text-main ${prcError ? "border-error" : prcValid ? "border-success" : "border-elements"}`}
           />
           {prcValid && (
-            <Check size={14} strokeWidth={2.5} className="absolute right-3 top-1/2 -translate-y-1/2 text-success pointer-events-none" />
+            <Check size={14} strokeWidth={1.75} className="absolute right-3 top-1/2 -translate-y-1/2 text-success pointer-events-none" />
           )}
         </div>
         {prcError && (
@@ -304,7 +304,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
             )}
           </button>
           <ChevronDown
-            size={14} strokeWidth={2.5}
+            size={14} strokeWidth={1.75}
             className={`absolute right-3 top-1/2 -translate-y-1/2 text-text-sub pointer-events-none transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`}
           />
 
@@ -334,7 +334,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
                       className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors duration-150 flex items-center justify-between ${checked ? "text-brand font-medium bg-brand/5" : "text-text-main hover:bg-background-sub"}`}
                     >
                       {lang}
-                      {checked && <Check size={14} strokeWidth={2.5} className="text-brand shrink-0" />}
+                      {checked && <Check size={14} strokeWidth={1.75} className="text-brand shrink-0" />}
                     </button>
                   );
                 })}
@@ -358,7 +358,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
                   onClick={() => toggleLanguage(lang)}
                   className="text-text-sub hover:text-text-main transition-colors duration-150"
                 >
-                  <X size={11} strokeWidth={2.5} />
+                  <X size={11} strokeWidth={1.75} />
                 </button>
               </span>
             ))}

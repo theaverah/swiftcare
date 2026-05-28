@@ -112,14 +112,15 @@ export function Step1Basics({ data, onChange, onContinue, triggerValidation }: P
         <div className="relative">
           <input
             type="text"
+            autoComplete="off"
             value={data.firstName}
             onChange={(e) => onChange({ firstName: toTitleCase(sanitizeName(e.target.value)) })}
             onBlur={() => setFirstNameTouched(true)}
             placeholder="e.g. Maria"
             className={`w-full h-10 rounded-lg border px-4 ${firstNameValid ? "pr-10" : ""} text-[14px] text-text-main bg-white outline-none transition-colors duration-200 placeholder:text-text-sub focus:border-text-main ${firstNameError ? "border-error" : firstNameValid ? "border-success" : "border-elements"}`}
           />
-          {firstNameValid && (
-            <Check size={14} strokeWidth={2.5} className="absolute right-3 top-1/2 -translate-y-1/2 text-success pointer-events-none" />
+          {firstNameValid && firstNameTouched && (
+            <Check size={14} strokeWidth={1.75} className="absolute right-3 top-1/2 -translate-y-1/2 text-success pointer-events-none" />
           )}
         </div>
         {firstNameError && (
@@ -138,14 +139,15 @@ export function Step1Basics({ data, onChange, onContinue, triggerValidation }: P
         <div className="relative">
           <input
             type="text"
+            autoComplete="off"
             value={data.lastName}
             onChange={(e) => onChange({ lastName: toTitleCase(sanitizeName(e.target.value)) })}
             onBlur={() => setLastNameTouched(true)}
             placeholder="e.g. Santos"
             className={`w-full h-10 rounded-lg border px-4 ${lastNameValid ? "pr-10" : ""} text-[14px] text-text-main bg-white outline-none transition-colors duration-200 placeholder:text-text-sub focus:border-text-main ${lastNameError ? "border-error" : lastNameValid ? "border-success" : "border-elements"}`}
           />
-          {lastNameValid && (
-            <Check size={14} strokeWidth={2.5} className="absolute right-3 top-1/2 -translate-y-1/2 text-success pointer-events-none" />
+          {lastNameValid && lastNameTouched && (
+            <Check size={14} strokeWidth={1.75} className="absolute right-3 top-1/2 -translate-y-1/2 text-success pointer-events-none" />
           )}
         </div>
         {lastNameError && (
@@ -163,6 +165,7 @@ export function Step1Basics({ data, onChange, onContinue, triggerValidation }: P
         <label className="text-[14px] font-medium text-text-main">Birthday</label>
         <input
           type="date"
+          autoComplete="off"
           value={data.birthday}
           onChange={(e) => onChange({ birthday: e.target.value })}
           onBlur={() => setBirthdayTouched(true)}
@@ -202,7 +205,7 @@ export function Step1Basics({ data, onChange, onContinue, triggerValidation }: P
             className={`flex-1 h-full px-3 ${phoneValid ? "pr-9" : ""} text-[14px] text-text-main bg-white outline-none placeholder:text-text-sub`}
           />
           {phoneValid && (
-            <Check size={14} strokeWidth={2.5} className="text-success shrink-0 mr-3" />
+            <Check size={14} strokeWidth={1.75} className="text-success shrink-0 mr-3" />
           )}
         </div>
         {phoneError && (

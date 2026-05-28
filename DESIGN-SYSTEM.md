@@ -54,18 +54,17 @@ Use `bg-elements/50` (50% opacity of `--elements`) for horizontal rule dividers 
 | h2 | 32px | Medium | -0.08em | Section headings |
 | h3 | 24px | Medium | -0.08em | Auth page titles, modal titles |
 | h4 | 20px | Medium | 0 | Subheadings |
-| body-lg | 18px | Regular | 0 | Emphasized body text |
-| body | 16px | Regular | 0 | Default body text |
-| body-sm | 14px | Regular or Medium | 0 | Form labels, input text, captions, all form UI |
-| label | 12px | Regular | 0 | Secondary hints, footer links, helper text |
+| body | 16px | Regular or Medium | 0 | **Default for all UI text** — nav labels, descriptions, button text, form labels, inputs, menu items, card content, notification messages, everything that isn't a heading |
+| label | 14px | Regular | 0 | Secondary captions only — timestamps, email addresses under names, sub-labels like "Profile" beneath a name in sidebar. Never go below 14px. |
 
 ### Rules
-- use **Medium (500)** weight throughout forms — not Bold
+- use **Medium (500)** weight throughout forms and interactive elements — not Bold
 - headings use `--text-main`
-- body and secondary text use `--text-main` or `--text-sub` depending on hierarchy
-- never go below 12px
+- **16px is the default for all non-heading text** — when in doubt, use 16px
+- 14px is reserved for secondary captions only (timestamps, email addresses under names, helper sub-labels)
 - line height: 1.5 for body, 1.2 for headings
-- established form standard: **14px** for all visible form text (labels, inputs, descriptions, button text, helper text)
+- sidebar width: 264px (`w-66`)
+- search bar height: 48px (`h-12`)
 
 ---
 
@@ -197,6 +196,26 @@ import { Calendar, User, Stethoscope } from "lucide-react"
 - font: 12px medium
 - padding: 4px 8px
 - status colors map to semantic tokens (success, warning, error, brand-sub)
+
+### Filter Chips
+
+Filter chips are interactive pill-shaped buttons used in scrollable filter rows (e.g. Find a Doctor).
+
+- border radius: `rounded-full` (pill) — exception to the 8px standard; chips are a distinct pattern
+- height: 32px (`h-8`)
+- padding: `px-3`
+- font: 13px medium
+- default state: `bg-transparent border-elements text-text-main`
+- hover state: `border-text-sub/60`
+- active/selected state: `bg-brand-sub border-brand text-brand`
+- active chip has a `×` button inline to clear the filter
+- inactive chip has a `ChevronDown` icon that rotates 180° when the popover is open
+- clicking a chip opens a dropdown popover anchored below-left
+- dropdown: `bg-bg-main border-elements rounded-lg shadow-md min-w-[180px]`
+- each option in the dropdown: 14px, `hover:bg-bg-sub`, checkmark on selected option
+- a "Clear all" text link (`text-brand`) appears after the chips when any filter is active
+
+Scrollable chip row: `overflow-x-auto` with `scrollbar-hide` class to hide the scrollbar.
 
 ---
 
@@ -391,6 +410,20 @@ Every one of these must have a skeleton or spinner:
 - medical records while loading
 - any dashboard stat or count
 - notification list
+
+---
+
+## Languages
+
+Supported consultation languages across the SwiftCare doctor network:
+
+- English
+- Filipino
+- Spanish
+- Cebuano
+- Mandarin
+
+Add new languages here when they appear in doctor profiles.
 
 ---
 

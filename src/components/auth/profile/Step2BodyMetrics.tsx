@@ -206,7 +206,7 @@ export function Step2BodyMetrics({ data, onChange, onContinue, onBack, triggerVa
             className={`${inputBase} ${isValidWeight(data.weight) ? "pr-10" : ""}`}
           />
           {isValidWeight(data.weight) && (
-            <Check size={14} strokeWidth={2.5} className="absolute right-3 top-1/2 -translate-y-1/2 text-success pointer-events-none" />
+            <Check size={14} strokeWidth={1.75} className="absolute right-3 top-1/2 -translate-y-1/2 text-success pointer-events-none" />
           )}
         </div>
 
@@ -260,7 +260,7 @@ export function Step2BodyMetrics({ data, onChange, onContinue, onBack, triggerVa
                 className={`${inputBase} ${isValidHeight(data.height) ? "pr-10" : ""}`}
               />
               {isValidHeight(data.height) && (
-                <Check size={14} strokeWidth={2.5} className="absolute right-3 top-1/2 -translate-y-1/2 text-success pointer-events-none" />
+                <Check size={14} strokeWidth={1.75} className="absolute right-3 top-1/2 -translate-y-1/2 text-success pointer-events-none" />
               )}
             </div>
           ) : (

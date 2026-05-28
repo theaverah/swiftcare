@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff, Check } from "lucide-react";
+import { Eye, EyeOff, Check, AlertCircle } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -26,7 +26,7 @@ function isValidEmail(email: string) {
 
 // Change 4: bare check, no circle
 function FieldSuccessIcon() {
-  return <Check size={16} className="text-success" strokeWidth={2.5} />;
+  return <Check size={16} className="text-success" strokeWidth={1.75} />;
 }
 
 interface RoleCardProps {
@@ -100,6 +100,8 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
   const [pwFocused, setPwFocused]       = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [attempted, setAttempted]       = useState(false);
+  const [submitting, setSubmitting]     = useState(false);
+  const [apiError, setApiError]         = useState("");
 
   // Derived state
   const conditionResults = PASSWORD_CONDITIONS.map((c) => c.test(password));
@@ -130,12 +132,30 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
     return "border-elements";
   }
 
-  function handleContinue() {
+  async function handleContinue() {
     if (!canContinue) {
       setAttempted(true);
       return;
     }
-    onContinue?.({ role: role!, email, password });
+    setSubmitting(true);
+    setApiError("");
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, role }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setApiError(json.error ?? "Something went wrong. Please try again.");
+        return;
+      }
+      onContinue?.({ role: role!, email, password });
+    } catch {
+      setApiError("Network error. Please check your connection.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -175,6 +195,14 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
 
         {/* ── Divider ─────────────────────────────────────────────────── */}
         <div className="h-px bg-elements/50 w-full animate-fadeInDown" style={{ animationDelay: "120ms" }} />
+
+        {/* ── Error banner ────────────────────────────────────────────── */}
+        {apiError && (
+          <div className="flex items-start gap-3 px-4 py-3 rounded-lg bg-error/8 border border-error/20 animate-fadeInDown w-full" style={{ animationDuration: "200ms" }}>
+            <AlertCircle size={16} strokeWidth={1.75} className="text-error shrink-0 mt-0.5" />
+            <p className="text-[14px] text-error leading-snug">{apiError}</p>
+          </div>
+        )}
 
         {/* ── Email ───────────────────────────────────────────────────── */}
         <div className="flex flex-col gap-1.5 w-full animate-fadeInDown" style={{ animationDelay: "180ms" }}>
@@ -261,8 +289,8 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-text-sub hover:text-text-main transition-colors duration-150"
                 >
                   {showPassword
-                    ? <Eye size={18} strokeWidth={1.5} />
-                    : <EyeOff size={18} strokeWidth={1.5} />
+                    ? <Eye size={18} strokeWidth={1.75} />
+                    : <EyeOff size={18} strokeWidth={1.75} />
                   }
                 </button>
               )}
@@ -294,7 +322,7 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
                     `}
                   >
                     {conditionResults[i] && (
-                      <Check size={8} className="text-white" strokeWidth={2.5} />
+                      <Check size={8} className="text-white" strokeWidth={1.75} />
                     )}
                   </div>
                   {/* Change 2: condition text → 12px */}
@@ -317,17 +345,18 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
           <button
             type="button"
             onClick={handleContinue}
+            disabled={submitting}
             className={`
               w-full h-10 rounded-lg
               text-[14px] font-medium tracking-[-0.176px] text-brand-sub
               transition-all duration-200
-              ${canContinue
+              ${canContinue && !submitting
                 ? "bg-text-main hover:opacity-90 cursor-pointer"
                 : "bg-text-main/40 cursor-not-allowed"
               }
             `}
           >
-            Continue
+            {submitting ? "Creating account…" : "Continue"}
           </button>
 
           <p className="text-[14px] text-text-sub text-center tracking-[-0.132px] leading-[1.5] w-full">

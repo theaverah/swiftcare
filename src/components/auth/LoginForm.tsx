@@ -12,7 +12,6 @@ function isValidEmail(email: string) {
 
 export function LoginForm() {
   const router = useRouter();
-
   const [email,        setEmail]        = useState("");
   const [password,     setPassword]     = useState("");
   const [emailFocused, setEmailFocused] = useState(false);
@@ -156,8 +155,8 @@ export function LoginForm() {
               className="absolute right-3 top-1/2 -translate-y-1/2 text-text-sub hover:text-text-main transition-colors duration-150"
             >
               {showPassword
-                ? <Eye size={18} strokeWidth={1.5} />
-                : <EyeOff size={18} strokeWidth={1.5} />
+                ? <Eye size={18} strokeWidth={1.75} />
+                : <EyeOff size={18} strokeWidth={1.75} />
               }
             </button>
           </div>

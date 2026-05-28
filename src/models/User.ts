@@ -9,6 +9,8 @@ export interface IUser extends Document {
   name: string;
   role: UserRole;
   isVerified: boolean;
+  verificationCode?: string;
+  verificationExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -30,7 +32,7 @@ const UserSchema = new Schema<IUser>(
     },
     name: {
       type: String,
-      required: [true, "Name is required"],
+      default: "",
       trim: true,
     },
     role: {
@@ -42,11 +44,13 @@ const UserSchema = new Schema<IUser>(
       type: Boolean,
       default: false,
     },
+    verificationCode: { type: String, select: false },
+    verificationExpires: { type: Date, select: false },
   },
   { timestamps: true }
 );
 
 const User: Model<IUser> =
-  mongoose.models.User ?? mongoose.model<IUser>("User", UserSchema);
+  (mongoose.models.User as Model<IUser>) ?? mongoose.model<IUser>("User", UserSchema);
 
 export default User;

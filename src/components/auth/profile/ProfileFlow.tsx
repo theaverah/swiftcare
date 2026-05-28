@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { ProfileStepper } from "./ProfileStepper";
 import { Step1Basics } from "./Step1Basics";
 import { Step2BodyMetrics } from "./Step2BodyMetrics";
@@ -58,6 +59,7 @@ const INITIAL: ProfileData = {
 
 export function ProfileFlow() {
   const router = useRouter();
+  const { update: refreshSession } = useSession();
   const [step,              setStep]              = useState(1);
   const [maxReached,        setMaxReached]        = useState(1);
   const [data,              setData]              = useState<ProfileData>(INITIAL);
@@ -121,8 +123,15 @@ export function ProfileFlow() {
     sessionStorage.removeItem("profile_step");
     sessionStorage.removeItem("profile_max");
     sessionStorage.removeItem("profile_data");
-    // TODO: POST /api/patient/profile  { ...data }
-    router.push("/patient/dashboard");
+    try {
+      await fetch("/api/patient/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+    } catch { /* non-blocking — user still lands on dashboard */ }
+    await refreshSession();
+    router.push("/patient/welcome");
   }
 
   const animClass = direction === "forward" ? "animate-stepForward" : "animate-stepBack";

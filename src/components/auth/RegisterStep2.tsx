@@ -42,11 +42,16 @@ export function RegisterStep2({ email, onVerified }: RegisterStep2Props) {
       setIsVerifying(true);
       setError(null);
       try {
-        await new Promise((r) => setTimeout(r, 600));
-        if (value !== "123456") throw new Error();
+        const res = await fetch("/api/auth/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, code: value }),
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error ?? "Invalid code");
         onVerified?.();
-      } catch {
-        setError("That code didn't work. Please try again.");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "That code didn't work. Please try again.");
         setCode(Array(6).fill(""));
         setTimeout(() => inputRefs.current[0]?.focus(), 0);
       } finally {

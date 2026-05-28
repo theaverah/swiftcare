@@ -34,16 +34,23 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+      }
+      // Re-fetch name from DB when session.update() is called
+      if (trigger === "update" && token.id) {
+        await dbConnect();
+        const dbUser = await User.findById(token.id).select("name");
+        if (dbUser?.name) token.name = dbUser.name;
       }
       return token;
     },
     async session({ session, token }) {
       session.user.id = token.id;
       session.user.role = token.role;
+      if (token.name) session.user.name = token.name as string;
       return session;
     },
   },

@@ -23,6 +23,7 @@ export interface ScheduleDay {
 }
 
 export interface DoctorProfileData {
+  profileImage: string;
   firstName: string;
   lastName: string;
   birthday: string;
@@ -41,6 +42,7 @@ export interface DoctorProfileData {
 export const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const INITIAL: DoctorProfileData = {
+  profileImage: "",
   firstName: "",
   lastName: "",
   birthday: "",
@@ -153,6 +155,7 @@ export function DoctorProfileFlow() {
       try {
         const parsed = JSON.parse(savedData);
         const merged = { ...INITIAL, ...parsed };
+        if (typeof merged.profileImage !== "string") merged.profileImage = "";
         if (typeof merged.firstName !== "string") merged.firstName = "";
         if (typeof merged.lastName !== "string") merged.lastName = "";
         if (typeof merged.birthday !== "string") merged.birthday = "";

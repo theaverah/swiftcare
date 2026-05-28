@@ -21,7 +21,7 @@ export interface IDoctorProfile extends Document {
   userId: mongoose.Types.ObjectId;
   specializations: string[];
   bio?: string;
-  profilePicture?: string;
+  profileImage?: string;
   licenseNumber?: string;
   yearsOfExperience?: number;
   consultationFee?: number;
@@ -72,7 +72,7 @@ const DoctorProfileSchema = new Schema<IDoctorProfile>(
       },
     },
     bio: { type: String },
-    profilePicture: { type: String },
+    profileImage: { type: String },
     licenseNumber: { type: String },
     yearsOfExperience: { type: Number, min: 0 },
     consultationFee: { type: Number, min: 0 },

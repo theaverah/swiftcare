@@ -36,8 +36,9 @@ export function RegisterFlow() {
 
   function handleVerified() {
     sessionStorage.removeItem("register_step");
+    const role = data?.role;
     sessionStorage.removeItem("register_data");
-    router.push("/register/profile");
+    router.push(role === "doctor" ? "/register/doctor-profile" : "/register/profile");
   }
 
   if (step === "verify" && data) {

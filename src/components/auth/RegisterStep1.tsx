@@ -142,8 +142,13 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
     <div className="min-h-screen bg-white flex items-center justify-center px-6 py-16">
       <div className="flex flex-col gap-4 w-full max-w-lg">
 
+        {/* ── Logo ────────────────────────────────────────────────────── */}
+        <div className="flex justify-center mb-1 animate-fadeInDown" style={{ animationDelay: "0ms" }}>
+          <img src="/logo.png" alt="SwiftCare" className="w-12 h-12 object-contain" />
+        </div>
+
         {/* ── Title + role cards ──────────────────────────────────────── */}
-        <div className="flex flex-col gap-6.5 items-center w-full">
+        <div className="flex flex-col gap-6.5 items-center w-full animate-fadeInDown" style={{ animationDelay: "60ms" }}>
           <h1 className="text-[24px] font-medium text-text-main tracking-[-0.264px] leading-[1.5] text-center w-full">
             Let&apos;s get you set up on SwiftCare
           </h1>
@@ -169,10 +174,10 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
         </div>
 
         {/* ── Divider ─────────────────────────────────────────────────── */}
-        <div className="h-px bg-elements/50 w-full" />
+        <div className="h-px bg-elements/50 w-full animate-fadeInDown" style={{ animationDelay: "120ms" }} />
 
         {/* ── Email ───────────────────────────────────────────────────── */}
-        <div className="flex flex-col gap-1.5 w-full">
+        <div className="flex flex-col gap-1.5 w-full animate-fadeInDown" style={{ animationDelay: "180ms" }}>
           <label
             htmlFor="email"
             className="text-[14px] font-medium text-text-main tracking-[-0.176px] leading-[1.5]"
@@ -215,7 +220,7 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
         </div>
 
         {/* ── Password ────────────────────────────────────────────────── */}
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full animate-fadeInDown" style={{ animationDelay: "240ms" }}>
           <div className="flex flex-col gap-1.5 w-full">
             <label
               htmlFor="password"
@@ -308,7 +313,7 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
         </div>
 
         {/* ── Continue + footer ────────────────────────────────────────── */}
-        <div className="flex flex-col gap-[14px] items-center w-full mt-4">
+        <div className="flex flex-col gap-[14px] items-center w-full mt-4 animate-fadeInDown" style={{ animationDelay: "300ms" }}>
           <button
             type="button"
             onClick={handleContinue}
@@ -334,7 +339,7 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
             <span className="text-text-sub">Already have an account?</span>
             {" "}
             {/* Change 7: Log in → font-bold */}
-            <Link href="/login" className="font-medium text-text-main hover:underline">
+            <Link href="/login" className="font-medium text-brand hover:underline">
               Log in
             </Link>
           </p>

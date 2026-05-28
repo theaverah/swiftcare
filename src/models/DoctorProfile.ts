@@ -19,7 +19,7 @@ export interface IBlockedSlot {
 export interface IDoctorProfile extends Document {
   _id: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
-  specialization: string;
+  specializations: string[];
   bio?: string;
   profilePicture?: string;
   licenseNumber?: string;
@@ -63,10 +63,13 @@ const DoctorProfileSchema = new Schema<IDoctorProfile>(
       required: true,
       unique: true,
     },
-    specialization: {
-      type: String,
-      required: [true, "Specialization is required"],
-      trim: true,
+    specializations: {
+      type: [String],
+      required: [true, "At least one specialization is required"],
+      validate: {
+        validator: (v: string[]) => v.length > 0,
+        message: "At least one specialization is required",
+      },
     },
     bio: { type: String },
     profilePicture: { type: String },
@@ -83,7 +86,7 @@ const DoctorProfileSchema = new Schema<IDoctorProfile>(
   { timestamps: true }
 );
 
-DoctorProfileSchema.index({ specialization: 1 });
+DoctorProfileSchema.index({ specializations: 1 });
 DoctorProfileSchema.index({ rating: -1 });
 
 const DoctorProfile: Model<IDoctorProfile> =

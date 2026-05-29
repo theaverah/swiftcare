@@ -23,7 +23,7 @@ export default function HomePage() {
             href="/register"
             className="px-5 py-3 bg-brand text-white rounded-lg text-[14px] font-medium hover:opacity-90 transition-opacity duration-base"
           >
-            Get Started
+            Get started
           </Link>
           <Link
             href="/login"

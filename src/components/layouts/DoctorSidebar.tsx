@@ -78,7 +78,7 @@ export function DoctorSidebar() {
           "
         >
           <LogOut size={18} className="text-text-sub" />
-          Sign Out
+          Sign out
         </button>
       </div>
     </aside>

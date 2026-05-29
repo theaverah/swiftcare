@@ -71,7 +71,7 @@ export function ProfilePopover({ name, email, initials, isOpen, onClose }: Profi
           className="flex items-center gap-2.5 px-4 py-2.5 text-[16px] text-text-main hover:bg-bg-sub transition-colors duration-150"
         >
           <User size={15} strokeWidth={1.75} className="text-text-sub shrink-0" />
-          View Profile
+          View profile
         </Link>
       </div>
 

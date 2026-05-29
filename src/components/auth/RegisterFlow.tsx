@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { RegisterStep1 } from "./RegisterStep1";
 import { RegisterStep2 } from "./RegisterStep2";
 
@@ -40,11 +40,12 @@ export function RegisterFlow() {
     setStep("verify");
   }
 
-  async function handleVerified() {
+  function handleVerified() {
     sessionStorage.removeItem("register_step");
-    const { role, email, password } = data!;
     sessionStorage.removeItem("register_data");
-    await signIn("credentials", { email, password, redirect: false });
+    const { role, email, password } = data!;
+    // Stash credentials so the profile flow can create the account at the end
+    sessionStorage.setItem("pending_creds", JSON.stringify({ email, password }));
     router.push(role === "doctor" ? "/register/doctor-profile" : "/register/profile");
   }
 

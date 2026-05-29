@@ -26,7 +26,7 @@ export default function PatientLayout({
         <div className="shrink-0 relative z-20 bg-transparent">
           <DashboardHeader />
         </div>
-        <main className="flex-1 overflow-y-auto overscroll-none flex flex-col px-8 pt-8 pb-6 bg-bg-sub">
+        <main className="flex-1 overflow-y-auto overscroll-none flex flex-col px-8 pt-10 pb-6 bg-bg-sub">
           {children}
         </main>
       </div>

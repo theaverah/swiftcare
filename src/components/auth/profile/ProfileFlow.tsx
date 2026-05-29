@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { ProfileStepper } from "./ProfileStepper";
 import { Step1Basics } from "./Step1Basics";
 import { Step2BodyMetrics } from "./Step2BodyMetrics";
@@ -123,14 +123,30 @@ export function ProfileFlow() {
     sessionStorage.removeItem("profile_step");
     sessionStorage.removeItem("profile_max");
     sessionStorage.removeItem("profile_data");
+
+    // Read pending credentials set by RegisterFlow after OTP verification
+    const rawCreds = sessionStorage.getItem("pending_creds");
+    const creds: { email: string; password: string } | null = rawCreds ? JSON.parse(rawCreds) : null;
+    sessionStorage.removeItem("pending_creds");
+
     try {
       await fetch("/api/patient/profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          ...(creds ? { pendingEmail: creds.email } : {}),
+        }),
       });
-    } catch { /* non-blocking — user still lands on dashboard */ }
-    await refreshSession();
+    } catch { /* non-blocking */ }
+
+    if (creds) {
+      // New registration — sign in now that the account exists
+      await signIn("credentials", { email: creds.email, password: creds.password, redirect: false });
+    } else {
+      await refreshSession();
+    }
+
     router.push("/patient/welcome");
   }
 

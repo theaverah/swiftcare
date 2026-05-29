@@ -60,7 +60,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose }: DoctorDrawerProps) {
         role="dialog"
         aria-modal="true"
         aria-label="Doctor Profile"
-        className="fixed right-0 top-0 h-full z-50 w-full sm:w-[480px] bg-bg-main
+        className="fixed right-0 top-0 h-full z-50 w-full sm:w-120 bg-bg-main
           flex flex-col shadow-[0_4px_40px_rgba(0,0,0,0.14)]"
         style={{
           transform: isOpen ? "translateX(0)" : "translateX(100%)",
@@ -230,7 +230,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose }: DoctorDrawerProps) {
             className="w-full h-11 rounded-lg bg-brand text-white text-[16px] font-medium
               hover:opacity-90 active:scale-[0.98] transition-all duration-200"
           >
-            Book a Consultation
+            Book a consultation
           </button>
         </div>
       </div>

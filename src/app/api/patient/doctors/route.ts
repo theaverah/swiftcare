@@ -1,10 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getToken } from "next-auth/jwt";
 import dbConnect from "@/lib/db";
 import User from "@/models/User";
 import DoctorProfile from "@/models/DoctorProfile";
 import PatientProfile from "@/models/PatientProfile";
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function parseHour(t: string): number {
+  const [time, ampm] = t.split(" ");
+  let [h] = time.split(":").map(Number);
+  if (ampm === "PM" && h !== 12) h += 12;
+  if (ampm === "AM" && h === 12) h = 0;
+  return h;
+}
+
+const TIME_WINDOWS: Record<string, [number, number]> = {
+  morning:   [6, 12],
+  afternoon: [12, 18],
+  evening:   [18, 22],
+};
 
 function nextAvailableDate(availability: { dayOfWeek: number; startTime: string; endTime: string; isAvailable: boolean }[]) {
   const available = availability.filter(a => a.isAvailable).map(a => a.dayOfWeek);
@@ -31,100 +46,96 @@ function todayHours(availability: { dayOfWeek: number; startTime: string; endTim
   return `${slot.startTime} – ${slot.endTime}`;
 }
 
+// ── Route ─────────────────────────────────────────────────────────────────────
+
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (!token?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     await dbConnect();
 
     const { searchParams } = new URL(req.url);
-    const search       = searchParams.get("search")?.toLowerCase() ?? "";
-    const speciality   = searchParams.get("speciality") ?? "";
-    const language     = searchParams.get("language") ?? "";
-    const feeRange     = searchParams.get("feeRange") ?? "";
-    const availability = searchParams.get("availability") ?? "";
-    const timeOfDay    = searchParams.get("timeOfDay") ?? "";
+    const search     = searchParams.get("search")?.toLowerCase() ?? "";
+    const specialties = searchParams.get("specialties")?.split(",").filter(Boolean) ?? [];
+    const languages  = searchParams.get("languages")?.split(",").filter(Boolean) ?? [];
+    const timePref   = searchParams.get("timePref")?.split(",").filter(Boolean) ?? [];
+    const maxFee     = searchParams.get("maxFee") ? Number(searchParams.get("maxFee")) : 0;
 
-    // Get patient's saved doctors
-    const patientProfile = await PatientProfile.findOne({ userId: session.user.id }).select("savedDoctors");
+    // Saved doctor IDs for this patient
+    const patientProfile = await PatientProfile.findOne({ userId: token.id }).select("savedDoctors");
     const savedIds = new Set((patientProfile?.savedDoctors ?? []).map(String));
 
-    // Get all verified doctor users
+    // All verified doctor users → name lookup map
     const doctorUsers = await User.find({ role: "doctor", isVerified: true }).select("_id name").lean();
     const userMap = new Map(doctorUsers.map(u => [String(u._id), u.name as string]));
 
-    // Query doctor profiles
+    // Build DB-level filter
     const profileFilter: Record<string, unknown> = { isAcceptingPatients: true };
-    if (speciality) profileFilter.specializations = { $in: [speciality] };
-    if (language)   profileFilter.languages = { $in: [language] };
-
-    if (feeRange) {
-      if (feeRange === "under500")        profileFilter.consultationFee = { $lt: 500 };
-      else if (feeRange === "500-1000")   profileFilter.consultationFee = { $gte: 500, $lte: 1000 };
-      else if (feeRange === "1000-2000")  profileFilter.consultationFee = { $gt: 1000, $lte: 2000 };
-      else if (feeRange === "2000plus")   profileFilter.consultationFee = { $gt: 2000 };
-    }
+    if (specialties.length) profileFilter.specializations = { $in: specialties };
+    if (languages.length)   profileFilter.languages       = { $in: languages };
+    if (maxFee > 0)         profileFilter.consultationFee = { $lte: maxFee };
 
     let profiles = await DoctorProfile.find(profileFilter).lean();
 
-    // Client-side filters that need computed data
+    // In-memory filters that need computed data
     const todayDow = new Date().getDay();
 
     profiles = profiles.filter(p => {
-      const name = (userMap.get(String(p.userId)) ?? "").toLowerCase();
-      const specs = p.specializations.map(s => s.toLowerCase()).join(" ");
-      if (search && !name.includes(search) && !specs.includes(search)) return false;
-
-      if (availability === "today") {
-        const hasToday = p.availability.some(a => a.dayOfWeek === todayDow && a.isAvailable);
-        if (!hasToday) return false;
-      }
-      if (availability === "week") {
-        const thisWeek = [0,1,2,3,4,5,6].slice(0, 7);
-        const hasThisWeek = p.availability.some(a => thisWeek.includes(a.dayOfWeek) && a.isAvailable);
-        if (!hasThisWeek) return false;
+      // Text search: name or specializations
+      if (search) {
+        const name  = (userMap.get(String(p.userId)) ?? "").toLowerCase();
+        const specs = (p.specializations ?? []).join(" ").toLowerCase();
+        if (!name.includes(search) && !specs.includes(search)) return false;
       }
 
-      if (timeOfDay) {
-        const todaySlot = p.availability.find(a => a.dayOfWeek === todayDow && a.isAvailable);
-        if (!todaySlot) return false;
-        const startHour = parseInt(todaySlot.startTime);
-        if (timeOfDay === "morning"   && (startHour < 6  || startHour >= 12)) return false;
-        if (timeOfDay === "afternoon" && (startHour < 12 || startHour >= 18)) return false;
-        if (timeOfDay === "evening"   && (startHour < 18 || startHour >= 22)) return false;
+      // Time preference: doctor must have at least one slot overlapping a requested window
+      if (timePref.length > 0) {
+        const windows = timePref
+          .map(tp => TIME_WINDOWS[tp])
+          .filter((w): w is [number, number] => !!w);
+
+        const hasOverlap = p.availability.some(slot => {
+          if (!slot.isAvailable) return false;
+          const sh = parseHour(slot.startTime);
+          const eh = parseHour(slot.endTime);
+          return windows.some(([ws, we]) => sh < we && eh > ws);
+        });
+
+        if (!hasOverlap) return false;
       }
 
       return true;
     });
 
+    // Shape response
     const doctors = profiles.map(p => {
-      const next    = nextAvailableDate(p.availability);
-      const hours   = todayHours(p.availability);
-      const dateStr = next
+      const next   = nextAvailableDate(p.availability);
+      const hours  = todayHours(p.availability);
+      const label  = next
         ? next.isToday
           ? "Available today"
-          : `Next available: ${next.date.toLocaleDateString("en-PH", { weekday: "long", month: "long", day: "numeric" })}`
+          : `Next: ${next.date.toLocaleDateString("en-PH", { weekday: "short", month: "short", day: "numeric" })}`
         : "Not currently available";
 
       return {
-        doctorProfileId:   String(p._id),
-        userId:            String(p.userId),
-        name:              userMap.get(String(p.userId)) ?? "Unknown",
-        profileImage:      p.profileImage ?? null,
-        specializations:   p.specializations,
-        consultationFee:   p.consultationFee ?? null,
-        languages:         p.languages,
-        yearsOfExperience: p.yearsOfExperience ?? null,
-        licenseNumber:     p.licenseNumber ?? null,
-        bio:               p.bio ?? null,
-        rating:            p.rating,
-        totalReviews:      p.totalReviews,
-        availability:      p.availability,
-        nextAvailableLabel: dateStr,
-        isAvailableToday:  next?.isToday ?? false,
-        todayHours:        hours,
-        isSaved:           savedIds.has(String(p.userId)),
+        doctorProfileId:    String(p._id),
+        userId:             String(p.userId),
+        name:               userMap.get(String(p.userId)) ?? "Unknown",
+        profileImage:       p.profileImage ?? null,
+        specializations:    p.specializations,
+        consultationFee:    p.consultationFee ?? null,
+        languages:          p.languages,
+        yearsOfExperience:  p.yearsOfExperience ?? null,
+        licenseNumber:      p.licenseNumber ?? null,
+        bio:                p.bio ?? null,
+        rating:             p.rating,
+        totalReviews:       p.totalReviews,
+        availability:       p.availability,
+        nextAvailableLabel: label,
+        isAvailableToday:   next?.isToday ?? false,
+        todayHours:         hours,
+        isSaved:            savedIds.has(String(p.userId)),
       };
     });
 

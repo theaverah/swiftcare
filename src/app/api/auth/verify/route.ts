@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
-import User from "@/models/User";
+import PendingRegistration from "@/models/PendingRegistration";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,32 +12,21 @@ export async function POST(req: NextRequest) {
 
     await dbConnect();
 
-    const user = await User.findOne({ email }).select("+verificationCode +verificationExpires");
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    if (user.isVerified) {
-      return NextResponse.json({ success: true }); // already verified, allow through
+    const pending = await PendingRegistration.findOne({ email: email.toLowerCase() });
+    if (!pending) {
+      return NextResponse.json({ error: "Registration not found. Please start over." }, { status: 404 });
     }
 
     const devBypass = process.env.NODE_ENV === "development" && code === "123456";
 
     if (
       !devBypass && (
-        user.verificationCode !== code ||
-        !user.verificationExpires ||
-        user.verificationExpires < new Date()
+        pending.otp !== code ||
+        pending.otpExpires < new Date()
       )
     ) {
       return NextResponse.json({ error: "Invalid or expired code" }, { status: 400 });
     }
-
-    user.isVerified          = true;
-    user.verificationCode    = undefined;
-    user.verificationExpires = undefined;
-    await user.save();
 
     return NextResponse.json({ success: true });
 

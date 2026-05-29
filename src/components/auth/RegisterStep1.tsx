@@ -73,12 +73,12 @@ function RoleCard({ label, description, selected, error, onClick, paddingClass }
               />
             </div>
           </div>
-          <span className="text-[14px] font-medium text-text-main leading-[1.5] tracking-[-0.176px]">
+          <span className="text-[14px] font-medium text-text-main leading-normal tracking-[-0.176px]">
             {label}
           </span>
         </div>
         {/* Description indented to align with label (p-1 wrapper = 26px + gap-2 = 8px) */}
-        <span className="text-[14px] font-normal text-text-sub leading-[1.5] pl-[34px]">
+        <span className="text-[14px] font-normal text-text-sub leading-normal pl-8.5">
           {description}
         </span>
       </div>
@@ -169,7 +169,7 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
 
         {/* ── Title + role cards ──────────────────────────────────────── */}
         <div className="flex flex-col gap-6.5 items-center w-full animate-fadeInDown" style={{ animationDelay: "60ms" }}>
-          <h1 className="text-[24px] font-medium text-text-main tracking-[-0.264px] leading-[1.5] text-center w-full">
+          <h1 className="text-[24px] font-medium text-text-main tracking-[-0.264px] leading-normal text-center w-full">
             Let&apos;s get you set up on SwiftCare
           </h1>
 
@@ -208,7 +208,7 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
         <div className="flex flex-col gap-1.5 w-full animate-fadeInDown" style={{ animationDelay: "180ms" }}>
           <label
             htmlFor="email"
-            className="text-[14px] font-medium text-text-main tracking-[-0.176px] leading-[1.5]"
+            className="text-[14px] font-medium text-text-main tracking-[-0.176px] leading-normal"
           >
             Email
           </label>
@@ -252,7 +252,7 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
           <div className="flex flex-col gap-1.5 w-full">
             <label
               htmlFor="password"
-              className="text-[14px] font-medium text-text-main tracking-[-0.176px] leading-[1.5]"
+              className="text-[14px] font-medium text-text-main tracking-[-0.176px] leading-normal"
             >
               Password
             </label>
@@ -356,10 +356,10 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
               }
             `}
           >
-            {submitting ? "Creating account…" : "Continue"}
+            {submitting ? "Sending code…" : "Continue"}
           </button>
 
-          <p className="text-[14px] text-text-sub text-center tracking-[-0.132px] leading-[1.5] w-full">
+          <p className="text-[14px] text-text-sub text-center tracking-[-0.132px] leading-normal w-full">
             We&apos;ll send a verification code to confirm your email.
           </p>
 

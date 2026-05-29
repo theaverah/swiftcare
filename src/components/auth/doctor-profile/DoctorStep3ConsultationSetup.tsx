@@ -175,14 +175,14 @@ export function DoctorStep3ConsultationSetup({ data, onChange, onContinue, onBac
   // ── Derived state ───────────────────────────────────────────────────────────
 
   const feeNum   = parseFloat(data.consultationFee);
-  const feeValid = !isNaN(feeNum) && feeNum >= 100 && feeNum <= 10000;
+  const feeValid = !isNaN(feeNum) && feeNum >= 100 && feeNum <= 5000;
   const feeError = feeTouched && !feeFocused && !feeValid;
 
   function feeErrorMessage(): string {
     if (!data.consultationFee) return "Please enter your consultation fee";
     if (isNaN(feeNum) || feeNum <= 0) return "Please enter a valid fee";
     if (feeNum < 100) return "Consultation fee must be at least PHP 100.";
-    if (feeNum > 10000) return "Consultation fee cannot exceed PHP 10,000.";
+    if (feeNum > 5000) return "Consultation fee cannot exceed PHP 5,000.";
     return "Please enter a valid fee";
   }
 

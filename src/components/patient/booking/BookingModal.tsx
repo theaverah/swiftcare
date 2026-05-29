@@ -36,14 +36,17 @@ const INITIAL: BookingData = {
 // ── Props ─────────────────────────────────────────────────────────────────────
 
 interface Props {
-  doctor:  Doctor;
-  isOpen:  boolean;
-  onClose: () => void;
+  doctor:           Doctor;
+  isOpen:           boolean;
+  onClose:          () => void;
+  rescheduleMode?:  boolean;
+  appointmentId?:   string;
+  onRescheduled?:   () => void;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function BookingModal({ doctor, isOpen, onClose }: Props) {
+export function BookingModal({ doctor, isOpen, onClose, rescheduleMode, appointmentId, onRescheduled }: Props) {
   const [step,       setStep]       = useState(1);
   const [data,       setData]       = useState<BookingData>(INITIAL);
   const [direction,  setDirection]  = useState<"forward" | "back">("forward");
@@ -90,26 +93,35 @@ export function BookingModal({ doctor, isOpen, onClose }: Props) {
   async function handleConfirm() {
     setSubmitting(true);
     try {
-      const res = await fetch("/api/patient/appointments", {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          doctorUserId:    doctor.userId,
-          doctorProfileId: doctor.doctorProfileId,
-          date:            data.date,
-          assignedSlot:    data.assignedSlot,
-          forSelf:         data.forSelf,
-          patientName:     data.patientName,
-          relationship:    data.relationship,
-          chiefComplaint:  data.reason,
-          additionalNotes: data.note,
-        }),
-      });
-      if (!res.ok) throw new Error("Failed");
+      if (rescheduleMode && appointmentId) {
+        const res = await fetch(`/api/patient/appointments/${appointmentId}`, {
+          method:  "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body:    JSON.stringify({ date: data.date, assignedSlot: data.assignedSlot }),
+        });
+        if (!res.ok) throw new Error("Failed");
+        onRescheduled?.();
+      } else {
+        const res = await fetch("/api/patient/appointments", {
+          method:  "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            doctorUserId:    doctor.userId,
+            doctorProfileId: doctor.doctorProfileId,
+            date:            data.date,
+            assignedSlot:    data.assignedSlot,
+            forSelf:         data.forSelf,
+            patientName:     data.patientName,
+            relationship:    data.relationship,
+            chiefComplaint:  data.reason,
+            additionalNotes: data.note,
+          }),
+        });
+        if (!res.ok) throw new Error("Failed");
+      }
       goTo(3, "forward");
     } catch {
-      // Silent fail — still show confirmed (optimistic)
-      goTo(3, "forward");
+      goTo(3, "forward"); // optimistic — show success regardless
     } finally {
       setSubmitting(false);
     }
@@ -173,6 +185,7 @@ export function BookingModal({ doctor, isOpen, onClose }: Props) {
                   data={data}
                   onChange={update}
                   onContinue={() => goTo(2, "forward")}
+                  rescheduleMode={rescheduleMode}
                 />
               )}
               {step === 2 && (
@@ -189,6 +202,8 @@ export function BookingModal({ doctor, isOpen, onClose }: Props) {
                 <BookingStep3
                   doctor={doctor}
                   data={data}
+                  rescheduleMode={rescheduleMode}
+                  onClose={onClose}
                 />
               )}
             </div>

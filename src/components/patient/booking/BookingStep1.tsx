@@ -49,15 +49,16 @@ const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 // ── Props ─────────────────────────────────────────────────────────────────────
 
 interface Props {
-  doctor: Doctor;
-  data: BookingData;
-  onChange: (patch: Partial<BookingData>) => void;
-  onContinue: () => void;
+  doctor:          Doctor;
+  data:            BookingData;
+  onChange:        (patch: Partial<BookingData>) => void;
+  onContinue:      () => void;
+  rescheduleMode?: boolean;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function BookingStep1({ doctor, data, onChange, onContinue }: Props) {
+export function BookingStep1({ doctor, data, onChange, onContinue, rescheduleMode }: Props) {
   const today = startOfDay(new Date());
   const [month, setMonth] = useState(() => startOfMonth(today));
 
@@ -126,13 +127,23 @@ export function BookingStep1({ doctor, data, onChange, onContinue }: Props) {
         </div>
       </div>
 
+      {/* Reschedule note */}
+      {rescheduleMode && (
+        <div className="px-3.5 py-2.5 rounded-lg bg-brand-sub border border-brand/20">
+          <p className="text-[13px] text-brand leading-relaxed">
+            You&apos;re rescheduling your consultation with{" "}
+            <span className="font-medium">Dr. {doctor.name}</span>. Pick a new date and time.
+          </p>
+        </div>
+      )}
+
       {/* Heading */}
       <div className="flex flex-col gap-1">
         <h3 className="text-[20px] font-medium text-text-main tracking-[-0.03em]">
-          When would you like to meet?
+          {rescheduleMode ? "Pick a new date and time" : "When would you like to meet?"}
         </h3>
         <p className="text-[14px] text-text-sub">
-          Pick a date and your preferred time of day. We'll find you the best available slot.
+          Pick a date and your preferred time of day. We&apos;ll find you the best available slot.
         </p>
       </div>
 

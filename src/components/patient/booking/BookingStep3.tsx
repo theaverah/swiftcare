@@ -7,12 +7,14 @@ import type { Doctor } from "@/types/doctor";
 import type { BookingData } from "./BookingModal";
 
 interface Props {
-  doctor: Doctor;
-  data: BookingData;
+  doctor:          Doctor;
+  data:            BookingData;
+  rescheduleMode?: boolean;
+  onClose?:        () => void;
 }
 
-export function BookingStep3({ doctor, data }: Props) {
-  const router  = useRouter();
+export function BookingStep3({ doctor, data, rescheduleMode, onClose }: Props) {
+  const router    = useRouter();
   const dateLabel = data.date
     ? format(new Date(data.date + "T12:00:00"), "MMMM d, yyyy")
     : "";
@@ -29,7 +31,7 @@ export function BookingStep3({ doctor, data }: Props) {
         src="/illustrations/welcome.svg"
         alt=""
         aria-hidden
-        className="w-full max-w-[240px] select-none animate-fadeInDown"
+        className="w-full max-w-60 select-none animate-fadeInDown"
         style={{ animationDelay: "0ms", animationDuration: "400ms" }}
       />
 
@@ -39,13 +41,13 @@ export function BookingStep3({ doctor, data }: Props) {
         style={{ animationDelay: "80ms", animationDuration: "400ms" }}
       >
         <h3 className="text-[24px] font-medium text-text-main tracking-[-0.03em]">
-          You&apos;re all booked!
+          {rescheduleMode ? "Consultation rescheduled!" : "You’re all booked!"}
         </h3>
         <p className="text-[14px] text-text-sub max-w-sm leading-relaxed">
-          Your consultation with <span className="font-medium text-text-main">Dr. {doctor.name}</span> is
-          confirmed on <span className="font-medium text-text-main">{dateLabel}</span> at{" "}
-          <span className="font-medium text-text-main">{data.assignedSlot}</span>. You&apos;ll receive a
-          reminder 30 minutes before your session.
+          {rescheduleMode
+            ? <>Your consultation with <span className="font-medium text-text-main">Dr. {doctor.name}</span> has been rescheduled to <span className="font-medium text-text-main">{dateLabel}</span> at <span className="font-medium text-text-main">{data.assignedSlot}</span>.</>
+            : <>Your consultation with <span className="font-medium text-text-main">Dr. {doctor.name}</span> is confirmed on <span className="font-medium text-text-main">{dateLabel}</span> at <span className="font-medium text-text-main">{data.assignedSlot}</span>. You&apos;ll receive a reminder 30 minutes before your session.</>
+          }
         </p>
       </div>
 
@@ -81,7 +83,10 @@ export function BookingStep3({ doctor, data }: Props) {
       {/* CTA */}
       <button
         type="button"
-        onClick={() => router.push("/patient/consultations")}
+        onClick={() => {
+          onClose?.();
+          router.push("/patient/consultations");
+        }}
         className="w-full h-11 rounded-lg bg-text-main text-brand-sub text-[14px] font-medium
           hover:opacity-90 active:scale-[0.99] transition-all duration-200 animate-fadeInDown"
         style={{ animationDelay: "240ms", animationDuration: "400ms" }}

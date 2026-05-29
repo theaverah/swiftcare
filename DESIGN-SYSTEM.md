@@ -64,7 +64,7 @@ Use `bg-elements/50` (50% opacity of `--elements`) for horizontal rule dividers 
 - 14px is reserved for secondary captions only (timestamps, email addresses under names, helper sub-labels)
 - line height: 1.5 for body, 1.2 for headings
 - sidebar width: 264px (`w-66`)
-- search bar height: 48px (`h-12`)
+- search bar height: 52px (`h-13`)
 
 ---
 
@@ -94,11 +94,13 @@ Base unit is **8px**. All spacing, padding, gap, and sizing values must be multi
 ```
 2px  — tags, small badges, subtle chips
 4px  — very small inline elements only
-8px  — inputs, buttons, cards, dropdowns, modals — the standard radius for all interactive elements
-12px — avoid; only if explicitly in Figma
+8px  — inputs, buttons, dropdowns, small form elements (rounded-lg)
+12px — dashboard cards, modals, drawers, doctor cards, consultation cards (rounded-xl)
 ```
 
-The standard is **8px (`rounded-lg`) across the board** — inputs, buttons, cards, role selection cards, all form fields.
+- **`rounded-lg` (8px)** — inputs, buttons, filter chips, inline form elements
+- **`rounded-xl` (12px)** — all dashboard cards, modals, drawers, popovers, doctor/consultation cards
+- **`rounded-full`** — avatars, status badges, pill tags, filter chip selected states
 
 ---
 
@@ -197,6 +199,63 @@ import { Calendar, User, Stethoscope } from "lucide-react"
 - padding: 4px 8px
 - status colors map to semantic tokens (success, warning, error, brand-sub)
 
+### Empty States
+
+Used wherever a list or section has no content to show.
+
+**Structure:**
+```
+illustration (w-66, max-w-full, opacity-90)
+  ↕ gap-4 (16px)
+text group (flex-col gap-1 = 4px between lines)
+  main text  — 16px medium, --text-main
+  subtext    — 16px regular, --text-sub
+  CTA link   — 16px regular, --brand, hover:underline (if action available)
+```
+
+**Rules:**
+- Always use the same `no-data.svg` illustration across all empty states for consistency
+- Main text is always a statement: "No upcoming consultations."
+- Subtext is a hint or next action
+- If the subtext is a navigable CTA, use `text-brand hover:underline` — never `hover:opacity`
+- Never underline by default — only on hover
+- Container: `flex flex-col items-center gap-4 py-16 text-center`
+
+### Tabs
+
+Used for switching between related content views (e.g. Upcoming / Past / Cancelled).
+
+**Sliding indicator pattern** — do not use `border-b` on individual buttons:
+```tsx
+// Container: position relative, border-b on the row
+<div ref={tabsRef} className="relative flex border-b border-elements">
+  {/* Sliding brand underline — absolutely positioned */}
+  <div
+    className="absolute bottom-0 h-0.5 bg-brand transition-all duration-200 ease-out"
+    style={{ left: indicator.left, width: indicator.width }}
+  />
+  {/* Tab buttons: data-tab attribute required for measurement */}
+  <button data-tab={key} ...>Label</button>
+</div>
+```
+
+**Measurement with `useLayoutEffect`:**
+```tsx
+useLayoutEffect(() => {
+  const btns = tabsRef.current.querySelectorAll<HTMLButtonElement>("button[data-tab]");
+  const btn  = btns[activeIndex];
+  if (btn) setIndicator({ left: btn.offsetLeft, width: btn.offsetWidth });
+}, [activeTab]);
+```
+
+**Tab button style:**
+- `px-4 py-2.5 text-[16px] font-medium`
+- active: `text-text-main`
+- inactive: `text-text-sub hover:text-text-main`
+- Count badge: `bg-brand text-white` (active), `bg-elements text-text-sub` (inactive), `rounded-full text-[11px]`
+
+**Content panel:** add `key={activeTab}` + `className="animate-tabIn"` to trigger the slide-in on every switch.
+
 ### Filter Chips
 
 Filter chips are interactive pill-shaped buttons used in scrollable filter rows (e.g. Find a Doctor).
@@ -229,7 +288,7 @@ Scrollable chip row: `overflow-x-auto` with `scrollbar-hide` class to hide the s
 | Loading | skeleton shimmer using `--elements` → `--background-sub` |
 | Error | `--error` border and text below input |
 | Success | `--success` icon or text confirmation |
-| Empty | centered illustration or icon + `--text-sub` message |
+| Empty | illustration (`w-66`) + bold main text + secondary text/link — see Empty States section |
 
 ---
 
@@ -260,7 +319,7 @@ easing:          ease-out for entrances, ease-in for exits, ease-in-out for loop
 ### Rules
 
 - **no static UI** — every meaningful state change should animate
-- **tab switching** — animate content fade + slight translate when switching tabs
+- **tab switching** — sliding brand indicator (`h-0.5 bg-brand transition-all duration-200`) measured via `offsetLeft/offsetWidth`; content panel uses `animate-tabIn` (fade + 6px upward slide, 220ms) triggered by `key={activeTab}` remount
 - **dropdowns and menus** — smooth fade + scale from origin point, never instant
 - **modals and drawers** — slide in with fade, never pop in abruptly
 - **page load / refresh** — each section, line, or component should stagger in with a downward shift (translate-y from -8px to 0) + fade in. stagger delay: 50-80ms per element. this creates the "everything settling into place" feel
@@ -299,6 +358,15 @@ No packages needed — purely CSS + Next.js `template.tsx` file convention.
 }
 .animate-fadeInDown {
   animation: fadeInDown 600ms ease-out both;
+}
+
+/* Tab panel transition — triggered by key={activeTab} */
+@keyframes tabIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-tabIn {
+  animation: tabIn 220ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 ```
 

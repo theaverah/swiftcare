@@ -278,9 +278,10 @@ function EmptyState({ title, subtitle }: { title: string; subtitle: string }) {
         aria-hidden
         className="w-66 max-w-full select-none opacity-90"
       />
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1">
         <p className="text-[16px] font-medium text-text-main">{title}</p>
-        <p className="text-[14px] text-text-sub">{subtitle}</p>
+        <p className="text-[16px] text-text-sub">{subtitle}</p>
+
       </div>
     </div>
   );

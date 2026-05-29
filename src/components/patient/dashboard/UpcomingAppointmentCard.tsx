@@ -56,19 +56,22 @@ function Skeleton() {
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center gap-3 py-12 px-6 rounded-lg border border-elements bg-bg-main text-center">
+    <div className="flex flex-col items-center gap-4 py-12 px-6 rounded-lg border border-elements bg-bg-main text-center">
       <img
-        src="/illustrations/doctor.svg"
+        src="/illustrations/no-data.svg"
         alt=""
         aria-hidden
-        className="w-full max-w-72 select-none"
+        className="w-66 max-w-full select-none opacity-90"
       />
-      <p className="text-[16px] text-text-sub leading-snug">
-        Nothing scheduled yet.<br />
-        <Link href="/patient/doctors" className="text-brand hover:underline transition-colors duration-200">
+      <div className="flex flex-col gap-1">
+        <p className="text-[16px] font-medium text-text-main">No upcoming consultations.</p>
+        <Link
+          href="/patient/doctors"
+          className="text-[16px] text-brand hover:underline transition-colors duration-200"
+        >
           Book your first consultation.
         </Link>
-      </p>
+      </div>
     </div>
   );
 }

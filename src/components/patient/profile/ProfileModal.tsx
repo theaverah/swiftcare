@@ -117,11 +117,12 @@ export function ProfileModal({ isOpen, onClose }: Props) {
       <div className="fixed inset-0 z-50 flex items-center justify-center p-6 pointer-events-none">
         <div
           className="relative w-full max-w-[900px] h-[680px] bg-bg-main rounded-xl
-            shadow-[0_16px_60px_rgba(0,0,0,0.20)] flex overflow-hidden pointer-events-auto"
+            shadow-[0_16px_60px_rgba(0,0,0,0.20)] flex overflow-hidden"
           style={{
-            opacity:    isOpen ? 1 : 0,
-            transform:  isOpen ? "scale(1) translateY(0)" : "scale(0.97) translateY(8px)",
-            transition: "opacity 300ms ease, transform 300ms cubic-bezier(0.25,0.46,0.45,0.94)",
+            opacity:       isOpen ? 1 : 0,
+            pointerEvents: isOpen ? "auto" : "none",
+            transform:     isOpen ? "scale(1) translateY(0)" : "scale(0.97) translateY(8px)",
+            transition:    "opacity 300ms ease, transform 300ms cubic-bezier(0.25,0.46,0.45,0.94)",
           }}
         >
           {/* ── Left sidebar ─────────────────────────────────────────── */}

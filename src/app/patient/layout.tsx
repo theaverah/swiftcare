@@ -15,7 +15,7 @@ export default function PatientLayout({
       <PatientSidebar />
       <div className="flex-1 flex flex-col overflow-hidden relative">
 
-        {/* ── Ambient gradient — upper right ───────────────────────── */}
+        {/* Ambient gradient - upper right */}
         <div
           className="pointer-events-none absolute inset-0 z-0"
           style={{

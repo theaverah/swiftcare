@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { Bell, Settings } from "lucide-react";
+import { Bell } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
 import { NotificationsDropdown } from "@/components/patient/notifications/NotificationsDropdown";
 
@@ -39,14 +38,6 @@ export function DashboardHeader() {
           />
         </div>
 
-        {/* Settings */}
-        <Link
-          href="/patient/settings"
-          className="w-9 h-9 flex items-center justify-center rounded-lg text-text-main hover:bg-bg-sub transition-colors duration-200"
-          aria-label="Settings"
-        >
-          <Settings size={20} strokeWidth={1.75} />
-        </Link>
 
       </div>
     </header>

@@ -1,19 +1,19 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { User, LogOut } from "lucide-react";
 
 interface ProfilePopoverProps {
-  name: string;
-  email: string;
-  initials: string;
-  isOpen: boolean;
-  onClose: () => void;
+  name:          string;
+  email:         string;
+  initials:      string;
+  isOpen:        boolean;
+  onClose:       () => void;
+  onViewProfile: () => void;
 }
 
-export function ProfilePopover({ name, email, initials, isOpen, onClose }: ProfilePopoverProps) {
+export function ProfilePopover({ name, email, initials, isOpen, onClose, onViewProfile }: ProfilePopoverProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -65,14 +65,14 @@ export function ProfilePopover({ name, email, initials, isOpen, onClose }: Profi
 
       {/* ── Menu items ────────────────────────────────────────────── */}
       <div className="py-1">
-        <Link
-          href="/patient/profile"
-          onClick={onClose}
-          className="flex items-center gap-2.5 px-4 py-2.5 text-[16px] text-text-main hover:bg-bg-sub transition-colors duration-150"
+        <button
+          type="button"
+          onClick={() => { onClose(); onViewProfile(); }}
+          className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[16px] text-text-main hover:bg-bg-sub transition-colors duration-150"
         >
           <User size={15} strokeWidth={1.75} className="text-text-sub shrink-0" />
           View profile
-        </Link>
+        </button>
       </div>
 
       <div className="h-px bg-elements/50" />

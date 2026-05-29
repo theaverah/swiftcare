@@ -21,6 +21,11 @@ export interface IPatientProfile extends Document {
   medicalHistory?: string;
   emergencyContact?: IEmergencyContact;
   savedDoctors: mongoose.Types.ObjectId[];
+  notificationPrefs: {
+    appointmentReminders: boolean;
+    bookingConfirmations: boolean;
+    scheduleUpdates: boolean;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -52,6 +57,11 @@ const PatientProfileSchema = new Schema<IPatientProfile>(
       relationship: { type: String },
     },
     savedDoctors: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    notificationPrefs: {
+      appointmentReminders: { type: Boolean, default: true },
+      bookingConfirmations:  { type: Boolean, default: true },
+      scheduleUpdates:       { type: Boolean, default: true },
+    },
   },
   { timestamps: true }
 );

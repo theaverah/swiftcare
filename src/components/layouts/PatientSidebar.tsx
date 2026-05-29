@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { House, Stethoscope, Calendar, FileText } from "lucide-react";
 import { ProfilePopover } from "@/components/patient/sidebar/ProfilePopover";
+import { ProfileModal }   from "@/components/patient/profile/ProfileModal";
 
 const NAV_ITEMS = [
   { label: "Home",            href: "/patient/dashboard",     icon: House       },
@@ -18,12 +19,14 @@ export function PatientSidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const name     = session?.user?.name ?? "Patient";
   const email    = session?.user?.email ?? "";
   const initials = name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
 
   return (
+    <>
     <aside className="w-66 shrink-0 flex flex-col bg-bg-main border-r border-elements h-full animate-fadeInDown" style={{ animationDelay: "0ms", animationDuration: "400ms" }}>
 
       {/* Logo */}
@@ -63,6 +66,7 @@ export function PatientSidebar() {
           initials={initials}
           isOpen={popoverOpen}
           onClose={() => setPopoverOpen(false)}
+          onViewProfile={() => setProfileOpen(true)}
         />
         <button
           type="button"
@@ -80,5 +84,8 @@ export function PatientSidebar() {
       </div>
 
     </aside>
+
+    <ProfileModal isOpen={profileOpen} onClose={() => setProfileOpen(false)} />
+    </>
   );
 }

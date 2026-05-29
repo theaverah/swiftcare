@@ -5,6 +5,77 @@ import User from "@/models/User";
 import PatientProfile from "@/models/PatientProfile";
 import PendingRegistration from "@/models/PendingRegistration";
 
+// ── GET — fetch full profile ───────────────────────────────────────────────────
+
+export async function GET(req: NextRequest) {
+  try {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (!token?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    await dbConnect();
+
+    const [user, profile] = await Promise.all([
+      User.findById(token.id).select("name email").lean(),
+      PatientProfile.findOne({ userId: token.id }).lean(),
+    ]);
+
+    return NextResponse.json({
+      name:               (user as { name?: string } | null)?.name ?? "",
+      email:              (user as { email?: string } | null)?.email ?? "",
+      dateOfBirth:        profile?.dateOfBirth ?? null,
+      phone:              profile?.phone ?? "",
+      weight:             profile?.weight ?? null,
+      height:             profile?.height ?? null,
+      bloodType:          profile?.bloodType ?? "",
+      allergies:          profile?.allergies ?? [],
+      currentMedications: profile?.currentMedications ?? [],
+      medicalHistory:     profile?.medicalHistory ?? "",
+      notificationPrefs:  profile?.notificationPrefs ?? {
+        appointmentReminders: true,
+        bookingConfirmations:  true,
+        scheduleUpdates:       true,
+      },
+    });
+  } catch (err) {
+    console.error("[patient/profile GET]", err);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
+}
+
+// ── PATCH — update personal or health fields ──────────────────────────────────
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (!token?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const body = await req.json() as Record<string, unknown>;
+    await dbConnect();
+
+    const profilePatch: Record<string, unknown> = {};
+    const userPatch:    Record<string, unknown> = {};
+
+    if ("name"       in body) userPatch.name = body.name;
+    if ("dateOfBirth"in body) profilePatch.dateOfBirth = body.dateOfBirth ? new Date(body.dateOfBirth as string) : undefined;
+    if ("phone"      in body) profilePatch.phone       = body.phone;
+    if ("weight"     in body) profilePatch.weight      = body.weight ? Number(body.weight) : undefined;
+    if ("height"     in body) profilePatch.height      = body.height ? Number(body.height) : undefined;
+    if ("allergies"  in body) profilePatch.allergies   = body.allergies;
+    if ("currentMedications" in body) profilePatch.currentMedications = body.currentMedications;
+    if ("medicalHistory"     in body) profilePatch.medicalHistory     = body.medicalHistory;
+
+    await Promise.all([
+      Object.keys(userPatch).length    ? User.findByIdAndUpdate(token.id, userPatch) : null,
+      Object.keys(profilePatch).length ? PatientProfile.findOneAndUpdate({ userId: token.id }, profilePatch, { upsert: true }) : null,
+    ]);
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("[patient/profile PATCH]", err);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     await dbConnect();

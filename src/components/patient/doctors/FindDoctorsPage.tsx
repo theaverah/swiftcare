@@ -12,6 +12,7 @@ import {
 import { DoctorCard } from "./DoctorCard";
 import { DoctorCardSkeleton } from "./DoctorCardSkeleton";
 import { DoctorDrawer } from "./DoctorDrawer";
+import { BookingModal } from "@/components/patient/booking/BookingModal";
 import type { Doctor } from "@/types/doctor";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -314,6 +315,7 @@ export function FindDoctorsPage() {
   const [visibleCount,   setVisibleCount]   = useState(PAGE_SIZE);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [drawerOpen,     setDrawerOpen]     = useState(false);
+  const [bookingDoctor,  setBookingDoctor]  = useState<Doctor | null>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   // ── Tab indicator ──────────────────────────────────────────────────────────
@@ -507,6 +509,8 @@ export function FindDoctorsPage() {
 
   function openDrawer(doctor: Doctor)  { setSelectedDoctor(doctor); setDrawerOpen(true); }
   function closeDrawer()               { setDrawerOpen(false); setTimeout(() => setSelectedDoctor(null), 420); }
+  function openBooking(doctor: Doctor) { setBookingDoctor(doctor); }
+  function closeBooking()              { setBookingDoctor(null); }
 
   const savedCount = doctors.filter(d => d.isSaved).length;
   const todayCount = doctors.filter(d => d.isAvailableToday).length;
@@ -850,6 +854,7 @@ export function FindDoctorsPage() {
                   animationIndex={index}
                   onSaveToggle={() => toggleSave(doctor)}
                   onOpenDrawer={() => openDrawer(doctor)}
+                  onBook={() => openBooking(doctor)}
                 />
               ))}
             </div>
@@ -864,7 +869,16 @@ export function FindDoctorsPage() {
         doctor={selectedDoctor}
         isOpen={drawerOpen}
         onClose={closeDrawer}
+        onBook={() => selectedDoctor && openBooking(selectedDoctor)}
       />
+
+      {bookingDoctor && (
+        <BookingModal
+          doctor={bookingDoctor}
+          isOpen={!!bookingDoctor}
+          onClose={closeBooking}
+        />
+      )}
     </>
   );
 }

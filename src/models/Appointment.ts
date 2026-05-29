@@ -22,6 +22,10 @@ export interface IAppointment extends Document {
   consultationType: ConsultationType;
   dailyRoomUrl?: string;
   chiefComplaint?: string;
+  additionalNotes?: string;
+  forSelf: boolean;
+  patientName?: string;
+  relationship?: string;
   cancelledBy?: CancelledBy;
   cancellationReason?: string;
   rescheduledFrom?: mongoose.Types.ObjectId;
@@ -62,7 +66,11 @@ const AppointmentSchema = new Schema<IAppointment>(
       default: "video",
     },
     dailyRoomUrl: { type: String },
-    chiefComplaint: { type: String },
+    chiefComplaint:   { type: String },
+    additionalNotes:  { type: String },
+    forSelf:          { type: Boolean, default: true },
+    patientName:      { type: String },
+    relationship:     { type: String },
     cancelledBy: {
       type: String,
       enum: ["patient", "doctor"],

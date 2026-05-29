@@ -10,7 +10,7 @@ import { ProfilePopover } from "@/components/patient/sidebar/ProfilePopover";
 const NAV_ITEMS = [
   { label: "Home",            href: "/patient/dashboard",     icon: House       },
   { label: "Find a doctor",   href: "/patient/doctors",        icon: Stethoscope },
-  { label: "Appointments",    href: "/patient/appointments",   icon: Calendar    },
+  { label: "Consultations",   href: "/patient/consultations",  icon: Calendar    },
   { label: "Medical Records", href: "/patient/records",        icon: FileText    },
 ];
 

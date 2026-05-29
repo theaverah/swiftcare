@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Bookmark, Calendar } from "lucide-react";
 import type { Doctor } from "@/types/doctor";
 
@@ -35,11 +34,11 @@ interface DoctorCardProps {
   doctor: Doctor;
   onSaveToggle: () => void;
   onOpenDrawer: () => void;
+  onBook: () => void;
   animationIndex: number;
 }
 
-export function DoctorCard({ doctor, onSaveToggle, onOpenDrawer, animationIndex }: DoctorCardProps) {
-  const router = useRouter();
+export function DoctorCard({ doctor, onSaveToggle, onOpenDrawer, onBook, animationIndex }: DoctorCardProps) {
   const [popping, setPopping] = useState(false);
 
   const initials = doctor.name
@@ -62,7 +61,7 @@ export function DoctorCard({ doctor, onSaveToggle, onOpenDrawer, animationIndex 
 
   function handleBook(e: React.MouseEvent) {
     e.stopPropagation();
-    router.push(`/patient/appointments/book?doctor=${doctor.doctorProfileId}`);
+    onBook();
   }
 
   return (

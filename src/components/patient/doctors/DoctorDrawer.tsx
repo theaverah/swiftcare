@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import type { Doctor } from "@/types/doctor";
 
@@ -9,13 +8,13 @@ interface DoctorDrawerProps {
   doctor: Doctor | null;
   isOpen: boolean;
   onClose: () => void;
+  onBook: () => void;
 }
 
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0]; // Mon → Sun
 
-export function DoctorDrawer({ doctor, isOpen, onClose }: DoctorDrawerProps) {
-  const router = useRouter();
+export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerProps) {
   const todayDow = new Date().getDay();
 
   // Close on Escape
@@ -204,10 +203,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose }: DoctorDrawerProps) {
         <div className="shrink-0 px-6 py-4 border-t border-elements bg-bg-main">
           <button
             type="button"
-            onClick={() =>
-              doctor &&
-              router.push(`/patient/appointments/book?doctor=${doctor.doctorProfileId}`)
-            }
+            onClick={onBook}
             className="w-full h-11 rounded-lg bg-brand text-white text-[16px] font-medium
               hover:opacity-90 active:scale-[0.98] transition-all duration-200"
           >

@@ -143,6 +143,12 @@ export function ConsultationsPage() {
     );
   }
 
+  function handleRestored(id: string, prevStatus: Consultation["status"]) {
+    setConsultations(prev =>
+      prev.map(c => c.id === id ? { ...c, status: prevStatus } : c)
+    );
+  }
+
   function openReschedule(c: Consultation) {
     setBooking({
       doctor:         toDoctorType(c.doctor),
@@ -219,13 +225,15 @@ export function ConsultationsPage() {
       </div>
 
       {/* Content */}
-      <div key={tab} className="flex flex-col gap-3 animate-tabIn">
+      <div key={tab} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-tabIn">
         {loading ? (
           Array.from({ length: 3 }).map((_, i) => (
             <ConsultationCardSkeleton key={i} />
           ))
         ) : filtered.length === 0 ? (
-          <EmptyState tab={tab} />
+          <div className="col-span-full">
+            <EmptyState tab={tab} />
+          </div>
         ) : (
           filtered.map((c, i) => (
             <div
@@ -250,6 +258,7 @@ export function ConsultationsPage() {
         consultation={cancelTarget}
         onClose={() => setCancelTarget(null)}
         onCancelled={handleCancelled}
+        onRestored={handleRestored}
       />
 
       {/* Booking/reschedule modal */}

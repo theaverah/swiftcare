@@ -61,7 +61,7 @@ export function NotificationsSection({ data, onUpdate }: Props) {
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-[14px] text-text-sub mb-2">
+      <p className="text-[16px] text-text-sub mb-2">
         Manage which notifications you receive from SwiftCare.
       </p>
 
@@ -73,13 +73,13 @@ export function NotificationsSection({ data, onUpdate }: Props) {
             className="flex items-center justify-between py-4 border-b border-elements/50 last:border-0"
           >
             <div>
-              <p className="text-[14px] font-medium text-text-main">{label}</p>
-              <p className="text-[13px] text-text-sub">{description}</p>
+              <p className="text-[16px] font-medium text-text-main">{label}</p>
+              <p className="text-[16px] text-text-sub">{description}</p>
             </div>
 
             <div className="flex items-center gap-2 shrink-0 ml-4">
               {confirmed === key && (
-                <span className="text-[12px] text-success animate-fadeInDown" style={{ animationDuration: "150ms" }}>
+                <span className="text-[14px] text-success animate-fadeInDown" style={{ animationDuration: "150ms" }}>
                   Saved
                 </span>
               )}
@@ -95,7 +95,7 @@ export function NotificationsSection({ data, onUpdate }: Props) {
               >
                 <span
                   className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm
-                    transition-all duration-200 ${enabled ? "left-[22px]" : "left-0.5"}`}
+                    transition-all duration-200 ${enabled ? "left-5.5" : "left-0.5"}`}
                 />
               </button>
             </div>

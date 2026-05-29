@@ -85,11 +85,11 @@ export function HealthProfileSection({ data, onUpdate, onDirtyChange }: Props) {
   const SaveCancel = ({ field }: { field: Field }) => (
     <div className="flex gap-2 mt-2">
       <button type="button" onClick={() => saveField(field)} disabled={saving}
-        className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-text-main text-brand-sub text-[13px] font-medium hover:opacity-90 transition-opacity duration-150 disabled:opacity-50">
+        className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-text-main text-brand-sub text-[14px] font-medium hover:opacity-90 transition-opacity duration-150 disabled:opacity-50">
         <Check size={13} strokeWidth={2} />{saving ? "Saving…" : "Save"}
       </button>
       <button type="button" onClick={cancelEdit}
-        className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-elements text-[13px] font-medium text-text-main hover:border-text-sub/60 transition-colors duration-150">
+        className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-elements text-[14px] font-medium text-text-main hover:border-text-sub/60 transition-colors duration-150">
         <X size={13} strokeWidth={2} />Cancel
       </button>
     </div>
@@ -103,19 +103,19 @@ export function HealthProfileSection({ data, onUpdate, onDirtyChange }: Props) {
         {([["weight", "Weight (kg)", data.weight != null ? `${data.weight} kg` : "—"],
            ["height", "Height (cm)", data.height != null ? `${data.height} cm` : "—"]] as [Field, string, string][]).map(([key, label, display]) => (
           <div key={key} className="flex flex-col gap-1.5">
-            <p className="text-[12px] font-medium text-text-sub uppercase tracking-wide">{label}</p>
+            <p className="text-[16px] font-medium text-text-sub">{label}</p>
             {editing === key ? (
               <div>
                 <input type="number" value={draft} onChange={e => setDraft(e.target.value)} autoFocus
-                  className="h-10 w-full px-3 rounded-lg border border-elements text-[14px] text-text-main outline-none focus:border-text-main transition-colors duration-200 bg-bg-main" />
+                  className="h-11 w-full px-3 rounded-lg border border-elements text-[16px] text-text-main outline-none focus:border-text-main transition-colors duration-200 bg-bg-main" />
                 <SaveCancel field={key} />
               </div>
             ) : (
               <div className="flex items-center justify-between group">
-                <p className="text-[14px] text-text-main">{display}</p>
+                <p className="text-[16px] text-text-main">{display}</p>
                 <button type="button" onClick={() => startEdit(key)}
-                  className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md text-text-sub hover:text-text-main hover:bg-bg-sub transition-all duration-150">
-                  <Pencil size={13} strokeWidth={1.75} />
+                  className="p-1.5 rounded-md text-text-sub hover:text-text-main hover:bg-bg-sub transition-all duration-150">
+                  <Pencil size={16} strokeWidth={1.75} className="text-text-main" />
                 </button>
               </div>
             )}
@@ -127,11 +127,11 @@ export function HealthProfileSection({ data, onUpdate, onDirtyChange }: Props) {
 
       {/* Allergies */}
       {(["allergies", "medications"] as Field[]).map(key => {
-        const label   = key === "allergies" ? "Allergies" : "Current medications";
+        const label   = key === "allergies" ? "Allergies" : "Current Medications";
         const items   = key === "allergies" ? data.allergies : data.currentMedications;
         return (
-          <div key={key} className="flex flex-col gap-1.5">
-            <p className="text-[12px] font-medium text-text-sub uppercase tracking-wide">{label}</p>
+          <div key={key} className="flex flex-col gap-2">
+            <p className="text-[16px] font-medium text-text-sub">{label}</p>
             {editing === key ? (
               <div className="flex flex-col gap-2">
                 <div className="flex flex-wrap gap-1.5">
@@ -146,7 +146,7 @@ export function HealthProfileSection({ data, onUpdate, onDirtyChange }: Props) {
                   <input value={newItem} onChange={e => setNewItem(e.target.value)}
                     onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addItem(); }}}
                     placeholder={`Add ${key === "allergies" ? "allergy" : "medication"}…`}
-                    className="flex-1 h-9 px-3 rounded-lg border border-elements text-[14px] text-text-main outline-none focus:border-text-main transition-colors bg-bg-main" />
+                    className="flex-1 h-9 px-3 rounded-lg border border-elements text-[16px] text-text-main outline-none focus:border-text-main transition-colors bg-bg-main" />
                   <button type="button" onClick={addItem}
                     className="h-9 px-3 rounded-lg border border-elements text-text-sub hover:text-text-main hover:border-text-sub/60 transition-colors">
                     <Plus size={14} strokeWidth={1.75} />
@@ -159,11 +159,11 @@ export function HealthProfileSection({ data, onUpdate, onDirtyChange }: Props) {
                 <div className="flex flex-wrap gap-1.5">
                   {items.length > 0 ? items.map((item, i) => (
                     <span key={i} className="px-2.5 py-1 rounded-full bg-bg-sub text-[13px] text-text-main border border-elements">{item}</span>
-                  )) : <p className="text-[14px] text-text-sub">None recorded</p>}
+                  )) : <p className="text-[16px] text-text-sub">None recorded</p>}
                 </div>
                 <button type="button" onClick={() => startEdit(key)}
-                  className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md text-text-sub hover:text-text-main hover:bg-bg-sub transition-all duration-150 shrink-0 ml-2">
-                  <Pencil size={13} strokeWidth={1.75} />
+                  className="p-1.5 rounded-md text-text-sub hover:text-text-main hover:bg-bg-sub transition-all duration-150 shrink-0 ml-2">
+                  <Pencil size={16} strokeWidth={1.75} className="text-text-main" />
                 </button>
               </div>
             )}
@@ -175,20 +175,20 @@ export function HealthProfileSection({ data, onUpdate, onDirtyChange }: Props) {
 
       {/* Conditions */}
       <div className="flex flex-col gap-1.5">
-        <p className="text-[12px] font-medium text-text-sub uppercase tracking-wide">Existing conditions</p>
+        <p className="text-[16px] font-medium text-text-sub">Existing Conditions</p>
         {editing === "conditions" ? (
           <div>
             <textarea rows={3} value={draft} onChange={e => setDraft(e.target.value)} autoFocus
               placeholder="e.g. hypertension, diabetes…"
-              className="w-full px-3 py-2.5 rounded-lg border border-elements text-[14px] text-text-main outline-none focus:border-text-main transition-colors bg-bg-main resize-none" />
+              className="w-full px-3 py-2.5 rounded-lg border border-elements text-[16px] text-text-main outline-none focus:border-text-main transition-colors bg-bg-main resize-none" />
             <SaveCancel field="conditions" />
           </div>
         ) : (
           <div className="flex items-start justify-between group">
-            <p className="text-[14px] text-text-main leading-relaxed">{data.medicalHistory || "None recorded"}</p>
+            <p className="text-[16px] text-text-main leading-relaxed">{data.medicalHistory || "None recorded"}</p>
             <button type="button" onClick={() => startEdit("conditions")}
-              className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md text-text-sub hover:text-text-main hover:bg-bg-sub transition-all duration-150 shrink-0 ml-2">
-              <Pencil size={13} strokeWidth={1.75} />
+              className="p-1.5 rounded-md text-text-sub hover:text-text-main hover:bg-bg-sub transition-all duration-150 shrink-0 ml-2">
+              <Pencil size={16} strokeWidth={1.75} className="text-text-main" />
             </button>
           </div>
         )}

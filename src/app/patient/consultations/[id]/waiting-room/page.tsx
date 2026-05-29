@@ -195,8 +195,8 @@ export default function WaitingRoomPage() {
           className="flex flex-col items-center gap-1.5 animate-fadeInDown"
           style={{ animationDelay: "120ms", animationDuration: "400ms" }}
         >
-          <p className="text-[13px] text-text-sub uppercase tracking-widest font-medium">
-            Session starts in
+          <p className="text-[13px] text-text-sub font-medium">
+            Session Starts In
           </p>
           <p className="text-[40px] font-medium text-text-main tracking-tighter tabular-nums">
             {formatCountdown(secondsLeft)}

@@ -47,7 +47,7 @@ This means **design and UX quality matter most**. Every screen should feel polis
 
 | Layer | Choice |
 |---|---|
-| Framework | Next.js 15 (App Router) + TypeScript |
+| Framework | Next.js 16 (App Router) + TypeScript |
 | Styling | Tailwind CSS v4 + shadcn (Nova preset, Radix) |
 | Database | MongoDB Atlas (free M0 cluster) via Mongoose |
 | Auth | NextAuth.js v4 with MongoDB adapter |
@@ -84,7 +84,27 @@ You have full discretion over architecture, folder structure, and all technical 
 - Next.js 15 project with TypeScript, Tailwind CSS v4, ESLint, App Router, src/ directory
 - shadcn initialized with Nova preset (Radix), neutral base color
 - shadcn components installed: button, input, label, card, badge, avatar, calendar, dialog, select, tabs, sonner
-- Packages installed: mongoose, next-auth, @next-auth/mongodb-adapter, mongodb, pusher, pusher-js, zod, react-hook-form, @hookform/resolvers, date-fns, axios, lucide-react, uploadthing, @uploadthing/react
+- Packages installed: mongoose, next-auth, @next-auth/mongodb-adapter, mongodb, pusher, pusher-js, zod, react-hook-form, @hookform/resolvers, date-fns, axios, lucide-react, uploadthing, @uploadthing/react, jspdf
+
+## Patient Module — Screens Built
+
+| Screen | Route | Status |
+|---|---|---|
+| Registration + onboarding flow | `/register` | ✅ |
+| Login | `/login` | ✅ |
+| Dashboard home | `/patient/dashboard` | ✅ |
+| Find a Doctor (filters, cards, drawer, booking) | `/patient/doctors` | ✅ |
+| Consultations (tabs, cancel w/ undo, reschedule) | `/patient/consultations` | ✅ |
+| Waiting room | `/patient/consultations/[id]/waiting-room` | ✅ |
+| Health Records (5 tabs, search, PDF download) | `/patient/records` | ✅ |
+| Profile modal (inline edit, account, notifications) | modal | ✅ |
+
+## Seed Endpoints
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/api/seed/test-accounts` | GET | Creates patient@test.com + all 20 doctors |
+| `/api/seed/test-accounts` | POST | Seeds 6 consultations + 8 health records for patient@test.com |
 
 ---
 

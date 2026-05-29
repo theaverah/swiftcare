@@ -185,7 +185,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
                   onChange={(e) => setSpecSearch(e.target.value)}
                   placeholder="Search..."
                   autoFocus
-                  className="w-full h-8 px-3 text-[14px] text-text-main bg-background-sub rounded-md outline-none placeholder:text-text-sub"
+                  className="w-full h-8 px-3 text-[14px] text-text-main bg-transparent outline-none placeholder:text-text-sub"
                 />
               </div>
               <div className="max-h-52 overflow-y-auto">
@@ -317,7 +317,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
                   onChange={(e) => setLangSearch(e.target.value)}
                   placeholder="Search..."
                   autoFocus
-                  className="w-full h-8 px-3 text-[14px] text-text-main bg-background-sub rounded-md outline-none placeholder:text-text-sub"
+                  className="w-full h-8 px-3 text-[14px] text-text-main bg-transparent outline-none placeholder:text-text-sub"
                 />
               </div>
               <div className="max-h-52 overflow-y-auto">

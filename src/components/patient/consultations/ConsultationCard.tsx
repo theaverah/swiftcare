@@ -169,7 +169,8 @@ export function ConsultationCard({
   const within15min    = diffMs <= 15 * 60_000;
   const within24h      = diffMs > 0 && diffMs <= 24 * 60 * 60_000;
 
-  const dateLabel = format(scheduledDate, "EEEE, MMMM d, yyyy");
+  const isThisYear = scheduledDate.getFullYear() === new Date().getFullYear();
+  const dateLabel  = format(scheduledDate, isThisYear ? "EEEE, MMMM d" : "EEEE, MMMM d, yyyy");
   const timeLabel = format(scheduledDate, "h:mm aa");
 
   return (
@@ -178,13 +179,13 @@ export function ConsultationCard({
 
       {/* Top row: doctor info + badges */}
       <div className="flex items-start justify-between gap-4">
-        <div className="flex items-center gap-3 min-w-0">
-          <DoctorAvatar doctor={doctor} />
+        <div className="flex items-center gap-4 min-w-0">
+          <DoctorAvatar doctor={doctor} size={56} />
           <div className="min-w-0">
-            <p className="text-[15px] font-medium text-text-main truncate">
+            <p className="text-[16px] font-medium text-text-main truncate">
               Dr. {doctor.name}
             </p>
-            <p className="text-[13px] text-text-sub truncate">
+            <p className="text-[13px] text-text-sub mt-0.5 truncate">
               {doctor.specializations[0] ?? "General Practitioner"}
             </p>
           </div>

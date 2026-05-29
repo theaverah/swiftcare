@@ -2,12 +2,10 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { X, User, Heart, Lock, Bell, Trash2 } from "lucide-react";
-import { PersonalInfoSection }  from "./PersonalInfoSection";
-import { HealthProfileSection } from "./HealthProfileSection";
-import { AccountSection }       from "./AccountSection";
-import { NotificationsSection } from "./NotificationsSection";
-import { DangerZoneSection }    from "./DangerZoneSection";
+import { X, User, Lock, Bell } from "lucide-react";
+import { EditableProfileSection } from "./EditableProfileSection";
+import { AccountSection }         from "./AccountSection";
+import { NotificationsSection }   from "./NotificationsSection";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -29,14 +27,12 @@ export interface ProfileData {
   };
 }
 
-type SectionKey = "personal" | "health" | "account" | "notifications" | "danger";
+type SectionKey = "profile" | "account" | "notifications";
 
-const NAV: { key: SectionKey; label: string; Icon: React.ElementType; danger?: boolean }[] = [
-  { key: "personal",      label: "Personal Info",    Icon: User    },
-  { key: "health",        label: "Health Profile",   Icon: Heart   },
-  { key: "account",       label: "Account",          Icon: Lock    },
-  { key: "notifications", label: "Notifications",    Icon: Bell    },
-  { key: "danger",        label: "Danger Zone",      Icon: Trash2, danger: true },
+const NAV: { key: SectionKey; label: string; Icon: React.ElementType }[] = [
+  { key: "profile",       label: "Profile",       Icon: User },
+  { key: "account",       label: "Account",       Icon: Lock },
+  { key: "notifications", label: "Notifications", Icon: Bell },
 ];
 
 interface Props {
@@ -48,18 +44,19 @@ interface Props {
 
 export function ProfileModal({ isOpen, onClose }: Props) {
   const [mounted,   setMounted]   = useState(false);
-  const [section,   setSection]   = useState<SectionKey>("personal");
-  const [data,      setData]      = useState<ProfileData | null>(null);
-  const [loading,   setLoading]   = useState(false);
-  const [dirty,     setDirty]     = useState(false);
-  const [confirmClose, setConfirmClose] = useState(false);
+  const [section,   setSection]   = useState<SectionKey>("profile");
+  const [data,     setData]    = useState<ProfileData | null>(null);
+  const [loading,  setLoading] = useState(false);
+  const [dirty,    setDirty]   = useState(false);
+  const [shaking,  setShaking] = useState(false);
+  const [warnKey,  setWarnKey] = useState(0);
 
   useEffect(() => { setMounted(true); }, []);
 
   // Fetch on open
   useEffect(() => {
     if (!isOpen) return;
-    setSection("personal");
+    setSection("profile");
     setDirty(false);
     setLoading(true);
     fetch("/api/patient/profile")
@@ -87,13 +84,12 @@ export function ProfileModal({ isOpen, onClose }: Props) {
   }, [isOpen, dirty]);
 
   function handleClose() {
-    if (dirty) { setConfirmClose(true); return; }
-    onClose();
-  }
-
-  function handleForceClose() {
-    setConfirmClose(false);
-    setDirty(false);
+    if (dirty) {
+      setShaking(true);
+      setWarnKey(k => k + 1);
+      setTimeout(() => setShaking(false), 500);
+      return;
+    }
     onClose();
   }
 
@@ -116,7 +112,7 @@ export function ProfileModal({ isOpen, onClose }: Props) {
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-6 pointer-events-none">
         <div
-          className="relative w-full max-w-[900px] h-[680px] bg-bg-main rounded-xl
+          className="relative w-full max-w-265 h-210 bg-bg-sub rounded-xl
             shadow-[0_16px_60px_rgba(0,0,0,0.20)] flex overflow-hidden"
           style={{
             opacity:       isOpen ? 1 : 0,
@@ -126,25 +122,18 @@ export function ProfileModal({ isOpen, onClose }: Props) {
           }}
         >
           {/* ── Left sidebar ─────────────────────────────────────────── */}
-          <div className="w-[200px] shrink-0 border-r border-elements flex flex-col py-6 bg-bg-sub">
-            <p className="px-5 text-[11px] font-medium text-text-sub uppercase tracking-wide mb-3">
-              Profile Settings
-            </p>
-
-            <nav className="flex flex-col gap-0.5 px-2">
-              {NAV.map(({ key, label, Icon, danger }) => (
+          <div className="w-55 shrink-0 border-r border-elements flex flex-col py-6 bg-bg-main">
+            <nav className="flex flex-col gap-0.5 px-2 mt-2">
+              {NAV.map(({ key, label, Icon }) => (
                 <button
                   key={key}
                   type="button"
                   onClick={() => { setSection(key); setDirty(false); }}
-                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[14px] font-medium
-                    transition-colors duration-150 text-left
-                    ${section === key
-                      ? danger ? "bg-error/10 text-error" : "bg-bg-main text-text-main"
-                      : danger ? "text-error hover:bg-error/10" : "text-text-sub hover:bg-bg-main hover:text-text-main"
-                    }`}
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[16px] font-medium
+                    transition-colors duration-150 text-left text-text-main
+                    ${section === key ? "bg-bg-sub" : "hover:bg-bg-sub"}`}
                 >
-                  <Icon size={15} strokeWidth={1.75} className="shrink-0" />
+                  <Icon size={16} strokeWidth={1.75} className="shrink-0" />
                   {label}
                 </button>
               ))}
@@ -152,7 +141,7 @@ export function ProfileModal({ isOpen, onClose }: Props) {
           </div>
 
           {/* ── Right content ────────────────────────────────────────── */}
-          <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 flex flex-col overflow-hidden bg-bg-main">
             {/* Header */}
             <div className="shrink-0 flex items-center justify-between px-8 py-5 border-b border-elements">
               <p className="text-[16px] font-medium text-text-main">
@@ -164,7 +153,7 @@ export function ProfileModal({ isOpen, onClose }: Props) {
                 className="w-8 h-8 flex items-center justify-center rounded-lg text-text-sub
                   hover:bg-bg-sub hover:text-text-main transition-colors duration-200"
               >
-                <X size={16} strokeWidth={1.75} />
+                <X size={16} strokeWidth={1.75} className="text-text-main" />
               </button>
             </div>
 
@@ -172,15 +161,13 @@ export function ProfileModal({ isOpen, onClose }: Props) {
             <div className="flex-1 overflow-y-auto px-8 py-6">
               {loading || !data ? (
                 <div className="flex items-center justify-center h-full">
-                  <p className="text-[14px] text-text-sub animate-pulse">Loading…</p>
+                  <p className="text-[16px] text-text-sub animate-pulse">Loading…</p>
                 </div>
               ) : (
                 <div key={section} className="animate-fadeInDown" style={{ animationDuration: "200ms" }}>
-                  {section === "personal"      && <PersonalInfoSection  data={data} onUpdate={updateData} onDirtyChange={setDirty} />}
-                  {section === "health"        && <HealthProfileSection data={data} onUpdate={updateData} onDirtyChange={setDirty} />}
-                  {section === "account"       && <AccountSection       data={data}                       onDirtyChange={setDirty} />}
-                  {section === "notifications" && <NotificationsSection data={data} onUpdate={updateData} />}
-                  {section === "danger"        && <DangerZoneSection    onClose={onClose} />}
+                  {section === "profile"       && <EditableProfileSection data={data} onUpdate={updateData} onDirtyChange={setDirty} warnKey={warnKey} />}
+                  {section === "account"       && <AccountSection        data={data} onDirtyChange={setDirty} onClose={onClose} />}
+                  {section === "notifications" && <NotificationsSection  data={data} onUpdate={updateData} />}
                 </div>
               )}
             </div>
@@ -188,31 +175,6 @@ export function ProfileModal({ isOpen, onClose }: Props) {
         </div>
       </div>
 
-      {/* Unsaved changes confirm */}
-      {confirmClose && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div className="w-full max-w-sm bg-bg-main rounded-xl border border-elements p-6 shadow-[0_8px_32px_rgba(0,0,0,0.16)] animate-fadeInDown" style={{ animationDuration: "150ms" }}>
-            <p className="text-[16px] font-medium text-text-main mb-1">Unsaved changes</p>
-            <p className="text-[14px] text-text-sub mb-5">You have unsaved changes. Leave anyway?</p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setConfirmClose(false)}
-                className="flex-1 h-9 rounded-lg border border-elements text-[14px] font-medium text-text-main hover:border-text-sub/60 transition-colors duration-150"
-              >
-                Keep editing
-              </button>
-              <button
-                type="button"
-                onClick={handleForceClose}
-                className="flex-1 h-9 rounded-lg bg-text-main text-brand-sub text-[14px] font-medium hover:opacity-90 transition-opacity duration-150"
-              >
-                Leave anyway
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 

@@ -70,19 +70,19 @@ export function PersonalInfoSection({ data, onUpdate, onDirtyChange }: Props) {
   const fields: { key: Field; label: string; display: string }[] = [
     {
       key:     "name",
-      label:   "Full name",
+      label:   "Full Name",
       display: data.name || "—",
     },
     {
       key:     "dateOfBirth",
-      label:   "Date of birth",
+      label:   "Date of Birth",
       display: data.dateOfBirth
         ? format(new Date(data.dateOfBirth), "MMMM d, yyyy")
         : "—",
     },
     {
       key:     "phone",
-      label:   "Contact number",
+      label:   "Contact Number",
       display: data.phone || "—",
     },
   ];
@@ -91,23 +91,21 @@ export function PersonalInfoSection({ data, onUpdate, onDirtyChange }: Props) {
     <div className="flex flex-col gap-6">
 
       {/* Avatar */}
-      <div className="flex items-center gap-4">
-        <div className="w-16 h-16 rounded-full bg-brand-sub flex items-center justify-center shrink-0">
+      <div className="flex flex-col items-center gap-3 pb-2">
+        <div className="w-20 h-20 rounded-full bg-brand-sub flex items-center justify-center shrink-0">
           <span className="text-[20px] font-medium text-brand select-none">{initials}</span>
         </div>
-        <div>
+        <div className="text-center">
           <p className="text-[16px] font-medium text-text-main">{data.name || "—"}</p>
-          <p className="text-[14px] text-text-sub">{data.email}</p>
+          <p className="text-[16px] text-text-sub">{data.email}</p>
         </div>
       </div>
 
-      <div className="h-px bg-elements/50" />
-
       {/* Fields */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-6">
         {fields.map(({ key, label, display }) => (
           <div key={key} className="flex flex-col gap-1.5">
-            <p className="text-[12px] font-medium text-text-sub uppercase tracking-wide">{label}</p>
+            <p className="text-[16px] font-medium text-text-sub">{label}</p>
 
             {editing === key ? (
               <div className="flex flex-col gap-2">
@@ -116,7 +114,7 @@ export function PersonalInfoSection({ data, onUpdate, onDirtyChange }: Props) {
                   value={draft}
                   onChange={e => setDraft(e.target.value)}
                   autoFocus
-                  className="h-10 px-3 rounded-lg border border-elements text-[14px] text-text-main
+                  className="h-11 px-3 rounded-lg border border-elements text-[16px] text-text-main
                     outline-none focus:border-text-main transition-colors duration-200 bg-bg-main"
                 />
                 <div className="flex gap-2">
@@ -125,7 +123,7 @@ export function PersonalInfoSection({ data, onUpdate, onDirtyChange }: Props) {
                     onClick={() => saveField(key)}
                     disabled={saving}
                     className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-text-main text-brand-sub
-                      text-[13px] font-medium hover:opacity-90 transition-opacity duration-150
+                      text-[14px] font-medium hover:opacity-90 transition-opacity duration-150
                       disabled:opacity-50"
                   >
                     <Check size={13} strokeWidth={2} />
@@ -135,7 +133,7 @@ export function PersonalInfoSection({ data, onUpdate, onDirtyChange }: Props) {
                     type="button"
                     onClick={cancelEdit}
                     className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-elements
-                      text-[13px] font-medium text-text-main hover:border-text-sub/60 transition-colors duration-150"
+                      text-[14px] font-medium text-text-main hover:border-text-sub/60 transition-colors duration-150"
                   >
                     <X size={13} strokeWidth={2} />
                     Cancel
@@ -144,15 +142,15 @@ export function PersonalInfoSection({ data, onUpdate, onDirtyChange }: Props) {
               </div>
             ) : (
               <div className="flex items-center justify-between group">
-                <p className="text-[14px] text-text-main">{display}</p>
+                <p className="text-[16px] text-text-main">{display}</p>
                 <button
                   type="button"
                   onClick={() => startEdit(key)}
-                  className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md text-text-sub
+                  className="p-1.5 rounded-md text-text-sub
                     hover:text-text-main hover:bg-bg-sub transition-all duration-150"
                   aria-label={`Edit ${label}`}
                 >
-                  <Pencil size={13} strokeWidth={1.75} />
+                  <Pencil size={16} strokeWidth={1.75} className="text-text-main" />
                 </button>
               </div>
             )}

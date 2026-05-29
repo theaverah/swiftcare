@@ -62,7 +62,7 @@ Use `bg-elements/50` (50% opacity of `--elements`) for horizontal rule dividers 
 - headings use `--text-main`
 - **16px is the default for all non-heading text** — when in doubt, use 16px
 - 14px is reserved for secondary captions only (timestamps, email addresses under names, helper sub-labels)
-- line height: 1.5 for body, 1.2 for headings
+- line height: 1.4 for body, 1.2 for headings
 - sidebar width: 264px (`w-66`)
 - search bar height: 52px (`h-13`)
 
@@ -124,22 +124,64 @@ Default cards: use `--background-sub` background + `1px solid var(--elements)` b
 
 **Style:** Outline only — never use filled variants.
 
-**Default size:** 20px (adjustable to 16px for compact UI, 24px for emphasis)
+**Always use the shared `Icon` wrapper** — never use Lucide icons directly unless you need to override defaults:
 
-**Default color:** `--text-sub` (`#6F6F6F`)
-
-**Active/interactive color:** `--brand` (`#008786`)
-
-**Usage:**
 ```tsx
-import { Calendar, User, Stethoscope } from "lucide-react"
+import { Icon } from "@/components/shared/Icon";
+import { Pencil, Calendar, Bell } from "lucide-react";
 
-<Calendar size={20} className="text-[var(--text-sub)]" />
+<Icon icon={Pencil} />                          // 16px, black, strokeWidth 1.75
+<Icon icon={Calendar} size={14} />              // 14px, black, strokeWidth 1.75
+<Icon icon={Bell} className="text-text-sub" />  // 16px, gray (muted)
+<Icon icon={Bookmark} className="text-brand" /> // 16px, brand color
 ```
+
+### Defaults (enforced by `Icon` component)
+
+| Property | Value |
+|---|---|
+| Size | **16px** |
+| strokeWidth | **1.75** |
+| Color | **`--text-main`** (black) |
+
+### When to override color
+
+| Use case | className |
+|---|---|
+| Muted / secondary | `text-text-sub` |
+| Brand / active | `text-brand` |
+| Destructive | `text-error` |
+| Success | `text-success` |
+| White (on dark bg) | `text-white` |
+
+### Size exceptions (use sparingly)
+
+- **14px** — icons inside compact rows, card metadata (date, time chips)
+- **18px** — sidebar nav, drawer close buttons
+- **20px** — header actions (bell, settings)
+
+**Never use:** `size={13}`, `size={15}`, `size={17}` — odd sizes that aren't part of the scale.
 
 ---
 
 ## Component Guidelines
+
+### Section Headers
+
+Used wherever a section has a title + supporting subtext (e.g. "Personal Information" / "The basics we use to identify you…").
+
+```tsx
+<div className="flex flex-col gap-0.5">
+  <p className="text-[18px] font-medium text-text-main">Section Title</p>
+  <p className="text-[16px] text-text-sub">Supporting description.</p>
+</div>
+```
+
+- gap between title and subtext: **2px** (`gap-0.5`)
+- title: 18px medium, `--text-main`
+- subtext: 16px regular, `--text-sub`
+
+---
 
 ### Buttons
 
@@ -384,10 +426,17 @@ Established from the registration screen — use this as the baseline for all au
 
 ### Field Group
 ```
-label (14px medium, --text-main)
+label (14px medium, --text-sub)
   ↕ gap-1.5 (6px)
 input (h-10, rounded-lg, border-elements)
 ```
+
+### Password Field (new password)
+Always use the conditions panel pattern from `RegisterStep1.tsx` — identical behavior everywhere a new password is set:
+- Conditions panel appears on focus or typing, collapses smoothly (`duration-500 ease-in-out`) when all conditions are met
+- Condition items: 14px circle indicator (filled `--success`) + 14px text in `--success` when met, `--text-sub` otherwise
+- Border: `--success` as soon as all conditions pass; `--text-main` while focused; `--elements` at rest
+- Eye icon (`EyeOff` default / `Eye` revealed) while typing; swaps to bare `Check` (16px, `--success`) once all conditions are met and field is blurred
 
 ### Field Border States
 | State | Border color |

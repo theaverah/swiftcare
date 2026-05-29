@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import mongoose from "mongoose";
 import dbConnect from "@/lib/db";
 import User from "@/models/User";
 import PatientProfile from "@/models/PatientProfile";
 import DoctorProfile from "@/models/DoctorProfile";
+import Appointment from "@/models/Appointment";
+import HealthRecord from "@/models/HealthRecord";
 import type { DayOfWeek } from "@/models/DoctorProfile";
 
 const PASSWORD = "Test1234!";
@@ -371,6 +374,217 @@ export async function GET() {
 
   } catch (err) {
     console.error("[seed/test-accounts]", err);
+    return NextResponse.json({ error: "Seed failed", detail: String(err) }, { status: 500 });
+  }
+}
+
+// ── POST — seed consultations + health records for patient@test.com ────────────
+
+export async function POST() {
+  try {
+    await dbConnect();
+
+    const patient = await User.findOne({ email: "patient@test.com" }).lean() as
+      { _id: mongoose.Types.ObjectId } & Record<string, unknown> | null;
+    if (!patient) return NextResponse.json({ error: "Run GET first to create patient@test.com" }, { status: 400 });
+
+    // Resolve doctor IDs by email
+    async function doctorId(email: string): Promise<mongoose.Types.ObjectId> {
+      const u = await User.findOne({ email }).select("_id").lean() as { _id: mongoose.Types.ObjectId } | null;
+      if (!u) throw new Error(`Doctor ${email} not found — run GET first`);
+      return u._id;
+    }
+
+    const [reyesId, santosId, ramirezId, bustamId, alcantaraId, limId] = await Promise.all([
+      doctorId("doctor@test.com"),      // Reyes  — General Practice
+      doctorId("santos@test.com"),       // Santos — Cardiology
+      doctorId("ramirez@test.com"),      // Ramirez — Dermatology
+      doctorId("endocrine@test.com"),    // Bustamante — Endocrinology
+      doctorId("allergy@test.com"),      // Alcantara — Allergy & Immunology
+      doctorId("lim@test.com"),          // Lim — Psychiatry
+    ]);
+
+    const patientId = patient._id;
+
+    // ── Date helpers ──────────────────────────────────────────────────────────
+    function daysFromNow(n: number, hour = 9, minute = 0) {
+      const d = new Date();
+      d.setDate(d.getDate() + n);
+      d.setHours(hour, minute, 0, 0);
+      return d;
+    }
+    function fixedDate(y: number, m: number, day: number, hour = 10, minute = 0) {
+      return new Date(y, m - 1, day, hour, minute, 0, 0);
+    }
+
+    // ── Wipe existing test consultations + health records ─────────────────────
+    await Appointment.deleteMany({ patientId });
+    await HealthRecord.deleteMany({ patientId });
+
+    // ── Consultations ─────────────────────────────────────────────────────────
+    const base = {
+      patientId,
+      forSelf:         true,
+      patientName:     "Alex Rivera",
+      consultationType:"video" as const,
+      durationMinutes: 30,
+    };
+
+    const [
+      _upcomingBP,      // tomorrow  — Dr. Santos (Cardiology) — blood pressure
+      _upcomingSkin,    // +3 days   — Dr. Ramirez (Dermatology) — skin irritation
+      pastMay20,        // May 20    — Dr. Reyes (General Practice)
+      pastMay15,        // May 15    — Dr. Bustamante (Endocrinology)
+      pastMay5,         // May 5     — Dr. Alcantara (Allergy & Immunology)
+      _cancelledAppt,   // -7 days   — Dr. Lim (Psychiatry)
+    ] = await Appointment.insertMany([
+      {
+        ...base,
+        doctorId:      santosId,
+        scheduledAt:   daysFromNow(1, 9, 0),
+        status:        "confirmed",
+        chiefComplaint:"Follow-up on blood pressure medication",
+      },
+      {
+        ...base,
+        doctorId:      ramirezId,
+        scheduledAt:   daysFromNow(3, 14, 0),
+        status:        "confirmed",
+        chiefComplaint:"Skin irritation on left arm",
+      },
+      {
+        ...base,
+        doctorId:      reyesId,
+        scheduledAt:   fixedDate(2026, 5, 20, 10, 0),
+        status:        "completed",
+        chiefComplaint:"Annual check-up and routine labs",
+      },
+      {
+        ...base,
+        doctorId:      bustamId,
+        scheduledAt:   fixedDate(2026, 5, 15, 15, 0),
+        status:        "completed",
+        chiefComplaint:"Diabetes management and medication review",
+      },
+      {
+        ...base,
+        doctorId:      alcantaraId,
+        scheduledAt:   fixedDate(2026, 5, 5, 11, 0),
+        status:        "completed",
+        chiefComplaint:"Persistent sneezing and runny nose for 2 weeks",
+      },
+      {
+        ...base,
+        doctorId:      limId,
+        scheduledAt:   daysFromNow(-7, 11, 0),
+        status:        "cancelled",
+        chiefComplaint:"Stress and difficulty sleeping",
+      },
+    ]);
+
+    // ── Health records ────────────────────────────────────────────────────────
+    await HealthRecord.insertMany([
+
+      // Prescriptions
+      {
+        patientId,
+        doctorId:      bustamId,
+        appointmentId: pastMay15._id,
+        type:          "prescription",
+        issuedAt:      fixedDate(2026, 5, 15),
+        medications: [
+          { name: "Metformin",  dosage: "500mg", frequency: "Twice daily with meals", duration: "3 months" },
+          { name: "Januvia",    dosage: "100mg", frequency: "Once daily",             duration: "3 months" },
+        ],
+      },
+      {
+        patientId,
+        doctorId:      alcantaraId,
+        appointmentId: pastMay5._id,
+        type:          "prescription",
+        issuedAt:      fixedDate(2026, 5, 5),
+        medications: [
+          { name: "Cetirizine",        dosage: "10mg", frequency: "Once daily at bedtime", duration: "30 days" },
+          { name: "Fluticasone Nasal", dosage: "50mcg", frequency: "2 sprays each nostril, once daily", duration: "30 days" },
+        ],
+      },
+
+      // Consultation Notes
+      {
+        patientId,
+        doctorId:      bustamId,
+        appointmentId: pastMay15._id,
+        type:          "consultation_note",
+        issuedAt:      fixedDate(2026, 5, 15),
+        notes: "Patient presents for diabetes management follow-up. HbA1c at last check was 7.8%, slightly above target. Fasting blood glucose has been ranging between 130–160 mg/dL per patient-reported readings. Patient reports good adherence to Metformin but admits to inconsistent dietary compliance on weekends. Adding Januvia 100mg once daily to improve glycemic control. Reinforced importance of carbohydrate monitoring and encouraged daily 30-minute walks. Repeat HbA1c and fasting glucose in 3 months.",
+      },
+      {
+        patientId,
+        doctorId:      reyesId,
+        appointmentId: pastMay20._id,
+        type:          "consultation_note",
+        issuedAt:      fixedDate(2026, 5, 20),
+        notes: "Patient came in for annual check-up. Vitals stable — BP 124/82 mmHg, HR 76 bpm, BMI 23.4. No acute complaints. Patient reports occasional fatigue in the afternoons, likely related to disrupted sleep schedule. Advised regular sleep hygiene and hydration. Ordered CBC and lipid panel as part of annual workup. Patient is up to date on vaccinations. Follow-up in 12 months unless issues arise sooner.",
+      },
+
+      // Lab Requests
+      {
+        patientId,
+        doctorId:      reyesId,
+        appointmentId: pastMay20._id,
+        type:          "lab_request",
+        issuedAt:      fixedDate(2026, 5, 20),
+        tests: [
+          { name: "Complete Blood Count (CBC)" },
+          { name: "Urinalysis" },
+          { name: "Fasting Blood Glucose" },
+        ],
+      },
+      {
+        patientId,
+        doctorId:      bustamId,
+        appointmentId: pastMay15._id,
+        type:          "lab_request",
+        issuedAt:      fixedDate(2026, 5, 15),
+        tests: [
+          { name: "HbA1c (Glycated Hemoglobin)" },
+          { name: "Lipid Panel (Total Cholesterol, LDL, HDL, Triglycerides)" },
+          { name: "Kidney Function Test (Creatinine, eGFR)" },
+          { name: "Liver Function Test (ALT, AST)" },
+        ],
+      },
+
+      // Medical Certificate
+      {
+        patientId,
+        doctorId:      reyesId,
+        appointmentId: pastMay20._id,
+        type:          "medical_certificate",
+        issuedAt:      fixedDate(2026, 5, 20),
+        purpose: "For work clearance — patient was examined on the above date and is found to be in generally good health and fit to return to full office duties without restriction.",
+      },
+
+      // Referral
+      {
+        patientId,
+        doctorId:      bustamId,
+        appointmentId: pastMay15._id,
+        type:          "referral",
+        issuedAt:      fixedDate(2026, 5, 15),
+        referredTo:    "Cardiology",
+        referralReason:"Patient reports intermittent chest tightness during physical exertion over the past month. Resting ECG shows borderline changes. Referred to Cardiology for further evaluation including stress test and echocardiogram to rule out coronary artery disease.",
+      },
+    ]);
+
+    return NextResponse.json({
+      success:       true,
+      consultations: 6,
+      healthRecords: 8,
+      message:       "Seeded 6 consultations and 8 health records for patient@test.com",
+    });
+
+  } catch (err) {
+    console.error("[seed/test-accounts POST]", err);
     return NextResponse.json({ error: "Seed failed", detail: String(err) }, { status: 500 });
   }
 }

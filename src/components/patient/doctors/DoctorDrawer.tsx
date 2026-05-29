@@ -17,7 +17,6 @@ const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0]; // Mon → Sun
 export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerProps) {
   const todayDow = new Date().getDay();
 
-  // Close on Escape
   useEffect(() => {
     function handler(e: KeyboardEvent) {
       if (e.key === "Escape" && isOpen) onClose();
@@ -26,10 +25,9 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
     return () => document.removeEventListener("keydown", handler);
   }, [isOpen, onClose]);
 
-  // Lock body scroll while open
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
+    else        document.body.style.overflow = "";
     return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
@@ -47,9 +45,9 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
         aria-hidden
         className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px]"
         style={{
-          opacity: isOpen ? 1 : 0,
+          opacity:       isOpen ? 1 : 0,
           pointerEvents: isOpen ? "auto" : "none",
-          transition: "opacity 350ms ease",
+          transition:    "opacity 350ms ease",
         }}
         onClick={onClose}
       />
@@ -59,10 +57,10 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
         role="dialog"
         aria-modal="true"
         aria-label="Doctor Profile"
-        className="fixed right-0 top-0 h-full z-50 w-full sm:w-120 bg-bg-main
+        className="fixed right-0 top-0 h-full z-50 w-full sm:w-160 bg-bg-main
           flex flex-col shadow-[0_4px_40px_rgba(0,0,0,0.14)]"
         style={{
-          transform: isOpen ? "translateX(0)" : "translateX(100%)",
+          transform:  isOpen ? "translateX(0)" : "translateX(100%)",
           transition: "transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)",
         }}
       >
@@ -89,16 +87,11 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                 <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-elements
                   bg-brand-sub flex items-center justify-center shrink-0">
                   {doctor.profileImage ? (
-                    <img
-                      src={doctor.profileImage}
-                      alt={doctor.name}
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={doctor.profileImage} alt={doctor.name} className="w-full h-full object-cover" />
                   ) : (
                     <span className="text-[20px] font-medium text-brand select-none">{initials}</span>
                   )}
                 </div>
-
                 <div>
                   <h3 className="text-[20px] font-medium text-text-main tracking-[-0.04em]">
                     Dr. {doctor.name}
@@ -111,46 +104,36 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
 
               {/* ── Bio ──────────────────────────────────────────────── */}
               {doctor.bio && (
-                <div>
-                  <p className="text-[16px] font-medium text-text-main mb-2">About</p>
-                  <p className="text-[14px] font-normal text-text-sub">{doctor.bio}</p>
-                </div>
+                <p className="text-[16px] text-text-sub text-center">{doctor.bio}</p>
               )}
 
-              {/* ── Info grid ────────────────────────────────────────── */}
-              <div className="grid grid-cols-2 gap-2.5">
+              {/* ── Info row ─────────────────────────────────────────── */}
+              <div className="grid grid-cols-2 gap-x-6 gap-y-5">
                 {doctor.licenseNumber && (
-                  <div className="bg-bg-sub rounded-lg px-4 py-3">
-                    <p className="text-[11px] text-text-sub uppercase tracking-wide mb-1">PRC License</p>
-                    <p className="text-[14px] font-medium text-text-main">{doctor.licenseNumber}</p>
+                  <div className="text-center">
+                    <p className="text-[14px] text-text-sub mb-1">PRC License</p>
+                    <p className="text-[16px] font-medium text-text-main">{doctor.licenseNumber}</p>
                   </div>
                 )}
                 {doctor.yearsOfExperience != null && (
-                  <div className="bg-bg-sub rounded-lg px-4 py-3">
-                    <p className="text-[11px] text-text-sub uppercase tracking-wide mb-1">Experience</p>
-                    <p className="text-[14px] font-medium text-text-main">{doctor.yearsOfExperience} years</p>
+                  <div className="text-center">
+                    <p className="text-[14px] text-text-sub mb-1">Experience</p>
+                    <p className="text-[16px] font-medium text-text-main">{doctor.yearsOfExperience} years</p>
                   </div>
                 )}
                 {doctor.languages.length > 0 && (
-                  <div className="bg-bg-sub rounded-lg px-4 py-3 col-span-2">
-                    <p className="text-[11px] text-text-sub uppercase tracking-wide mb-1">Languages</p>
-                    <p className="text-[14px] font-medium text-text-main">{doctor.languages.join(", ")}</p>
+                  <div className="text-center">
+                    <p className="text-[14px] text-text-sub mb-1">Languages</p>
+                    <p className="text-[16px] font-medium text-text-main">{doctor.languages.join(", ")}</p>
                   </div>
                 )}
-              </div>
-
-              {/* ── Consultation fee ─────────────────────────────────── */}
-              <div className="border border-elements rounded-lg px-5 py-4 flex items-center justify-between">
-                <div>
-                  <p className="text-[12px] text-text-sub mb-1">Consultation fee</p>
-                  <p className="text-[28px] font-medium text-text-main tracking-[-0.04em] leading-none">
+                <div className="text-center">
+                  <p className="text-[14px] text-text-sub mb-1">Consultation fee</p>
+                  <p className="text-[16px] font-medium text-text-main">
                     {doctor.consultationFee != null
                       ? `₱${doctor.consultationFee.toLocaleString("en-PH")}`
                       : "On request"}
                   </p>
-                </div>
-                <div className="w-11 h-11 rounded-full bg-brand-sub flex items-center justify-center">
-                  <span className="text-brand text-[18px] font-medium select-none">₱</span>
                 </div>
               </div>
 
@@ -159,9 +142,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                 <p className="text-[16px] font-medium text-text-main mb-3">Weekly Schedule</p>
                 <div className="flex flex-col">
                   {DAY_ORDER.map((dow) => {
-                    const slot = doctor.availability.find(
-                      (a) => a.dayOfWeek === dow && a.isAvailable
-                    );
+                    const slot    = doctor.availability.find(a => a.dayOfWeek === dow && a.isAvailable);
                     const isToday = todayDow === dow;
                     return (
                       <div
@@ -171,7 +152,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                         }`}
                       >
                         <div className="flex items-center gap-2">
-                          <span className={`text-[14px] font-normal ${isToday ? "text-text-main" : "text-text-sub"}`}>
+                          <span className={`text-[16px] font-normal ${isToday ? "text-text-main" : "text-text-sub"}`}>
                             {DAY_NAMES[dow]}
                           </span>
                           {isToday && (
@@ -181,11 +162,11 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                           )}
                         </div>
                         {slot ? (
-                          <span className="text-[14px] font-normal text-text-main">
+                          <span className="text-[16px] font-normal text-text-main">
                             {slot.startTime} – {slot.endTime}
                           </span>
                         ) : (
-                          <span className="text-[14px] font-normal text-text-sub">Not available</span>
+                          <span className="text-[16px] font-normal text-text-sub">Not available</span>
                         )}
                       </div>
                     );
@@ -193,7 +174,6 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                 </div>
               </div>
 
-              {/* Bottom spacing */}
               <div className="h-2" />
             </div>
           )}

@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { label: "Home",            href: "/patient/dashboard",     icon: House       },
   { label: "Find a doctor",   href: "/patient/doctors",        icon: Stethoscope },
   { label: "Consultations",   href: "/patient/consultations",  icon: Calendar    },
-  { label: "Medical Records", href: "/patient/records",        icon: FileText    },
+  { label: "Health Records",  href: "/patient/records",        icon: FileText    },
 ];
 
 export function PatientSidebar() {

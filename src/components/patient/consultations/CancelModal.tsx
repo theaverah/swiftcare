@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { format } from "date-fns";
-import { AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import type { Consultation } from "@/types/consultation";
 
@@ -11,9 +10,10 @@ interface Props {
   consultation: Consultation | null;
   onClose:      () => void;
   onCancelled:  (id: string) => void;
+  onRestored:   (id: string, prevStatus: Consultation["status"]) => void;
 }
 
-export function CancelModal({ consultation, onClose, onCancelled }: Props) {
+export function CancelModal({ consultation, onClose, onCancelled, onRestored }: Props) {
   const [mounted,    setMounted]    = useState(false);
   const [cancelling, setCancelling] = useState(false);
 
@@ -33,100 +33,99 @@ export function CancelModal({ consultation, onClose, onCancelled }: Props) {
   async function handleCancel() {
     if (!consultation) return;
     setCancelling(true);
-    try {
-      const res = await fetch(`/api/patient/appointments/${consultation.id}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Failed");
-      onCancelled(consultation.id);
-      onClose();
-      toast.success("Consultation cancelled.");
-    } catch {
-      toast.error("Failed to cancel. Please try again.");
-    } finally {
-      setCancelling(false);
-    }
+
+    const { id, status: prevStatus } = consultation;
+
+    // 1 — Optimistically update UI and close modal immediately
+    onCancelled(id);
+    onClose();
+    setCancelling(false);
+
+    // 2 — Show undo toast (top, red, 5 s)
+    let undone = false;
+    const toastId = toast.error("Consultation cancelled.", {
+      duration: 5000,
+      position: "top-center",
+      action: {
+        label: "Undo",
+        onClick: () => {
+          undone = true;
+          onRestored(id, prevStatus);
+          toast.dismiss(toastId);
+        },
+      },
+    });
+
+    // 3 — After 5 s, fire the real DELETE only if not undone
+    setTimeout(async () => {
+      if (undone) return;
+      try {
+        const res = await fetch(`/api/patient/appointments/${id}`, { method: "DELETE" });
+        if (!res.ok) throw new Error();
+      } catch {
+        // Revert UI if the server call fails
+        onRestored(id, prevStatus);
+        toast.error("Failed to cancel. Please try again.", { position: "top-center" });
+      }
+    }, 5000);
   }
 
-  if (!mounted) return null;
+  if (!mounted || !isOpen) return null;
 
-  const dateLabel = consultation
-    ? format(new Date(consultation.scheduledAt), "EEEE, MMMM d, yyyy 'at' h:mm aa")
-    : "";
+  const d          = new Date(consultation!.scheduledAt);
+  const isThisYear = d.getFullYear() === new Date().getFullYear();
+  const dateLabel  = format(d, isThisYear ? "EEEE, MMMM d 'at' h:mm aa" : "EEEE, MMMM d, yyyy 'at' h:mm aa");
 
-  const panel = (
-    <>
+  return createPortal(
+    <div
+      className="fixed inset-0 z-200 flex items-center justify-center p-4 bg-black/50"
+      onClick={() => !cancelling && onClose()}
+    >
       <div
-        aria-hidden
-        className="fixed inset-0 z-50 bg-black/30 backdrop-blur-[2px]"
-        style={{
-          opacity:       isOpen ? 1 : 0,
-          pointerEvents: isOpen ? "auto" : "none",
-          transition:    "opacity 250ms ease",
-        }}
-        onClick={onClose}
-      />
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
+        className="w-full max-w-md bg-bg-main rounded-xl p-8
+          shadow-[0_8px_32px_rgba(0,0,0,0.18)] animate-fadeInDown flex flex-col"
+        style={{ animationDuration: "150ms" }}
+        onClick={e => e.stopPropagation()}
       >
-        <div
-          className="w-full max-w-sm bg-bg-main rounded-xl shadow-[0_8px_40px_rgba(0,0,0,0.16)]
-            flex flex-col"
-          style={{
-            opacity:       isOpen ? 1 : 0,
-            pointerEvents: isOpen ? "auto" : "none",
-            transform:     isOpen ? "scale(1) translateY(0)" : "scale(0.96) translateY(8px)",
-            transition:    "opacity 250ms ease, transform 250ms cubic-bezier(0.25,0.46,0.45,0.94)",
-          }}
-        >
-          <div className="p-6 flex flex-col gap-4">
-            {/* Icon */}
-            <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
-              <AlertTriangle size={18} className="text-error" strokeWidth={1.75} />
-            </div>
+        {/* Illustration + title */}
+        <div className="flex flex-col items-center text-center mb-4">
+          <img src="/illustrations/thinking.svg" alt="" className="w-66 max-w-full mb-3" />
+          <p className="text-[18px] font-medium text-text-main">
+            Cancel your consultation?
+          </p>
+        </div>
 
-            {/* Text */}
-            <div className="flex flex-col gap-1.5">
-              <h3 className="text-[18px] font-medium text-text-main tracking-[-0.02em]">
-                Cancel your consultation?
-              </h3>
-              <p className="text-[14px] text-text-sub leading-relaxed">
-                This will cancel your consultation with{" "}
-                <span className="font-medium text-text-main">
-                  Dr. {consultation?.doctor.name}
-                </span>{" "}
-                on <span className="font-medium text-text-main">{dateLabel}</span>.
-                This action cannot be undone.
-              </p>
-            </div>
-          </div>
+        {/* Body */}
+        <p className="text-[16px] text-text-sub text-center mb-7">
+          This will cancel your consultation with{" "}
+          <span className="font-medium text-text-main">Dr. {consultation!.doctor.name}</span>{" "}
+          on <span className="font-medium text-text-main">{dateLabel}</span>.{" "}
+          This action cannot be undone.
+        </p>
 
-          <div className="h-px bg-elements/50" />
-
-          {/* Actions */}
-          <div className="flex items-center gap-2.5 p-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 h-10 rounded-lg bg-text-main text-brand-sub text-[14px] font-medium
-                hover:opacity-90 active:scale-[0.99] transition-all duration-200"
-            >
-              Keep it
-            </button>
-            <button
-              type="button"
-              onClick={handleCancel}
-              disabled={cancelling}
-              className="flex-1 h-10 rounded-lg border border-error text-error text-[14px] font-medium
-                hover:bg-red-50 active:scale-[0.99] transition-all duration-200 disabled:opacity-50"
-            >
-              {cancelling ? "Cancelling…" : "Yes, cancel"}
-            </button>
-          </div>
+        {/* Buttons — Yes cancel first, Keep it second */}
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={handleCancel}
+            disabled={cancelling}
+            className="flex-1 h-11 rounded-lg bg-error text-white text-[16px] font-medium
+              hover:opacity-90 transition-opacity duration-150 disabled:opacity-50"
+          >
+            {cancelling ? "Cancelling…" : "Yes, cancel"}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={cancelling}
+            className="flex-1 h-11 rounded-lg bg-success text-white text-[16px] font-medium
+              hover:opacity-90 transition-opacity duration-150 disabled:opacity-50"
+          >
+            Keep it
+          </button>
         </div>
       </div>
-    </>
+    </div>,
+    document.body
   );
-
-  return createPortal(panel, document.body);
 }

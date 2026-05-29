@@ -70,107 +70,110 @@ export function DoctorCard({ doctor, onSaveToggle, onOpenDrawer, onBook, animati
       tabIndex={0}
       onClick={onOpenDrawer}
       onKeyDown={(e) => e.key === "Enter" && onOpenDrawer()}
-      className="bg-bg-main border border-elements rounded-lg p-5 flex flex-col gap-4 cursor-pointer
+      className="bg-bg-main border border-elements rounded-xl overflow-hidden flex flex-col cursor-pointer
         hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] hover:border-brand
         transition-all duration-200 animate-fadeInDown outline-none
         focus-visible:ring-2 focus-visible:ring-brand/40"
       style={{ animationDelay: `${animationIndex * 65}ms`, animationDuration: "420ms" }}
     >
-      {/* ── Top row ─────────────────────────────────────────────── */}
-      <div className="flex items-center gap-4">
+      {/* ── Content ──────────────────────────────────────────────── */}
+      <div className="flex flex-col gap-4 p-5 flex-1">
 
-        {/* Avatar */}
-        <div
-          className="w-14 h-14 rounded-full overflow-hidden shrink-0 flex items-center justify-center border border-elements/50"
-          style={{ backgroundColor: palette.bg }}
-        >
-          {doctor.profileImage ? (
-            <img src={doctor.profileImage} alt={doctor.name} className="w-full h-full object-cover" />
-          ) : (
-            <span className="text-[14px] font-semibold select-none" style={{ color: palette.color }}>
-              {initials}
-            </span>
-          )}
-        </div>
+        {/* Top row */}
+        <div className="flex items-center gap-4">
 
-        {/* Name + specializations only */}
-        <div className="flex-1 min-w-0">
-          <p className="text-[14px] font-medium text-text-main leading-tight truncate">{doctor.name}</p>
-          <p className="text-[13px] text-text-sub mt-0.5 leading-snug">
-            {specs.length > 0 ? specs.join(" · ") : "General practitioner"}
-          </p>
-        </div>
-
-        {/* Bookmark + tooltip */}
-        <div className="relative group/save shrink-0">
-          <button
-            type="button"
-            aria-label={doctor.isSaved ? "Remove from saved" : "Save doctor"}
-            onClick={handleSave}
-            className="w-8 h-8 flex items-center justify-center -mr-0.5 -mt-0.5 group/bm"
+          {/* Avatar */}
+          <div
+            className="w-14 h-14 rounded-full overflow-hidden shrink-0 flex items-center justify-center border border-elements/50"
+            style={{ backgroundColor: palette.bg }}
           >
-            <Bookmark
-              size={18}
-              strokeWidth={1.75}
-              style={{
-                color: doctor.isSaved ? "var(--brand)" : undefined,
-                fill: doctor.isSaved ? "var(--brand)" : "transparent",
-                transform: popping ? "scale(1.3)" : "scale(1)",
-                transition: "transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), color 200ms ease, fill 200ms ease",
-              }}
-              className={`transition-colors duration-200 ${
-                doctor.isSaved ? "group-hover/bm:brightness-75" : "text-text-sub group-hover/bm:text-text-main"
-              }`}
-            />
-          </button>
-          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2
-            opacity-0 group-hover/save:opacity-100 transition-opacity duration-200
-            pointer-events-none z-50 flex flex-col items-center">
-            <div className="px-2.5 py-1 bg-text-main/70 rounded-md text-[11px] text-white/90 whitespace-nowrap">
-              {doctor.isSaved ? "Remove from saved" : "Save doctor"}
+            {doctor.profileImage ? (
+              <img src={doctor.profileImage} alt={doctor.name} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-[14px] font-semibold select-none" style={{ color: palette.color }}>
+                {initials}
+              </span>
+            )}
+          </div>
+
+          {/* Name + specializations */}
+          <div className="flex-1 min-w-0">
+            <p className="text-[16px] font-medium text-text-main leading-tight truncate">Dr. {doctor.name}</p>
+            <p className="text-[13px] text-text-sub mt-0.5 leading-snug">
+              {specs.length > 0 ? specs.join(" · ") : "General practitioner"}
+            </p>
+          </div>
+
+          {/* Bookmark + tooltip */}
+          <div className="relative group/save shrink-0">
+            <button
+              type="button"
+              aria-label={doctor.isSaved ? "Remove from saved" : "Save doctor"}
+              onClick={handleSave}
+              className="w-8 h-8 flex items-center justify-center -mr-0.5 -mt-0.5 group/bm"
+            >
+              <Bookmark
+                size={18}
+                strokeWidth={1.75}
+                style={{
+                  color: doctor.isSaved ? "var(--brand)" : undefined,
+                  fill: doctor.isSaved ? "var(--brand)" : "transparent",
+                  transform: popping ? "scale(1.3)" : "scale(1)",
+                  transition: "transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), color 200ms ease, fill 200ms ease",
+                }}
+                className={`transition-colors duration-200 ${
+                  doctor.isSaved ? "group-hover/bm:brightness-75" : "text-text-sub group-hover/bm:text-text-main"
+                }`}
+              />
+            </button>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2
+              opacity-0 group-hover/save:opacity-100 transition-opacity duration-200
+              pointer-events-none z-50 flex flex-col items-center">
+              <div className="px-2.5 py-1 bg-text-main/70 rounded-md text-[11px] text-white/90 whitespace-nowrap">
+                {doctor.isSaved ? "Remove from saved" : "Save doctor"}
+              </div>
+              <div
+                className="w-0 h-0"
+                style={{
+                  borderLeft: "4px solid transparent",
+                  borderRight: "4px solid transparent",
+                  borderTop: "4px solid rgba(17,17,17,0.70)",
+                }}
+              />
             </div>
-            <div
-              className="w-0 h-0"
-              style={{
-                borderLeft: "4px solid transparent",
-                borderRight: "4px solid transparent",
-                borderTop: "4px solid rgba(17,17,17,0.70)",
-              }}
-            />
           </div>
         </div>
-      </div>
 
-      {/* ── Body ─────────────────────────────────────────────────── */}
-      <div className="flex flex-col gap-1.5 py-0.5">
-<div className="flex flex-col gap-2">
+        {/* Body */}
+        <div className="flex flex-col gap-2 py-2">
           <p className="text-[14px] font-medium text-text-main leading-none">Earliest available schedule</p>
           <div className="flex items-center gap-2">
             <Calendar size={14} className="text-text-sub shrink-0" />
             <p className="text-[14px] text-text-sub leading-none">{doctor.nextAvailableLabel}</p>
           </div>
         </div>
+
       </div>
 
-      {/* ── Actions ──────────────────────────────────────────────── */}
-      <div className="flex gap-2 mt-auto">
+      {/* ── Button footer ─────────────────────────────────────────── */}
+      <div className="flex border-t border-elements">
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); onOpenDrawer(); }}
-          className="flex-1 self-stretch border border-elements rounded-lg text-[14px] font-medium
-            text-text-main hover:border-text-sub transition-all duration-200"
+          className="flex-1 py-2.5 text-[14px] font-medium text-text-main
+            hover:bg-bg-sub transition-colors duration-200 border-r border-elements"
         >
           View profile
         </button>
         <button
           type="button"
           onClick={handleBook}
-          className="flex-1 py-1.5 rounded-lg bg-success text-white
-            hover:opacity-90 active:scale-[0.98] transition-all duration-200
+          className="flex-1 py-2.5 bg-brand text-white hover:opacity-90
+            active:opacity-80 transition-all duration-200
             flex flex-col items-center justify-center gap-0.5"
         >
           <span className="text-[14px] font-medium leading-tight">Book a consultation</span>
-          <span className="text-[15px] font-semibold leading-tight">
+          <span className="text-[16px] font-semibold leading-tight">
             {doctor.consultationFee != null
               ? `₱${doctor.consultationFee.toLocaleString("en-PH")}`
               : "Fee on request"}

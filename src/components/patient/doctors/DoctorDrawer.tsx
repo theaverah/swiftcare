@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { X, Star } from "lucide-react";
+import { X } from "lucide-react";
 import type { Doctor } from "@/types/doctor";
 
 interface DoctorDrawerProps {
@@ -102,28 +102,21 @@ export function DoctorDrawer({ doctor, isOpen, onClose }: DoctorDrawerProps) {
 
                 <div>
                   <h3 className="text-[20px] font-medium text-text-main tracking-[-0.04em]">
-                    {doctor.name}
+                    Dr. {doctor.name}
                   </h3>
-                  <div className="flex flex-wrap items-center justify-center gap-1.5 mt-2">
-                    {doctor.specializations.map((spec) => (
-                      <span
-                        key={spec}
-                        className="text-[12px] font-medium bg-brand-sub text-brand px-2 py-0.5 rounded-sm"
-                      >
-                        {spec}
-                      </span>
-                    ))}
-                  </div>
+                  <p className="text-[16px] text-text-sub mt-1">
+                    {doctor.specializations.join(" · ")}
+                  </p>
                 </div>
-
-                {doctor.totalReviews > 0 && (
-                  <div className="flex items-center gap-1.5 text-[14px] text-text-sub">
-                    <Star size={13} className="fill-warning text-warning shrink-0" />
-                    <span className="font-medium text-text-main">{doctor.rating.toFixed(1)}</span>
-                    <span>({doctor.totalReviews.toLocaleString()} reviews)</span>
-                  </div>
-                )}
               </div>
+
+              {/* ── Bio ──────────────────────────────────────────────── */}
+              {doctor.bio && (
+                <div>
+                  <p className="text-[16px] font-medium text-text-main mb-2">About</p>
+                  <p className="text-[14px] font-normal text-text-sub">{doctor.bio}</p>
+                </div>
+              )}
 
               {/* ── Info grid ────────────────────────────────────────── */}
               <div className="grid grid-cols-2 gap-2.5">
@@ -162,17 +155,9 @@ export function DoctorDrawer({ doctor, isOpen, onClose }: DoctorDrawerProps) {
                 </div>
               </div>
 
-              {/* ── Bio ──────────────────────────────────────────────── */}
-              {doctor.bio && (
-                <div>
-                  <h4 className="text-[14px] font-medium text-text-main mb-2">About</h4>
-                  <p className="text-[14px] text-text-sub leading-relaxed">{doctor.bio}</p>
-                </div>
-              )}
-
               {/* ── Weekly schedule ──────────────────────────────────── */}
               <div>
-                <h4 className="text-[14px] font-medium text-text-main mb-3">Weekly Schedule</h4>
+                <p className="text-[16px] font-medium text-text-main mb-3">Weekly Schedule</p>
                 <div className="flex flex-col">
                   {DAY_ORDER.map((dow) => {
                     const slot = doctor.availability.find(
@@ -182,16 +167,12 @@ export function DoctorDrawer({ doctor, isOpen, onClose }: DoctorDrawerProps) {
                     return (
                       <div
                         key={dow}
-                        className={`flex items-center justify-between py-2.5 border-b border-elements/50 last:border-0 ${
+                        className={`flex items-center justify-between py-1.5 ${
                           isToday ? "-mx-2 px-2 rounded-md bg-brand-sub/40" : ""
                         }`}
                       >
                         <div className="flex items-center gap-2">
-                          <span
-                            className={`text-[14px] ${
-                              isToday ? "font-medium text-text-main" : "text-text-sub"
-                            }`}
-                          >
+                          <span className={`text-[14px] font-normal ${isToday ? "text-text-main" : "text-text-sub"}`}>
                             {DAY_NAMES[dow]}
                           </span>
                           {isToday && (
@@ -201,11 +182,11 @@ export function DoctorDrawer({ doctor, isOpen, onClose }: DoctorDrawerProps) {
                           )}
                         </div>
                         {slot ? (
-                          <span className="text-[14px] font-medium text-text-main">
+                          <span className="text-[14px] font-normal text-text-main">
                             {slot.startTime} – {slot.endTime}
                           </span>
                         ) : (
-                          <span className="text-[14px] text-text-sub">Not available</span>
+                          <span className="text-[14px] font-normal text-text-sub">Not available</span>
                         )}
                       </div>
                     );

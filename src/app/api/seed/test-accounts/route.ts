@@ -322,6 +322,20 @@ export async function GET() {
       results.patient = "already exists";
     }
 
+    // ── Remove non-seed doctor accounts ──────────────────────────────────────
+    const seedEmails = SEED_DOCTORS.map(d => d.email);
+    const staleUsers = await User.find({
+      role: "doctor",
+      email: { $nin: [...seedEmails, "patient@test.com"] },
+    }).select("_id").lean();
+
+    if (staleUsers.length > 0) {
+      const staleIds = staleUsers.map(u => u._id);
+      await DoctorProfile.deleteMany({ userId: { $in: staleIds } });
+      await User.deleteMany({ _id: { $in: staleIds } });
+      results._cleaned = `removed ${staleUsers.length} stale doctor(s)`;
+    }
+
     // ── Doctors ───────────────────────────────────────────────────────────────
     for (const seed of SEED_DOCTORS) {
       let user = await User.findOne({ email: seed.email });

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Heart } from "lucide-react";
+import { Bookmark, Calendar } from "lucide-react";
 import type { Doctor } from "@/types/doctor";
 
 // ── Avatar color palette — soft muted tones ───────────────────────────────────
@@ -29,26 +29,6 @@ function avatarPalette(name: string) {
   return AVATAR_PALETTES[Math.abs(hash) % AVATAR_PALETTES.length];
 }
 
-// ── Time format helper ────────────────────────────────────────────────────────
-
-function normalizeTime(t: string): string {
-  if (/[AaPp][Mm]/.test(t)) return t; // already 12-hour
-  const [hStr, mStr] = t.split(":");
-  const h = parseInt(hStr, 10);
-  const m = mStr ?? "00";
-  const ampm = h < 12 ? "AM" : "PM";
-  const hour = h === 0 ? 12 : h > 12 ? h - 12 : h;
-  return `${hour}:${m} ${ampm}`;
-}
-
-function formatTimeRange(range: string | null): string | null {
-  if (!range) return null;
-  // Split on en dash, em dash, or hyphen
-  const parts = range.split(/\s*[–—-]\s*/);
-  if (parts.length !== 2) return range;
-  return `${normalizeTime(parts[0].trim())} - ${normalizeTime(parts[1].trim())}`;
-}
-
 // ── Component ─────────────────────────────────────────────────────────────────
 
 interface DoctorCardProps {
@@ -60,7 +40,7 @@ interface DoctorCardProps {
 
 export function DoctorCard({ doctor, onSaveToggle, onOpenDrawer, animationIndex }: DoctorCardProps) {
   const router = useRouter();
-  const [beating, setBeating] = useState(false);
+  const [popping, setPopping] = useState(false);
 
   const initials = doctor.name
     .split(" ")
@@ -69,15 +49,14 @@ export function DoctorCard({ doctor, onSaveToggle, onOpenDrawer, animationIndex 
     .slice(0, 2)
     .toUpperCase();
 
-  const palette     = avatarPalette(doctor.name);
-  const timeRange   = formatTimeRange(doctor.todayHours);
-  const specs       = doctor.specializations ?? [];
-  const langs       = doctor.languages ?? [];
+  const palette = avatarPalette(doctor.name);
+  const specs   = doctor.specializations ?? [];
+  const langs   = doctor.languages ?? [];
 
   function handleSave(e: React.MouseEvent) {
     e.stopPropagation();
-    setBeating(true);
-    setTimeout(() => setBeating(false), 350);
+    setPopping(true);
+    setTimeout(() => setPopping(false), 300);
     onSaveToggle();
   }
 
@@ -92,14 +71,14 @@ export function DoctorCard({ doctor, onSaveToggle, onOpenDrawer, animationIndex 
       tabIndex={0}
       onClick={onOpenDrawer}
       onKeyDown={(e) => e.key === "Enter" && onOpenDrawer()}
-      className="bg-bg-main border border-elements rounded-lg p-4 flex flex-col gap-3 cursor-pointer
+      className="bg-bg-main border border-elements rounded-lg p-5 flex flex-col gap-4 cursor-pointer
         hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] hover:border-brand
         transition-all duration-200 animate-fadeInDown outline-none
         focus-visible:ring-2 focus-visible:ring-brand/40"
       style={{ animationDelay: `${animationIndex * 65}ms`, animationDuration: "420ms" }}
     >
       {/* ── Top row ─────────────────────────────────────────────── */}
-      <div className="flex items-start gap-4">
+      <div className="flex items-center gap-4">
 
         {/* Avatar */}
         <div
@@ -117,38 +96,37 @@ export function DoctorCard({ doctor, onSaveToggle, onOpenDrawer, animationIndex 
 
         {/* Name + specializations only */}
         <div className="flex-1 min-w-0">
-          <p className="text-[16px] font-medium text-text-main leading-tight truncate">{doctor.name}</p>
+          <p className="text-[14px] font-medium text-text-main leading-tight truncate">{doctor.name}</p>
           <p className="text-[13px] text-text-sub mt-0.5 leading-snug">
             {specs.length > 0 ? specs.join(" · ") : "General practitioner"}
           </p>
         </div>
 
-        {/* Heart + tooltip */}
+        {/* Bookmark + tooltip */}
         <div className="relative group/save shrink-0">
           <button
             type="button"
             aria-label={doctor.isSaved ? "Remove from saved" : "Save doctor"}
             onClick={handleSave}
-            className="w-8 h-8 flex items-center justify-center rounded-full
-              hover:bg-bg-sub transition-colors duration-200 -mr-0.5 -mt-0.5 group/heart"
+            className="w-8 h-8 flex items-center justify-center -mr-0.5 -mt-0.5 group/bm"
           >
-            <Heart
+            <Bookmark
               size={18}
               strokeWidth={1.75}
               style={{
-                color: doctor.isSaved ? "#F54062" : undefined,
-                fill: doctor.isSaved ? "#F54062" : "transparent",
-                transform: beating ? "scale(1.4)" : "scale(1)",
-                transition: "transform 350ms cubic-bezier(0.34, 1.56, 0.64, 1), color 200ms ease, fill 200ms ease",
+                color: doctor.isSaved ? "var(--brand)" : undefined,
+                fill: doctor.isSaved ? "var(--brand)" : "transparent",
+                transform: popping ? "scale(1.3)" : "scale(1)",
+                transition: "transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), color 200ms ease, fill 200ms ease",
               }}
               className={`transition-colors duration-200 ${
-                doctor.isSaved ? "" : "text-text-sub group-hover/heart:text-text-main"
+                doctor.isSaved ? "group-hover/bm:brightness-75" : "text-text-sub group-hover/bm:text-text-main"
               }`}
             />
           </button>
           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2
             opacity-0 group-hover/save:opacity-100 transition-opacity duration-200
-            pointer-events-none z-10 flex flex-col items-center">
+            pointer-events-none z-50 flex flex-col items-center">
             <div className="px-2.5 py-1 bg-text-main/70 rounded-md text-[11px] text-white/90 whitespace-nowrap">
               {doctor.isSaved ? "Remove from saved" : "Save doctor"}
             </div>
@@ -164,28 +142,15 @@ export function DoctorCard({ doctor, onSaveToggle, onOpenDrawer, animationIndex 
         </div>
       </div>
 
-      {/* ── Divider ─────────────────────────────────────────────── */}
-      <div className="h-px bg-elements/50" />
-
-      {/* ── Experience + languages + availability ─────────────────── */}
-      <div className="flex flex-col gap-1">
-        {doctor.yearsOfExperience != null && (
-          <p className="text-[13px] text-text-sub leading-none">
-            {doctor.yearsOfExperience} years of experience
-          </p>
-        )}
-        {langs.length > 0 && (
-          <p className="text-[12px] text-text-sub leading-none">
-            {langs.join(" · ")}
-          </p>
-        )}
-        <p className={`text-[13px] font-medium leading-snug ${
-          doctor.isAvailableToday ? "text-success" : "text-text-sub"
-        }`}>
-          {doctor.isAvailableToday && timeRange
-            ? `Available today · ${timeRange}`
-            : doctor.nextAvailableLabel}
-        </p>
+      {/* ── Body ─────────────────────────────────────────────────── */}
+      <div className="flex flex-col gap-1.5 py-0.5">
+<div className="flex flex-col gap-2">
+          <p className="text-[14px] font-medium text-text-main leading-none">Earliest available schedule</p>
+          <div className="flex items-center gap-2">
+            <Calendar size={14} className="text-text-sub shrink-0" />
+            <p className="text-[14px] text-text-sub leading-none">{doctor.nextAvailableLabel}</p>
+          </div>
+        </div>
       </div>
 
       {/* ── Actions ──────────────────────────────────────────────── */}

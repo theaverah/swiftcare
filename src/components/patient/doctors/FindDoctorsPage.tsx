@@ -68,7 +68,7 @@ const INITIAL_FILTERS: FilterState = {
   specialties: [],
   languages:   [],
   timePref:    [],
-  maxFee:      0,
+  maxFee:      5000,
   date:        "",
   location:    [],
 };
@@ -137,25 +137,28 @@ function MultiSelectSearch({
 }
 
 function SliderContent({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const fillPct = ((value - 100) / (5000 - 100)) * 100;
+
   return (
     <div className="p-4 w-64">
       <div className="flex items-center justify-between mb-3">
         <p className="text-[12px] text-text-sub">Max consultation fee</p>
         <p className="text-[14px] font-medium text-text-main">
-          {value === 0 ? "No limit" : `₱${value.toLocaleString("en-PH")}`}
+          ₱{value.toLocaleString("en-PH")}
         </p>
       </div>
       <input
         type="range"
-        min={0}
+        min={100}
         max={5000}
         step={100}
         value={value}
         onChange={e => onChange(Number(e.target.value))}
-        className="w-full cursor-pointer accent-brand"
+        className="w-full fee-slider"
+        style={{ "--fill-pct": `${fillPct}%` } as React.CSSProperties}
       />
       <div className="flex justify-between mt-2">
-        <span className="text-[11px] text-text-sub">₱0</span>
+        <span className="text-[11px] text-text-sub">₱100</span>
         <span className="text-[11px] text-text-sub">₱5,000</span>
       </div>
     </div>
@@ -220,7 +223,7 @@ function FilterChip({
           transition-all duration-200 whitespace-nowrap border select-none ${
           isActive
             ? "bg-brand-sub border-brand text-brand"
-            : "bg-white/64 border-elements text-text-main hover:border-text-sub/60"
+            : "bg-bg-main border-elements text-text-main hover:border-text-sub/60"
         }`}
       >
         <Icon
@@ -370,7 +373,7 @@ export function FindDoctorsPage() {
         if (specialtyParam)   params.set("specialties", specialtyParam);
         if (languageParam)    params.set("languages",  languageParam);
         if (timePrefParam)    params.set("timePref",   timePrefParam);
-        if (filters.maxFee)   params.set("maxFee",     String(filters.maxFee));
+        if (filters.maxFee < 5000) params.set("maxFee", String(filters.maxFee));
 
         const res = await fetch(`/api/patient/doctors?${params}`, { signal: controller.signal });
         if (!res.ok) throw new Error("API error");
@@ -475,7 +478,7 @@ export function FindDoctorsPage() {
 
   const hasActiveFilters =
     filters.specialties.length > 0 || filters.languages.length > 0 ||
-    filters.timePref.length > 0 || filters.maxFee > 0 ||
+    filters.timePref.length > 0 || filters.maxFee < 5000 ||
     filters.date !== "" || filters.location.length > 0 || search !== "";
 
   function clearAll() { setFilters(INITIAL_FILTERS); setSearch(""); }
@@ -574,13 +577,16 @@ export function FindDoctorsPage() {
           })}
         </div>
 
+        {/* ── Search + Filters ────────────────────────────────────── */}
+        <div className="flex flex-col gap-2">
+
         {/* ── Search ──────────────────────────────────────────────── */}
         <div
           className="animate-fadeInDown"
           style={{ animationDelay: "140ms", animationDuration: "400ms" }}
         >
           <div
-            className={`relative h-12 flex items-center border rounded-lg bg-bg-main
+            className={`relative h-13 flex items-center border rounded-lg bg-bg-main
               transition-all duration-200 ${
               searchFocused
                 ? "border-text-main shadow-[0_0_0_3px_rgba(17,17,17,0.05)]"
@@ -728,12 +734,12 @@ export function FindDoctorsPage() {
               label="Fee"
               icon={PhilippinePeso}
               displayValue={
-                filters.maxFee > 0
+                filters.maxFee < 5000
                   ? `Up to ₱${filters.maxFee.toLocaleString("en-PH")}`
                   : undefined
               }
-              isActive={filters.maxFee > 0}
-              onClear={() => updateFilter("maxFee", 0)}
+              isActive={filters.maxFee < 5000}
+              onClear={() => updateFilter("maxFee", 5000)}
             >
               {() => (
                 <SliderContent
@@ -791,6 +797,8 @@ export function FindDoctorsPage() {
           </div>
         </div>
 
+        </div>{/* end Search + Filters wrapper */}
+
         {/* ── Doctor grid ─────────────────────────────────────────── */}
         <div
           className={`transition-opacity duration-150 ease-in-out ${
@@ -825,7 +833,7 @@ export function FindDoctorsPage() {
                 "No doctors match your search."
               }
               subtitle={
-                activeTab === "saved" ? "Heart a doctor to save them here." :
+                activeTab === "saved" ? "Bookmark a doctor to save them here." :
                 activeTab === "today" ? "Try 'All Doctors' or adjust your filters." :
                 "Try adjusting your filters."
               }

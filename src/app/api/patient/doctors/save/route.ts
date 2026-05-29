@@ -19,8 +19,9 @@ export async function POST(req: NextRequest) {
 
     await dbConnect();
 
-    const userId     = new mongoose.Types.ObjectId(token.id as string);
+    const userId      = new mongoose.Types.ObjectId(token.id as string);
     const doctorObjId = new mongoose.Types.ObjectId(doctorUserId);
+
 
     // Try to unsave first (pull from savedDoctors where the doctor is present)
     const pulled = await PatientProfile.findOneAndUpdate(
@@ -30,11 +31,9 @@ export async function POST(req: NextRequest) {
     ).lean();
 
     if (pulled) {
-      // Doctor was saved → now unsaved
       return NextResponse.json({ isSaved: false });
     }
 
-    // Doctor was not saved → save it (upsert in case PatientProfile doesn't exist yet)
     await PatientProfile.findOneAndUpdate(
       { userId },
       { $addToSet: { savedDoctors: doctorObjId } },

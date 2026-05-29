@@ -21,29 +21,25 @@ const TIME_WINDOWS: Record<string, [number, number]> = {
   evening:   [18, 22],
 };
 
-function nextAvailableDate(availability: { dayOfWeek: number; startTime: string; endTime: string; isAvailable: boolean }[]) {
-  const available = availability.filter(a => a.isAvailable).map(a => a.dayOfWeek);
-  if (available.length === 0) return null;
+type AvailSlot = { dayOfWeek: number; startTime: string; endTime: string; isAvailable: boolean };
 
-  const today = new Date();
+function nextAvailable(availability: AvailSlot[]) {
+  const active = availability.filter(a => a.isAvailable);
+  if (active.length === 0) return null;
+
+  const today   = new Date();
   const todayDow = today.getDay();
 
   for (let offset = 0; offset <= 7; offset++) {
-    const dow = (todayDow + offset) % 7;
-    if (available.includes(dow)) {
+    const dow  = (todayDow + offset) % 7;
+    const slot = active.find(a => a.dayOfWeek === dow);
+    if (slot) {
       const d = new Date(today);
       d.setDate(today.getDate() + offset);
-      return { date: d, isToday: offset === 0 };
+      return { date: d, isToday: offset === 0, startTime: slot.startTime, endTime: slot.endTime };
     }
   }
   return null;
-}
-
-function todayHours(availability: { dayOfWeek: number; startTime: string; endTime: string; isAvailable: boolean }[]) {
-  const todayDow = new Date().getDay();
-  const slot = availability.find(a => a.dayOfWeek === todayDow && a.isAvailable);
-  if (!slot) return null;
-  return `${slot.startTime} – ${slot.endTime}`;
 }
 
 // ── Route ─────────────────────────────────────────────────────────────────────
@@ -71,7 +67,10 @@ export async function GET(req: NextRequest) {
     const userMap = new Map(doctorUsers.map(u => [String(u._id), u.name as string]));
 
     // Build DB-level filter
-    const profileFilter: Record<string, unknown> = { isAcceptingPatients: true };
+    const profileFilter: Record<string, unknown> = {
+      isAcceptingPatients: true,
+      specializations: { $exists: true, $not: { $size: 0 } },
+    };
     if (specialties.length) profileFilter.specializations = { $in: specialties };
     if (languages.length)   profileFilter.languages       = { $in: languages };
     if (maxFee > 0)         profileFilter.consultationFee = { $lte: maxFee };
@@ -110,12 +109,14 @@ export async function GET(req: NextRequest) {
 
     // Shape response
     const doctors = profiles.map(p => {
-      const next   = nextAvailableDate(p.availability);
-      const hours  = todayHours(p.availability);
-      const label  = next
-        ? next.isToday
-          ? "Available today"
-          : `Next: ${next.date.toLocaleDateString("en-PH", { weekday: "short", month: "short", day: "numeric" })}`
+      const next  = nextAvailable(p.availability);
+      const label = next
+        ? (() => {
+            const datePart = next.isToday
+              ? "Today"
+              : next.date.toLocaleDateString("en-PH", { weekday: "long", month: "long", day: "numeric" });
+            return `${datePart}, ${next.startTime} - ${next.endTime}`;
+          })()
         : "Not currently available";
 
       return {
@@ -134,7 +135,7 @@ export async function GET(req: NextRequest) {
         availability:       p.availability,
         nextAvailableLabel: label,
         isAvailableToday:   next?.isToday ?? false,
-        todayHours:         hours,
+        todayHours:         next ? `${next.startTime} - ${next.endTime}` : null,
         isSaved:            savedIds.has(String(p.userId)),
       };
     });

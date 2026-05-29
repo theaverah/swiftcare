@@ -368,3 +368,80 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-sub);
 }
+
+/* ─── Fee slider ─────────────────────────────────────────────────────────── */
+
+.fee-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: transparent;
+  accent-color: transparent;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Track — WebKit: filled portion brand, unfilled gray */
+.fee-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    var(--brand) 0%,
+    var(--brand) var(--fill-pct, 100%),
+    var(--elements) var(--fill-pct, 100%),
+    var(--elements) 100%
+  );
+}
+.fee-slider:hover::-webkit-slider-runnable-track {
+  background: linear-gradient(
+    to right,
+    var(--brand) 0%,
+    var(--brand) var(--fill-pct, 100%),
+    var(--elements) var(--fill-pct, 100%),
+    var(--elements) 100%
+  );
+}
+
+/* Thumb — WebKit */
+.fee-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--brand);
+  cursor: pointer;
+  margin-top: -6px;
+  transition: box-shadow 150ms ease;
+}
+.fee-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 0 8px rgba(0, 135, 134, 0.12);
+}
+
+/* Track — Firefox */
+.fee-slider::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--elements);
+}
+.fee-slider::-moz-range-progress {
+  height: 4px;
+  border-radius: 2px 0 0 2px;
+  background: var(--brand);
+}
+
+/* Thumb — Firefox */
+.fee-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--brand);
+  cursor: pointer;
+  border: none;
+  transition: box-shadow 150ms ease;
+}
+.fee-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 0 8px rgba(0, 135, 134, 0.12);
+}

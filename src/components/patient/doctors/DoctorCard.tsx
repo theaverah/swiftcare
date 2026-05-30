@@ -71,7 +71,7 @@ export function DoctorCard({ doctor, onSaveToggle, onOpenDrawer, onBook, animati
       onClick={onOpenDrawer}
       onKeyDown={(e) => e.key === "Enter" && onOpenDrawer()}
       className="bg-bg-main border border-elements rounded-xl overflow-hidden flex flex-col cursor-pointer
-        hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] hover:border-brand
+        hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)]
         transition-all duration-200 animate-fadeInDown outline-none
         focus-visible:ring-2 focus-visible:ring-brand/40"
       style={{ animationDelay: `${animationIndex * 65}ms`, animationDuration: "420ms" }}

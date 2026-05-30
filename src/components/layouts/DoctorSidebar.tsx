@@ -31,7 +31,9 @@ export function DoctorSidebar() {
     <aside className="w-60 shrink-0 flex flex-col bg-bg-sub border-r border-elements h-full">
       {/* Logo */}
       <div className="h-16 flex items-center px-6 border-b border-elements">
-        <img src="/horizontal%20logo.png" alt="SwiftCare" className="h-15 w-auto object-contain" />
+        <Link href="/doctor/dashboard">
+          <img src="/horizontal%20logo.png" alt="SwiftCare" className="h-15 w-auto object-contain" />
+        </Link>
       </div>
 
       {/* Navigation */}

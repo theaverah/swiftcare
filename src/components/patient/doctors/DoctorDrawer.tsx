@@ -58,7 +58,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
           role="dialog"
           aria-modal="true"
           aria-label="Doctor Profile"
-          className="relative w-full max-w-2xl max-h-[90vh] bg-bg-main rounded-xl
+          className="relative w-full max-w-2xl max-h-[97vh] bg-bg-main rounded-xl
             shadow-[0_16px_60px_rgba(0,0,0,0.20)] flex flex-col overflow-hidden"
           style={{
             opacity:       isOpen ? 1 : 0,
@@ -67,9 +67,8 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
             transition:    "opacity 300ms ease, transform 300ms cubic-bezier(0.25,0.46,0.45,0.94)",
           }}
         >
-          {/* Header */}
-          <div className="shrink-0 flex items-center justify-between px-6 h-14 border-b border-elements">
-            <p className="text-[16px] text-text-main">Doctor Profile</p>
+          {/* Close button */}
+          <div className="shrink-0 flex items-center justify-end px-6 pt-4">
             <button
               type="button"
               onClick={onClose}
@@ -87,7 +86,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
 
                 {/* ── Hero ─────────────────────────────────────────────── */}
                 <div className="flex flex-col items-center gap-3 text-center">
-                  <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-elements
+                  <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-brand/8
                     bg-brand-sub flex items-center justify-center shrink-0">
                     {doctor.profileImage ? (
                       <img src={doctor.profileImage} alt={doctor.name} className="w-full h-full object-cover" />
@@ -111,28 +110,22 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                 )}
 
                 {/* ── Info row ─────────────────────────────────────────── */}
-                <div className="flex gap-2">
-                  {doctor.licenseNumber && (
-                    <div className="flex-1 text-center">
-                      <p className="text-[14px] text-text-sub mb-1">PRC License</p>
-                      <p className="text-[16px] text-text-main">{doctor.licenseNumber}</p>
-                    </div>
-                  )}
+                <div className="flex divide-x divide-elements border-y border-elements">
                   {doctor.yearsOfExperience != null && (
-                    <div className="flex-1 text-center">
-                      <p className="text-[14px] text-text-sub mb-1">Experience</p>
-                      <p className="text-[16px] text-text-main">{doctor.yearsOfExperience} years</p>
+                    <div className="flex-1 text-center py-4 px-2 flex flex-col justify-center">
+                      <p className="text-[16px] font-medium text-text-main mb-1">Experience</p>
+                      <p className="text-[16px] text-text-sub">{doctor.yearsOfExperience} years</p>
                     </div>
                   )}
                   {doctor.languages.length > 0 && (
-                    <div className="flex-1 text-center">
-                      <p className="text-[14px] text-text-sub mb-1">Languages</p>
-                      <p className="text-[16px] text-text-main">{doctor.languages.join(", ")}</p>
+                    <div className="flex-2 text-center py-4 px-2 flex flex-col justify-center">
+                      <p className="text-[16px] font-medium text-text-main mb-1">Languages</p>
+                      <p className="text-[16px] text-text-sub text-balance">{doctor.languages.join(", ")}</p>
                     </div>
                   )}
-                  <div className="flex-1 text-center">
-                    <p className="text-[14px] text-text-sub mb-1">Consultation fee</p>
-                    <p className="text-[16px] text-text-main">
+                  <div className="flex-1 text-center py-4 px-2 flex flex-col justify-center">
+                    <p className="text-[16px] font-medium text-text-main mb-1">Consultation fee</p>
+                    <p className="text-[16px] text-text-sub">
                       {doctor.consultationFee != null
                         ? `₱${doctor.consultationFee.toLocaleString("en-PH")}`
                         : "On request"}
@@ -140,42 +133,44 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                   </div>
                 </div>
 
-                {/* ── Background & Credentials ─────────────────────────── */}
-              {(doctor.education || doctor.certifications.length > 0 || doctor.affiliations.length > 0) && (
-                <div className="flex flex-col gap-4">
-                  <p className="text-[16px] text-text-main">Background & Credentials</p>
-
-                  {doctor.education && (
+                {/* ── Education ────────────────────────────────────────── */}
+                {doctor.education && (
+                  <div className="flex flex-col gap-2">
+                    <p className="text-[16px] font-medium text-text-main">Education</p>
                     <div className="flex flex-col gap-1">
-                      <p className="text-[14px] text-text-sub">Education</p>
-                      <p className="text-[16px] text-text-main">{doctor.education.medicalSchool}</p>
-                      <p className="text-[16px] text-text-main">{doctor.education.residency}</p>
+                      <p className="text-[16px] text-text-sub">{doctor.education.medicalSchool}</p>
+                      <p className="text-[16px] text-text-sub">{doctor.education.residency}</p>
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {doctor.certifications.length > 0 && (
+                {/* ── Certifications ───────────────────────────────────── */}
+                {doctor.certifications.length > 0 && (
+                  <div className="flex flex-col gap-2">
+                    <p className="text-[16px] font-medium text-text-main">Certifications</p>
                     <div className="flex flex-col gap-1">
-                      <p className="text-[14px] text-text-sub">Certifications</p>
                       {doctor.certifications.map(c => (
-                        <p key={c} className="text-[16px] text-text-main">{c}</p>
+                        <p key={c} className="text-[16px] text-text-sub">{c}</p>
                       ))}
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {doctor.affiliations.length > 0 && (
+                {/* ── Affiliations ─────────────────────────────────────── */}
+                {doctor.affiliations.length > 0 && (
+                  <div className="flex flex-col gap-2">
+                    <p className="text-[16px] font-medium text-text-main">Affiliations</p>
                     <div className="flex flex-col gap-1">
-                      <p className="text-[14px] text-text-sub">Affiliations</p>
                       {doctor.affiliations.map(a => (
-                        <p key={a} className="text-[16px] text-text-main">{a}</p>
+                        <p key={a} className="text-[16px] text-text-sub">{a}</p>
                       ))}
                     </div>
-                  )}
-                </div>
-              )}
+                  </div>
+                )}
 
               {/* ── Weekly schedule ──────────────────────────────────── */}
-                <div>
-                  <p className="text-[16px] font-medium text-text-main mb-3">Weekly Schedule</p>
+                <div className="flex flex-col gap-2">
+                  <p className="text-[16px] font-medium text-text-main">Weekly Schedule</p>
                   <div className="flex flex-col">
                     {DAY_ORDER.map((dow) => {
                       const slot    = doctor.availability.find(a => a.dayOfWeek === dow && a.isAvailable);
@@ -183,7 +178,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                       return (
                         <div
                           key={dow}
-                          className={`flex items-center justify-between py-1.5 ${
+                          className={`flex items-center justify-between py-0.5 ${
                             isToday ? "-mx-2 px-2 rounded-md bg-brand-sub/40" : ""
                           }`}
                         >
@@ -192,7 +187,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                               {DAY_NAMES[dow]}
                             </span>
                             {isToday && (
-                              <span className="text-[10px] bg-brand text-white px-1.5 py-0.5 rounded-sm font-medium leading-none">
+                              <span className="text-[10px] bg-brand text-white px-2 py-1 rounded-full font-normal leading-none">
                                 Today
                               </span>
                             )}
@@ -211,6 +206,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                 </div>
 
               </div>
+
             )}
           </div>
 

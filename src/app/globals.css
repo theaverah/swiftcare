@@ -223,6 +223,7 @@
     background-color: var(--background-main);
     color: var(--text-main);
     line-height: 1.4;
+    text-wrap: balance;
   }
 
   h1, h2, h3, h4, h5, h6 {

@@ -190,102 +190,100 @@ export function ConsultationCard({
   const timeLabel = format(scheduledDate, "h:mm aa");
 
   return (
-    <div className="bg-bg-main rounded-xl border border-elements p-5 flex flex-col h-full
-      animate-fadeInDown transition-shadow duration-200 hover:shadow-sm">
+    <div className="bg-bg-main rounded-xl border border-elements flex flex-col h-full
+      animate-fadeInDown transition-shadow duration-200 hover:shadow-sm overflow-hidden">
 
-      {/* Badges */}
-      <div className="flex flex-wrap items-center gap-2">
-        <StatusBadge status={status} />
-        {tab === "upcoming" && <PaymentBadge status={paymentStatus} />}
-      </div>
-
-      {/* Doctor info */}
-      <div className="flex items-center gap-4 min-w-0 mt-3">
-        <DoctorAvatar doctor={doctor} size={56} />
-        <div className="min-w-0">
-          <p className="text-[16px] font-medium text-text-main truncate">
-            Dr. {doctor.name}
-          </p>
-          <p className="text-[14px] text-text-sub mt-0.5 truncate">
-            {doctor.specializations[0] ?? "General Practitioner"}
-          </p>
+      {/* Content */}
+      <div className="p-5 flex flex-col flex-1">
+        {/* Badges */}
+        <div className="flex flex-wrap items-center gap-2">
+          <StatusBadge status={status} />
+          {tab === "upcoming" && <PaymentBadge status={paymentStatus} />}
         </div>
-      </div>
 
-      <div className="h-px bg-elements/50 my-4" />
-
-      {/* Date + time */}
-      <div className="flex items-center gap-2">
-        <Calendar size={14} className="text-text-sub shrink-0" strokeWidth={1.75} />
-        <span className="text-[14px] text-text-main">
-          {dateLabel}
-          <span className="text-text-sub"> · {timeLabel}</span>
-        </span>
-      </div>
-
-      {/* Countdown (only within 24h, upcoming) */}
-      {tab === "upcoming" && within24h && (
-        <div className="mt-3">
-          <Countdown scheduledAt={scheduledAt} />
+        {/* Doctor info */}
+        <div className="flex items-center gap-4 min-w-0 mt-3">
+          <DoctorAvatar doctor={doctor} size={56} />
+          <div className="min-w-0">
+            <p className="text-[16px] font-medium text-text-main truncate">
+              Dr. {doctor.name}
+            </p>
+            <p className="text-[14px] text-text-sub mt-0.5 truncate">
+              {doctor.specializations[0] ?? "General Practitioner"}
+            </p>
+          </div>
         </div>
-      )}
 
-      {/* Actions — always pinned to bottom right */}
-      <div className="mt-auto pt-4 flex items-center justify-end gap-2 flex-wrap">
-        {tab === "upcoming" && (
-          within15min || status === "ongoing" ? (
+        <div className="h-px bg-elements/50 my-4" />
+
+        {/* Date + time */}
+        <div className="flex items-center gap-2">
+          <Calendar size={14} className="text-text-sub shrink-0" strokeWidth={1.75} />
+          <span className="text-[14px] text-text-main">
+            {dateLabel}
+            <span className="text-text-sub"> · {timeLabel}</span>
+          </span>
+        </div>
+
+        {/* Countdown (only within 24h, upcoming) */}
+        {tab === "upcoming" && within24h && (
+          <div className="mt-3">
+            <Countdown scheduledAt={scheduledAt} />
+          </div>
+        )}
+      </div>
+
+      {/* Footer actions */}
+      <div className="flex border-t border-elements">
+        {tab === "upcoming" && (within15min || status === "ongoing") ? (
+          <button
+            type="button"
+            onClick={() => router.push(`/patient/consultations/${consultation.id}/waiting-room`)}
+            className="flex-1 py-3 bg-brand text-white flex items-center justify-center gap-2
+              text-[14px] font-medium hover:opacity-90 active:opacity-80 transition-all duration-200"
+          >
+            <Video size={14} strokeWidth={1.75} />
+            Enter waiting room
+          </button>
+        ) : tab === "upcoming" ? (
+          <>
             <button
               type="button"
-              onClick={() => router.push(`/patient/consultations/${consultation.id}/waiting-room`)}
-              className="flex items-center gap-2 h-9 px-4 rounded-lg bg-brand text-white
-                text-[14px] font-medium hover:opacity-90 active:scale-[0.99]
-                transition-all duration-200"
+              onClick={() => onCancel(consultation)}
+              className="flex-1 py-3 text-[14px] font-medium text-error
+                hover:bg-bg-sub transition-colors duration-200 border-r border-elements"
             >
-              <Video size={14} strokeWidth={1.75} />
-              Enter waiting room
+              Cancel
             </button>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={() => onCancel(consultation)}
-                className="text-[14px] font-medium text-error hover:opacity-70 transition-opacity duration-200 px-2"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => onReschedule(consultation)}
-                className="flex items-center gap-2 h-9 px-4 rounded-lg border border-elements
-                  text-[14px] font-medium text-text-main hover:border-text-sub/60
-                  hover:bg-bg-sub transition-all duration-200"
-              >
-                <RotateCcw size={13} strokeWidth={1.75} />
-                Reschedule
-              </button>
-              <a
-                href={buildCalendarUrl(doctor.name, scheduledAt, durationMinutes)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 h-9 px-4 rounded-lg bg-brand text-white
-                  text-[14px] font-medium hover:opacity-90 active:scale-[0.99]
-                  transition-all duration-200"
-              >
-                <CalendarPlus size={13} strokeWidth={1.75} />
-                Add to calendar
-              </a>
-            </>
-          )
-        )}
-
-        {tab === "past" && (
+            <button
+              type="button"
+              onClick={() => onReschedule(consultation)}
+              className="flex-1 py-3 flex items-center justify-center gap-2
+                text-[14px] font-medium text-text-main hover:bg-bg-sub
+                transition-colors duration-200 border-r border-elements"
+            >
+              <RotateCcw size={13} strokeWidth={1.75} />
+              Reschedule
+            </button>
+            <a
+              href={buildCalendarUrl(doctor.name, scheduledAt, durationMinutes)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 py-3 bg-brand text-white flex items-center justify-center gap-2
+                text-[14px] font-medium hover:opacity-90 active:opacity-80 transition-all duration-200"
+            >
+              <CalendarPlus size={13} strokeWidth={1.75} />
+              Add to calendar
+            </a>
+          </>
+        ) : tab === "past" ? (
           <>
             <button
               type="button"
               onClick={() => router.push(`/patient/records`)}
-              className="flex items-center gap-2 h-9 px-4 rounded-lg border border-elements
-                text-[14px] font-medium text-text-main hover:border-text-sub/60
-                hover:bg-bg-sub transition-all duration-200"
+              className="flex-1 py-3 flex items-center justify-center gap-2
+                text-[14px] font-medium text-text-main hover:bg-bg-sub
+                transition-colors duration-200 border-r border-elements"
             >
               View records
               <ArrowRight size={13} strokeWidth={1.75} />
@@ -293,22 +291,18 @@ export function ConsultationCard({
             <button
               type="button"
               onClick={() => onBookAgain(consultation)}
-              className="flex items-center gap-2 h-9 px-4 rounded-lg bg-text-main text-brand-sub
-                text-[14px] font-medium hover:opacity-90 active:scale-[0.99]
-                transition-all duration-200"
+              className="flex-1 py-3 bg-text-main text-brand-sub flex items-center justify-center
+                text-[14px] font-medium hover:opacity-90 active:opacity-80 transition-all duration-200"
             >
               Book again
             </button>
           </>
-        )}
-
-        {tab === "cancelled" && (
+        ) : (
           <button
             type="button"
             onClick={() => onBookAgain(consultation)}
-            className="flex items-center gap-2 h-9 px-4 rounded-lg bg-text-main text-brand-sub
-              text-[14px] font-medium hover:opacity-90 active:scale-[0.99]
-              transition-all duration-200"
+            className="flex-1 py-3 bg-text-main text-brand-sub flex items-center justify-center
+              text-[14px] font-medium hover:opacity-90 active:opacity-80 transition-all duration-200"
           >
             Book again
           </button>

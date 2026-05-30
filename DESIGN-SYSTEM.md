@@ -386,6 +386,29 @@ useLayoutEffect(() => {
 
 **Content panel:** add `key={activeTab}` + `className="animate-tabIn"` to trigger the slide-in on every switch.
 
+### Calendar Picker
+
+Used in the booking modal and reschedule modal. The calendar must always stretch to fill the container width with evenly distributed columns.
+
+- **Grid:** `grid-cols-7` with no fixed column widths — cells use `w-full` and stretch evenly
+- **Month nav row:** `flex items-center justify-between` — month label flush left, prev/next arrows flush right
+- **Day headers:** `grid grid-cols-7`, each cell `flex items-center justify-center`
+- **Day cells:** `h-7 w-full flex items-center justify-center rounded-lg`
+- **Today highlight:** `bg-brand/15` fill on the cell — no dot, number color inherits from availability state
+- **Selected:** `bg-text-main text-white`
+- **Available:** `text-text-main hover:bg-bg-sub`
+- **Unavailable:** `text-text-sub/30 cursor-not-allowed`
+- Wrap the entire calendar (month nav + headers + cells) in a padded `bg-elements/20 border border-elements/60 rounded-xl` container
+
+### Text Wrap
+
+- `text-wrap: balance` is **not** applied globally — it causes unnatural line breaks in textareas and inputs
+- Headings (`h1–h6`) may use `text-balance` individually when needed
+- Inputs: `text-wrap: nowrap`
+- Textareas: `text-wrap: wrap` (normal — never balance)
+
+---
+
 ### Filter Chips
 
 Filter chips are interactive pill-shaped buttons used in scrollable filter rows (e.g. Find a Doctor).

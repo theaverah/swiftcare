@@ -23,7 +23,7 @@ SwiftCare has two primary modules:
 | Patient | patient@test.com | Test1234! |
 | Doctor | doctor@test.com | Test1234! |
 
-All 27 seeded doctors are also accessible via `doctor@test.com`. The patient account (`patient@test.com`) comes pre-loaded with consultation history and health records after running the POST seed.
+All 29 seeded doctors are also accessible via `doctor@test.com`. The patient account (`patient@test.com`) comes pre-loaded with consultation history and health records after running the POST seed.
 
 ---
 
@@ -83,7 +83,7 @@ Open [http://localhost:3000](http://localhost:3000).
 npm run seed
 ```
 
-This populates 27 doctors across 15+ specializations, a patient account, and sample consultations and health records.
+This populates 29 doctors across 15+ specializations, a patient account, and sample consultations and health records.
 
 ---
 
@@ -111,61 +111,75 @@ This populates 27 doctors across 15+ specializations, a patient account, and sam
 ```
 swiftcare/
 ├── public/
-│   └── fonts/          # Apercu Pro font files (export from Font Book)
+│   ├── fonts/              # Apercu Pro font files
+│   └── illustrations/      # SVG illustrations for empty/success states
 ├── src/
 │   ├── app/
-│   │   ├── (auth)/
-│   │   │   ├── login/          # Shared login page (patients + doctors)
-│   │   │   └── register/       # Registration — role selected on this page
+│   │   ├── login/              # Shared login page (patients + doctors)
+│   │   ├── register/           # Registration — role selected on this page
 │   │   ├── patient/
-│   │   │   ├── layout.tsx      # Patient dashboard shell (sidebar + header)
-│   │   │   ├── dashboard/      # Patient home/overview
-│   │   │   ├── doctors/        # Browse and search doctors
-│   │   │   ├── appointments/   # Book, view, reschedule, cancel
-│   │   │   ├── records/        # Medical records and prescriptions
-│   │   │   └── profile/        # Patient profile management
+│   │   │   ├── (app)/
+│   │   │   │   ├── layout.tsx          # Patient dashboard shell (sidebar + header)
+│   │   │   │   ├── dashboard/          # Patient home — upcoming consultations, AI chat
+│   │   │   │   ├── doctors/            # Browse and search doctors, book consultations
+│   │   │   │   ├── consultations/      # View, reschedule, cancel consultations
+│   │   │   │   │   └── [id]/waiting-room/  # Pre-session waiting room
+│   │   │   │   └── records/            # Health records — prescriptions, notes, labs, certs, referrals
 │   │   ├── doctor/
-│   │   │   ├── layout.tsx      # Doctor dashboard shell (sidebar + header)
-│   │   │   ├── dashboard/      # Doctor home/overview
-│   │   │   ├── schedule/       # Availability and slot management
-│   │   │   ├── appointments/   # Upcoming and past appointments
-│   │   │   ├── patients/       # Patient list and records
-│   │   │   └── profile/        # Doctor profile management
+│   │   │   ├── (app)/
+│   │   │   │   ├── layout.tsx          # Doctor dashboard shell
+│   │   │   │   ├── dashboard/          # Doctor home — today's schedule, earnings
+│   │   │   │   └── consultations/      # Manage all consultations, add notes, view records
 │   │   ├── api/
-│   │   │   ├── auth/[...nextauth]/   # NextAuth handler
-│   │   │   ├── appointments/         # Appointment CRUD
-│   │   │   ├── doctors/              # Doctor listing and search
-│   │   │   ├── patients/             # Patient profile endpoints
-│   │   │   ├── records/              # Medical records endpoints
-│   │   │   ├── notifications/        # Notification endpoints
-│   │   │   ├── ai/recommend/         # Claude AI doctor recommendation
-│   │   │   └── uploadthing/          # File upload handler
+│   │   │   ├── auth/[...nextauth]/     # NextAuth handler
+│   │   │   ├── patient/
+│   │   │   │   ├── appointments/       # Book, list, patch appointments
+│   │   │   │   ├── doctors/            # Doctor listing and search
+│   │   │   │   └── records/            # Health records endpoints
+│   │   │   ├── doctor/
+│   │   │   │   └── consultations/      # Doctor consultation management + records
+│   │   │   ├── seed/
+│   │   │   │   ├── test-accounts/      # GET: seed 29 doctors + patient; POST: seed consultations + records; PATCH: seed doctor consultations
+│   │   │   │   └── health-records/     # Seed health records
+│   │   │   └── uploadthing/            # File upload handler
 │   │   ├── globals.css
-│   │   ├── layout.tsx          # Root layout
-│   │   └── page.tsx            # Landing page
+│   │   ├── layout.tsx      # Root layout
+│   │   ├── template.tsx    # Page transition wrapper (animate-pageIn)
+│   │   └── page.tsx        # Landing page (redirects authenticated users)
 │   ├── components/
-│   │   ├── ui/                 # shadcn/ui components
-│   │   ├── layouts/            # Sidebar and header components
-│   │   └── shared/             # Reusable UI components
+│   │   ├── auth/           # RegisterStep1–3, LoginForm
+│   │   ├── landing/        # LandingPage
+│   │   ├── patient/
+│   │   │   ├── booking/    # BookingModal, BookingStep1–3, RescheduleModal
+│   │   │   ├── consultations/  # ConsultationsPage, ConsultationCard, CancelModal
+│   │   │   ├── dashboard/  # DashboardHome, UpcomingAppointmentCard, SwiftChat, HeroSearch
+│   │   │   ├── doctors/    # FindDoctorsPage, DoctorCard, DoctorDrawer
+│   │   │   └── records/    # HealthRecordsPage
+│   │   └── doctor/
+│   │       ├── consultations/  # DoctorConsultationCard, AddNotesModal, ViewRecordsModal
+│   │       ├── dashboard/  # DoctorDashboard
+│   │       └── profile/    # DoctorProfileModal
 │   ├── lib/
-│   │   ├── db.ts               # MongoDB connection (Mongoose, hot-reload safe)
-│   │   ├── auth.ts             # NextAuth options
-│   │   └── utils.ts            # cn() helper
+│   │   ├── db.ts           # MongoDB connection (Mongoose, hot-reload safe)
+│   │   ├── auth.ts         # NextAuth options
+│   │   └── utils.ts        # cn() helper
 │   ├── models/
 │   │   ├── User.ts
 │   │   ├── PatientProfile.ts
 │   │   ├── DoctorProfile.ts
 │   │   ├── Appointment.ts
-│   │   ├── MedicalRecord.ts
+│   │   ├── HealthRecord.ts
 │   │   └── Notification.ts
 │   ├── types/
-│   │   ├── index.ts            # Shared TypeScript interfaces
-│   │   └── next-auth.d.ts      # NextAuth type extensions
-│   └── proxy.ts                # Route protection (Next.js 16 — replaces middleware.ts)
+│   │   ├── consultation.ts
+│   │   ├── doctor.ts
+│   │   └── next-auth.d.ts
+│   └── proxy.ts            # Route protection (Next.js 16 — replaces middleware.ts)
 ├── .env.local
 ├── BRIEF.md
 ├── CLAUDE.md
 ├── DESIGN-SYSTEM.md
+├── FUTURE-IMPROVEMENTS.md
 └── package.json
 ```
 

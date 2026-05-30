@@ -884,14 +884,35 @@ export async function PATCH() {
       paymentStatus:    "paid",
     };
 
-    // -- Today's consultations -------------------------------------------------
+    // -- Today's consultations (May 30) ----------------------------------------
     await Appointment.insertMany([
       {
         ...base,
         patientName:    "Juan dela Cruz",
-        scheduledAt:    today(10, 0),
-        status:         "confirmed",
+        scheduledAt:    today(9, 0),
+        status:         "completed",
         chiefComplaint: "Recurring headaches and dizziness for 2 weeks",
+      },
+      {
+        ...base,
+        patientName:    "Maricel Bautista",
+        scheduledAt:    today(9, 45),
+        status:         "completed",
+        chiefComplaint: "Persistent dry cough for 3 weeks, no fever",
+      },
+      {
+        ...base,
+        patientName:    "Eduardo Salazar",
+        scheduledAt:    today(10, 30),
+        status:         "ongoing",
+        chiefComplaint: "Chest tightness and shortness of breath on exertion",
+      },
+      {
+        ...base,
+        patientName:    "Rosario Dela Torre",
+        scheduledAt:    today(11, 30),
+        status:         "confirmed",
+        chiefComplaint: "Routine annual physical examination",
       },
       {
         ...base,
@@ -899,6 +920,20 @@ export async function PATCH() {
         scheduledAt:    today(14, 0),
         status:         "confirmed",
         chiefComplaint: "Follow-up for hypertension management",
+      },
+      {
+        ...base,
+        patientName:    "Cornelio Macaraeg",
+        scheduledAt:    today(15, 30),
+        status:         "confirmed",
+        chiefComplaint: "Type 2 diabetes check — elevated fasting glucose readings",
+      },
+      {
+        ...base,
+        patientName:    "Precious Anne Tolentino",
+        scheduledAt:    today(19, 0),
+        status:         "confirmed",
+        chiefComplaint: "Severe dysmenorrhea, asking about hormonal options",
       },
     ]);
 
@@ -1086,8 +1121,8 @@ export async function PATCH() {
 
     return NextResponse.json({
       success: true,
-      message: "Seeded doctor@test.com with 2 today + 3 upcoming + 5 past consultations and health records",
-      todayConsultations:    2,
+      message: "Seeded doctor@test.com with 7 today + 3 upcoming + 5 past consultations and health records",
+      todayConsultations:    7,
       upcomingConsultations: 3,
       pastConsultations:     5,
       healthRecords:         15,

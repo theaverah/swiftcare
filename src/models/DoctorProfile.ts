@@ -21,6 +21,12 @@ export interface IEducation {
   residency:     string;
 }
 
+export interface INotificationPrefs {
+  appointmentReminders: boolean;
+  bookingConfirmations: boolean;
+  scheduleUpdates: boolean;
+}
+
 export interface IDoctorProfile extends Document {
   _id: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
@@ -28,6 +34,7 @@ export interface IDoctorProfile extends Document {
   bio?: string;
   profileImage?: string;
   licenseNumber?: string;
+  contactNumber?: string;
   yearsOfExperience?: number;
   consultationFee?: number;
   languages: string[];
@@ -40,6 +47,7 @@ export interface IDoctorProfile extends Document {
   rating: number;
   totalReviews: number;
   isAcceptingPatients: boolean;
+  notificationPrefs?: INotificationPrefs;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -82,7 +90,8 @@ const DoctorProfileSchema = new Schema<IDoctorProfile>(
     },
     bio: { type: String },
     profileImage: { type: String },
-    licenseNumber: { type: String },
+    licenseNumber:    { type: String },
+    contactNumber:    { type: String, default: "" },
     yearsOfExperience: { type: Number, min: 0 },
     consultationFee: { type: Number, min: 0 },
     languages: { type: [String], default: ["English"] },
@@ -95,6 +104,17 @@ const DoctorProfileSchema = new Schema<IDoctorProfile>(
     affiliations:   { type: [String], default: [] },
     availability: { type: [AvailabilitySlotSchema], default: [] },
     blockedSlots: { type: [BlockedSlotSchema], default: [] },
+    notificationPrefs: {
+      type: new Schema<INotificationPrefs>(
+        {
+          appointmentReminders: { type: Boolean, default: true },
+          bookingConfirmations:  { type: Boolean, default: true },
+          scheduleUpdates:       { type: Boolean, default: true },
+        },
+        { _id: false }
+      ),
+      default: () => ({ appointmentReminders: true, bookingConfirmations: true, scheduleUpdates: true }),
+    },
     rating: { type: Number, default: 0, min: 0, max: 5 },
     totalReviews: { type: Number, default: 0 },
     isAcceptingPatients: { type: Boolean, default: true },

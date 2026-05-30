@@ -13,6 +13,20 @@ SwiftCare has two primary modules:
 
 ---
 
+## Test Accounts
+
+> Run the seed endpoint once before testing to create all accounts:
+> `GET /api/seed/test-accounts` — then `POST /api/seed/test-accounts` to populate consultations and health records.
+
+| Role | Email | Password |
+|---|---|---|
+| Patient | patient@test.com | Test1234! |
+| Doctor | doctor@test.com | Test1234! |
+
+All 27 seeded doctors are also accessible via `doctor@test.com`. The patient account (`patient@test.com`) comes pre-loaded with consultation history and health records after running the POST seed.
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -69,7 +83,7 @@ Open [http://localhost:3000](http://localhost:3000).
 npm run seed
 ```
 
-This populates 6+ doctors across different specializations for demo purposes.
+This populates 27 doctors across 15+ specializations, a patient account, and sample consultations and health records.
 
 ---
 

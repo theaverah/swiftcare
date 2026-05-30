@@ -31,12 +31,7 @@ export function DoctorSidebar() {
     <aside className="w-60 shrink-0 flex flex-col bg-bg-sub border-r border-elements h-full">
       {/* Logo */}
       <div className="h-16 flex items-center px-6 border-b border-elements">
-        <span className="text-[17px] font-bold tracking-tight text-text-main">
-          Swift<span className="text-brand">Care</span>
-        </span>
-        <span className="ml-2 text-[10px] font-medium text-brand bg-brand-sub px-1.5 py-0.5 rounded">
-          Doctor
-        </span>
+        <img src="/horizontal%20logo.png" alt="SwiftCare" className="h-15 w-auto object-contain" />
       </div>
 
       {/* Navigation */}

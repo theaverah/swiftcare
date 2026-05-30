@@ -211,8 +211,13 @@
   html {
     font-family: "Apercu Pro", Inter, system-ui, sans-serif;
     scrollbar-gutter: stable;
+    zoom: 0.8;
     @apply antialiased;
   }
+
+  /* Compensate h-screen / min-h-screen for the 0.8 zoom so layouts fill the viewport */
+  .h-screen     { height:     calc(100vh / 0.8) !important; }
+  .min-h-screen { min-height: calc(100vh / 0.8) !important; }
 
   body {
     background-color: var(--background-main);

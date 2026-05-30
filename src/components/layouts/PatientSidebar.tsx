@@ -31,10 +31,7 @@ export function PatientSidebar() {
 
       {/* Logo */}
       <div className="h-16 flex items-center px-6 shrink-0 gap-2.5 mt-6">
-        <img src="/logo.png" alt="" className="w-10 h-10 object-contain shrink-0" />
-        <span className="text-[24px] font-bold tracking-tight text-text-main">
-          Swift<span className="text-brand">Care</span>
-        </span>
+        <img src="/horizontal%20logo.png" alt="SwiftCare" className="h-15 w-auto object-contain" />
       </div>
 
       {/* Nav */}

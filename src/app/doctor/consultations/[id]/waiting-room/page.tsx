@@ -4,30 +4,16 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Wifi, Mic, Video, ArrowLeft, CheckCircle, AlertCircle, Calendar, Clock } from "lucide-react";
 import { format } from "date-fns";
-import type { Consultation } from "@/types/consultation";
 
-// ── Avatar palette (matches DoctorCard) ───────────────────────────────────────
+// ── Consultation type (doctor-side) ───────────────────────────────────────────
 
-const AVATAR_PALETTES = [
-  { bg: "#E8F4FD", color: "#2B7BB9" },
-  { bg: "#FEF3E2", color: "#B5651D" },
-  { bg: "#F0FDF4", color: "#15803D" },
-  { bg: "#FDF2F8", color: "#9D174D" },
-  { bg: "#F5F3FF", color: "#6D28D9" },
-  { bg: "#FFF7ED", color: "#C2410C" },
-  { bg: "#F0F9FF", color: "#0369A1" },
-  { bg: "#FFF1F2", color: "#BE123C" },
-  { bg: "#ECFDF5", color: "#065F46" },
-  { bg: "#FEF9C3", color: "#854D0E" },
-];
-
-function avatarPalette(name: string) {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = ((hash << 5) - hash) + name.charCodeAt(i);
-    hash |= 0;
-  }
-  return AVATAR_PALETTES[Math.abs(hash) % AVATAR_PALETTES.length];
+interface DoctorConsultation {
+  id: string;
+  patientName: string;
+  scheduledAt: string;
+  durationMinutes: number;
+  status: string;
+  chiefComplaint: string | null;
 }
 
 // ── Device status row ─────────────────────────────────────────────────────────
@@ -71,8 +57,6 @@ function DeviceRow({
   );
 }
 
-// ── Countdown formatter ───────────────────────────────────────────────────────
-
 function formatCountdown(s: number): string {
   if (s <= 0) return "Starting now";
   const h = Math.floor(s / 3600);
@@ -85,23 +69,22 @@ function formatCountdown(s: number): string {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
-export default function PatientWaitingRoomPage() {
+export default function DoctorWaitingRoomPage() {
   const { id }  = useParams<{ id: string }>();
   const router  = useRouter();
 
-  const [consultation, setConsultation] = useState<Consultation | null>(null);
+  const [consultation, setConsultation] = useState<DoctorConsultation | null>(null);
   const [loading,      setLoading]      = useState(true);
   const [secondsLeft,  setSecondsLeft]  = useState<number | null>(null);
   const [wifi,   setWifi]   = useState<DeviceStatus>("checking");
   const [mic,    setMic]    = useState<DeviceStatus>("checking");
   const [camera, setCamera] = useState<DeviceStatus>("checking");
 
-  // Load consultation
   useEffect(() => {
     async function load() {
       try {
-        const res  = await fetch(`/api/patient/consultations/${id}`);
-        const data = await res.json() as { consultation: Consultation };
+        const res  = await fetch(`/api/doctor/consultations/${id}`);
+        const data = await res.json() as { consultation: DoctorConsultation };
         setConsultation(data.consultation);
       } finally {
         setLoading(false);
@@ -148,8 +131,6 @@ export default function PatientWaitingRoomPage() {
     };
   }, []);
 
-  const canJoin = secondsLeft !== null && secondsLeft <= 15 * 60;
-
   if (loading) {
     return (
       <div className="min-h-screen bg-bg-sub flex items-center justify-center">
@@ -162,10 +143,6 @@ export default function PatientWaitingRoomPage() {
   const dateLabel = scheduledDate ? format(scheduledDate, "EEEE, MMMM d, yyyy") : "";
   const timeLabel = scheduledDate ? format(scheduledDate, "h:mm aa") : "";
 
-  const initials = consultation?.doctor.name
-    .split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase() ?? "";
-  const palette = consultation ? avatarPalette(consultation.doctor.name) : AVATAR_PALETTES[0];
-
   return (
     <div className="min-h-screen bg-bg-sub flex flex-col">
 
@@ -173,12 +150,12 @@ export default function PatientWaitingRoomPage() {
       <div className="px-6 py-4 shrink-0">
         <button
           type="button"
-          onClick={() => router.push("/patient/consultations")}
+          onClick={() => router.push("/doctor/dashboard")}
           className="flex items-center gap-2 text-[14px] text-text-sub
             hover:text-text-main transition-colors duration-200"
         >
           <ArrowLeft size={15} strokeWidth={1.75} />
-          Back to consultations
+          Back to dashboard
         </button>
       </div>
 
@@ -189,30 +166,21 @@ export default function PatientWaitingRoomPage() {
           style={{ animationDuration: "400ms" }}
         >
 
-          {/* Doctor card */}
+          {/* Patient badge */}
           {consultation && (
             <div className="bg-bg-main rounded-xl border border-elements p-5 flex items-center gap-4">
-              <div
-                className="w-16 h-16 rounded-full overflow-hidden shrink-0 flex items-center justify-center border border-elements/50"
-                style={{ backgroundColor: palette.bg }}
-              >
-                {consultation.doctor.profileImage ? (
-                  <img
-                    src={consultation.doctor.profileImage}
-                    alt={consultation.doctor.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-[18px] font-medium select-none" style={{ color: palette.color }}>
-                    {initials}
-                  </span>
-                )}
+              <div className="w-16 h-16 rounded-full bg-brand-sub flex items-center justify-center shrink-0">
+                <span className="text-[18px] font-medium text-brand select-none">
+                  {consultation.patientName.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
+                </span>
               </div>
               <div>
-                <p className="text-[17px] font-medium text-text-main">Dr. {consultation.doctor.name}</p>
-                <p className="text-[14px] text-text-sub mt-0.5">
-                  {consultation.doctor.specializations[0] ?? "General Practitioner"}
-                </p>
+                <p className="text-[17px] font-medium text-text-main">{consultation.patientName}</p>
+                {consultation.chiefComplaint && (
+                  <p className="text-[14px] text-text-sub mt-0.5">
+                    &ldquo;{consultation.chiefComplaint}&rdquo;
+                  </p>
+                )}
               </div>
             </div>
           )}
@@ -220,10 +188,14 @@ export default function PatientWaitingRoomPage() {
           {/* Heading */}
           <div className="text-center flex flex-col gap-2">
             <h1 className="text-[28px] font-medium text-text-main tracking-[-0.03em]">
-              You&apos;re in the waiting room.
+              Your patient is waiting.
             </h1>
             <p className="text-[15px] text-text-sub leading-relaxed">
-              Your doctor will be with you shortly. Take a moment to get ready.
+              Your consultation with{" "}
+              <span className="text-text-main font-medium">
+                {consultation?.patientName ?? "your patient"}
+              </span>{" "}
+              starts soon. Get ready.
             </p>
           </div>
 
@@ -266,44 +238,21 @@ export default function PatientWaitingRoomPage() {
               <div className="flex items-center gap-2.5">
                 <Clock size={14} className="text-text-sub shrink-0" strokeWidth={1.75} />
                 <span className="text-[14px] text-text-sub">
-                  {timeLabel} · with Dr. {consultation.doctor.name}
+                  {timeLabel} · with {consultation.patientName}
                 </span>
               </div>
             </div>
           )}
 
-          {/* Join button with tooltip */}
-          <div className="relative group/tooltip">
-            <button
-              type="button"
-              disabled={!canJoin}
-              onClick={() => router.push(`/patient/consultations/${id}/session`)}
-              className={`w-full h-12 rounded-xl text-[16px] font-medium transition-all duration-200
-                ${canJoin
-                  ? "bg-brand text-white hover:opacity-90 active:scale-[0.99]"
-                  : "bg-elements text-text-sub cursor-not-allowed"
-                }`}
-            >
-              Join consultation
-            </button>
-            {!canJoin && (
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2
-                opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200
-                pointer-events-none z-50 flex flex-col items-center">
-                <div className="px-3 py-1.5 bg-text-main/80 rounded-lg text-[12px] text-white/90 whitespace-nowrap">
-                  You can join 15 minutes before your session
-                </div>
-                <div
-                  className="w-0 h-0"
-                  style={{
-                    borderLeft:  "5px solid transparent",
-                    borderRight: "5px solid transparent",
-                    borderTop:   "5px solid rgba(17,17,17,0.80)",
-                  }}
-                />
-              </div>
-            )}
-          </div>
+          {/* CTA — always active for doctors */}
+          <button
+            type="button"
+            onClick={() => router.push(`/doctor/consultations/${id}/session`)}
+            className="w-full h-12 rounded-xl bg-brand text-white text-[16px] font-medium
+              hover:opacity-90 active:scale-[0.99] transition-all duration-200"
+          >
+            Start consultation
+          </button>
 
         </div>
       </div>

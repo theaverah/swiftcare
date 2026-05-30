@@ -311,6 +311,7 @@ export function UpcomingAppointmentCard() {
         consultation={cancelTarget}
         onClose={() => setCancelTarget(null)}
         onCancelled={() => { setCancelTarget(null); fetchConsultations(); }}
+        onRestored={() => { setCancelTarget(null); fetchConsultations(); }}
       />
     </>
   );

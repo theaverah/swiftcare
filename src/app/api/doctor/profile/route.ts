@@ -9,6 +9,42 @@ const DAY_TO_NUM: Record<string, number> = {
   Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6,
 };
 
+export async function GET(req: NextRequest) {
+  try {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (!token?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    await dbConnect();
+    const [user, profile] = await Promise.all([
+      User.findById(token.id).select("name email").lean() as Promise<{ name: string; email: string } | null>,
+      DoctorProfile.findOne({ userId: token.id })
+        .select("specializations bio profileImage consultationFee yearsOfExperience languages")
+        .lean() as Promise<{
+          specializations?: string[];
+          bio?: string;
+          profileImage?: string;
+          consultationFee?: number;
+          yearsOfExperience?: number;
+          languages?: string[];
+        } | null>,
+    ]);
+
+    return NextResponse.json({
+      name:             user?.name ?? "",
+      email:            user?.email ?? "",
+      specializations:  profile?.specializations  ?? [],
+      bio:              profile?.bio              ?? "",
+      profileImage:     profile?.profileImage     ?? null,
+      consultationFee:  profile?.consultationFee  ?? null,
+      yearsOfExperience: profile?.yearsOfExperience ?? null,
+      languages:        profile?.languages        ?? ["English"],
+    });
+  } catch (err) {
+    console.error("[doctor/profile GET]", err);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     await dbConnect();

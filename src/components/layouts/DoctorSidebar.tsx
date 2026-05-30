@@ -1,83 +1,93 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
-import {
-  LayoutDashboard,
-  Calendar,
-  Clock,
-  Users,
-  FileText,
-  Bell,
-  User,
-  LogOut,
-} from "lucide-react";
+import { useSession } from "next-auth/react";
+import { House, Calendar } from "lucide-react";
+import { ProfilePopover }    from "@/components/patient/sidebar/ProfilePopover";
+import { DoctorProfileModal } from "@/components/doctor/profile/DoctorProfileModal";
 
 const NAV_ITEMS = [
-  { label: "Dashboard",    href: "/doctor/dashboard",     icon: LayoutDashboard },
-  { label: "Schedule",     href: "/doctor/schedule",      icon: Clock },
-  { label: "Appointments", href: "/doctor/appointments",  icon: Calendar },
-  { label: "Patients",     href: "/doctor/patients",      icon: Users },
-  { label: "Records",      href: "/doctor/records",       icon: FileText },
-  { label: "Notifications",href: "/doctor/notifications", icon: Bell },
-  { label: "Profile",      href: "/doctor/profile",       icon: User },
+  { label: "Home",          href: "/doctor/dashboard",      icon: House     },
+  { label: "Consultations", href: "/doctor/consultations",  icon: Calendar  },
 ];
 
 export function DoctorSidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  const name     = session?.user?.name ?? "Doctor";
+  const email    = session?.user?.email ?? "";
+  const initials = name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
 
   return (
-    <aside className="w-60 shrink-0 flex flex-col bg-bg-sub border-r border-elements h-full">
-      {/* Logo */}
-      <div className="h-16 flex items-center px-6 border-b border-elements">
-        <Link href="/doctor/dashboard">
-          <img src="/horizontal%20logo.png" alt="SwiftCare" className="h-15 w-auto object-contain" />
-        </Link>
-      </div>
+    <>
+      <aside
+        className="w-66 shrink-0 flex flex-col bg-bg-main border-r border-elements h-full animate-fadeInDown"
+        style={{ animationDelay: "0ms", animationDuration: "400ms" }}
+      >
+        {/* Logo */}
+        <div className="h-16 flex items-center px-6 shrink-0 gap-2.5 mt-6">
+          <Link href="/doctor/dashboard">
+            <img src="/horizontal%20logo.png" alt="SwiftCare" className="h-15 w-auto object-contain" />
+          </Link>
+        </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 flex flex-col gap-1 overflow-y-auto">
-        {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
-          const isActive = pathname === href || pathname.startsWith(href + "/");
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={`
-                flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium
-                transition-colors duration-base
-                ${isActive
-                  ? "bg-brand-sub text-brand"
-                  : "text-text-sub hover:bg-elements hover:text-text-main"
-                }
-              `}
-            >
-              <Icon
-                size={18}
-                className={isActive ? "text-brand" : "text-text-sub"}
-              />
-              {label}
-            </Link>
-          );
-        })}
-      </nav>
+        {/* Nav */}
+        <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5 overflow-y-auto">
+          {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
+            const isActive = pathname === href || pathname.startsWith(href + "/");
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[16px] font-medium
+                  transition-colors duration-200 ${
+                  isActive
+                    ? "bg-bg-sub text-text-main"
+                    : "text-text-main hover:bg-bg-sub"
+                }`}
+              >
+                <Icon size={18} className="text-text-main" strokeWidth={isActive ? 2 : 1.75} />
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
 
-      {/* Sign out */}
-      <div className="px-3 py-4 border-t border-elements">
-        <button
-          onClick={() => signOut({ callbackUrl: "/login" })}
-          className="
-            w-full flex items-center gap-3 px-3 py-2.5 rounded-lg
-            text-[14px] font-medium text-text-sub
-            hover:bg-elements hover:text-text-main
-            transition-colors duration-base
-          "
-        >
-          <LogOut size={18} className="text-text-sub" />
-          Sign out
-        </button>
-      </div>
-    </aside>
+        {/* Doctor profile trigger — same pattern as PatientSidebar */}
+        <div className="px-3 py-1.5 border-t border-elements shrink-0 relative">
+          <ProfilePopover
+            name={name}
+            email={email}
+            initials={initials}
+            isOpen={popoverOpen}
+            onClose={() => setPopoverOpen(false)}
+            onViewProfile={() => setProfileOpen(true)}
+          />
+          <button
+            type="button"
+            onClick={() => setPopoverOpen(v => !v)}
+            className="group w-full flex items-center gap-4 px-3 py-2.5 rounded-lg
+              hover:bg-bg-sub transition-colors duration-200 text-left"
+          >
+            <div className="w-10 h-10 rounded-full bg-brand-sub flex items-center justify-center
+              text-brand text-[13px] font-medium shrink-0
+              transition-transform duration-200 ease-out group-hover:scale-110">
+              {initials}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[16px] font-medium text-text-main truncate leading-tight">{name}</p>
+              <p className="text-[14px] text-text-sub leading-tight">Doctor</p>
+            </div>
+          </button>
+        </div>
+      </aside>
+
+      <DoctorProfileModal isOpen={profileOpen} onClose={() => setProfileOpen(false)} />
+    </>
   );
 }

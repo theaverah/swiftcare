@@ -19,20 +19,20 @@ const SEED_DOCTORS = [
   // -- 20 original doctors (fees adjusted, city added) ---------------------------
   {
     email: "doctor@test.com",
-    name:  "Maria Cristina Reyes",
+    name:  "Maria Cristina Reyes-Santos",
     profile: {
       specializations:   ["General Practice", "Internal Medicine"],
-      bio:               "Dr. Reyes is a board-certified internist with over 10 years of experience. She is committed to providing compassionate, evidence-based care to every patient.",
-      licenseNumber:     "0012345",
-      yearsOfExperience: 10,
-      consultationFee:   500,
-      languages:         ["English", "Filipino (Tagalog)"],
+      bio:               "A warm, patient-centered physician with over a decade of experience in general and internal medicine. She believes in treating the whole person, not just the condition.",
+      licenseNumber:     "4232331",
+      yearsOfExperience: 12,
+      consultationFee:   800,
+      languages:         ["English", "Filipino (Tagalog)", "Cebuano"],
       city:              "Manila",
-      availability:      days([1,2,3,4,5], "8:00 AM", "5:00 PM"),
-      rating: 4.8, totalReviews: 124,
+      availability:      days([1,2,3,4,5], "9:00 AM", "5:00 PM"),
+      rating: 4.9, totalReviews: 187,
       education:        { medicalSchool: "UP College of Medicine", residency: "Internal Medicine, Philippine General Hospital" },
-      certifications:   ["Philippine Board of Internal Medicine", "Fellow of the Philippine College of Physicians"],
-      affiliations:     ["Philippine College of Physicians", "Philippine Medical Association"],
+      certifications:   ["Philippine Board of Internal Medicine", "Basic Life Support Certified"],
+      affiliations:     ["Philippine Medical Association", "Philippine College of Physicians"],
     },
   },
   {
@@ -623,8 +623,8 @@ export async function POST() {
       return new Date(y, m - 1, day, hour, minute, 0, 0);
     }
 
-    // -- Wipe existing test consultations + health records ---------------------
-    await Appointment.deleteMany({ patientId });
+    // -- Wipe patient's own appointments only (not the doctor seed data) --------
+    await Appointment.deleteMany({ patientId, forSelf: true });
     await HealthRecord.deleteMany({ patientId });
 
     // -- Consultations ---------------------------------------------------------
@@ -791,6 +791,267 @@ export async function POST() {
 
   } catch (err) {
     console.error("[seed/test-accounts POST]", err);
+    return NextResponse.json({ error: "Seed failed", detail: String(err) }, { status: 500 });
+  }
+}
+
+// -- PATCH — seed doctor@test.com consultations and health records ---------------
+
+export async function PATCH() {
+  try {
+    await dbConnect();
+
+    const doctor = await User.findOne({ email: "doctor@test.com" }).lean() as
+      { _id: mongoose.Types.ObjectId } | null;
+    if (!doctor) return NextResponse.json({ error: "Run GET first" }, { status: 400 });
+
+    const patient = await User.findOne({ email: "patient@test.com" }).lean() as
+      { _id: mongoose.Types.ObjectId } | null;
+    if (!patient) return NextResponse.json({ error: "Run GET first to create patient@test.com" }, { status: 400 });
+
+    const doctorId  = doctor._id;
+    const patientId = patient._id;
+
+    // -- Wipe existing doctor appointments + records ---------------------------
+    const existingAppts = await Appointment.find({ doctorId }).select("_id").lean() as { _id: mongoose.Types.ObjectId }[];
+    const apptIds = existingAppts.map(a => a._id);
+    await HealthRecord.deleteMany({ appointmentId: { $in: apptIds } });
+    await Appointment.deleteMany({ doctorId });
+
+    // -- Date helpers ----------------------------------------------------------
+    function today(hour: number, minute = 0) {
+      const d = new Date();
+      d.setHours(hour, minute, 0, 0);
+      return d;
+    }
+    function fromNow(daysOffset: number, hour: number, minute = 0) {
+      const d = new Date();
+      d.setDate(d.getDate() + daysOffset);
+      d.setHours(hour, minute, 0, 0);
+      return d;
+    }
+
+    const base = {
+      doctorId,
+      patientId,
+      forSelf:          false,
+      consultationType: "video" as const,
+      durationMinutes:  30,
+      paymentStatus:    "paid",
+    };
+
+    // -- Today's consultations -------------------------------------------------
+    await Appointment.insertMany([
+      {
+        ...base,
+        patientName:    "Juan dela Cruz",
+        scheduledAt:    today(10, 0),
+        status:         "confirmed",
+        chiefComplaint: "Recurring headaches and dizziness for 2 weeks",
+      },
+      {
+        ...base,
+        patientName:    "Maria Santos",
+        scheduledAt:    today(14, 0),
+        status:         "confirmed",
+        chiefComplaint: "Follow-up for hypertension management",
+      },
+    ]);
+
+    // -- Upcoming consultations ------------------------------------------------
+    await Appointment.insertMany([
+      {
+        ...base,
+        patientName:    "Ana Reyes",
+        scheduledAt:    fromNow(1, 9, 0),
+        status:         "confirmed",
+        chiefComplaint: "Severe menstrual cramps",
+      },
+      {
+        ...base,
+        patientName:    "Roberto Cruz",
+        scheduledAt:    fromNow(2, 11, 0),
+        status:         "confirmed",
+        chiefComplaint: "Skin rash on left arm",
+      },
+      {
+        ...base,
+        patientName:    "Liza Gomez",
+        scheduledAt:    fromNow(4, 15, 0),
+        status:         "confirmed",
+        chiefComplaint: "Annual physical checkup",
+      },
+    ]);
+
+    // -- Past consultations (completed, this month for earnings) ---------------
+    const [pastBenito, pastCelia, pastRamon, pastLuisa, pastDante] = await Appointment.insertMany([
+      {
+        ...base,
+        patientName:    "Benito Aquino",
+        scheduledAt:    fromNow(-2, 10, 0),
+        status:         "completed",
+        chiefComplaint: "Persistent cough and mild fever for 5 days",
+      },
+      {
+        ...base,
+        patientName:    "Celia Fernandez",
+        scheduledAt:    fromNow(-4, 14, 30),
+        status:         "completed",
+        chiefComplaint: "Type 2 diabetes management and medication review",
+      },
+      {
+        ...base,
+        patientName:    "Ramon Villanueva",
+        scheduledAt:    fromNow(-6, 9, 0),
+        status:         "completed",
+        chiefComplaint: "Lower back pain radiating to left leg",
+      },
+      {
+        ...base,
+        patientName:    "Luisa Bautista",
+        scheduledAt:    fromNow(-8, 11, 0),
+        status:         "completed",
+        chiefComplaint: "Routine prenatal check-up at 28 weeks",
+      },
+      {
+        ...base,
+        patientName:    "Dante Ocampo",
+        scheduledAt:    fromNow(-10, 15, 0),
+        status:         "completed",
+        chiefComplaint: "Hypertension follow-up and lipid panel review",
+      },
+    ]);
+
+    // -- Health records for past consultations ---------------------------------
+    await HealthRecord.insertMany([
+
+      // Benito Aquino — consultation note + prescription
+      {
+        patientId, doctorId, appointmentId: pastBenito._id,
+        type:     "consultation_note",
+        issuedAt: pastBenito.scheduledAt,
+        notes:    "Patient presents with productive cough, low-grade fever (37.8°C), and mild pharyngitis of 5 days duration. Lungs are clear to auscultation bilaterally with no wheeze or crackles. Assessment is acute upper respiratory tract infection, likely viral in origin. Advised adequate hydration, rest, and symptomatic management. Antibiotics not indicated at this time. Patient instructed to return if fever persists beyond 3 days or if symptoms worsen.",
+      },
+      {
+        patientId, doctorId, appointmentId: pastBenito._id,
+        type:     "prescription",
+        issuedAt: pastBenito.scheduledAt,
+        medications: [
+          { name: "Paracetamol (Biogesic)",    dosage: "500mg", frequency: "Every 6 hours as needed for fever or pain", duration: "5 days" },
+          { name: "Guaifenesin (Robitussin)",  dosage: "100mg/5mL", frequency: "10mL every 4 hours for cough",         duration: "5 days" },
+          { name: "Ascorbic Acid (Vitamin C)", dosage: "500mg", frequency: "Once daily after meals",                   duration: "2 weeks" },
+        ],
+      },
+
+      // Celia Fernandez — consultation note + prescription + lab request
+      {
+        patientId, doctorId, appointmentId: pastCelia._id,
+        type:     "consultation_note",
+        issuedAt: pastCelia.scheduledAt,
+        notes:    "Patient is a known Type 2 diabetic, here for quarterly follow-up. Self-monitored fasting blood glucose readings have been ranging 140–180 mg/dL, above target of <130. Reports good adherence to Metformin but admits to dietary lapses during weekends. BP is 128/84 mmHg. Weight stable at 72 kg. HbA1c result pending. Adjusted Metformin dose upward and counseled on low-glycemic diet. Emphasized the importance of daily glucose monitoring. Repeat labs in 3 months.",
+      },
+      {
+        patientId, doctorId, appointmentId: pastCelia._id,
+        type:     "prescription",
+        issuedAt: pastCelia.scheduledAt,
+        medications: [
+          { name: "Metformin (Glucophage)",  dosage: "1000mg", frequency: "Twice daily with meals",  duration: "3 months" },
+          { name: "Glimepiride (Amaryl)",    dosage: "2mg",    frequency: "Once daily before breakfast", duration: "3 months" },
+          { name: "Losartan (Cozaar)",       dosage: "50mg",   frequency: "Once daily",               duration: "3 months" },
+        ],
+      },
+      {
+        patientId, doctorId, appointmentId: pastCelia._id,
+        type:     "lab_request",
+        issuedAt: pastCelia.scheduledAt,
+        tests: [
+          { name: "HbA1c (Glycated Hemoglobin)" },
+          { name: "Fasting Blood Glucose" },
+          { name: "Lipid Panel (Cholesterol, LDL, HDL, Triglycerides)" },
+          { name: "Kidney Function Test (Creatinine, eGFR)" },
+        ],
+      },
+
+      // Ramon Villanueva — consultation note + prescription
+      {
+        patientId, doctorId, appointmentId: pastRamon._id,
+        type:     "consultation_note",
+        issuedAt: pastRamon.scheduledAt,
+        notes:    "Patient reports a 2-week history of lower back pain radiating to the left leg with occasional numbness. Pain is worse with prolonged sitting and improves with walking. No bowel or bladder symptoms. Neurological exam reveals mild decreased sensation over the L4 dermatome. Working diagnosis is lumbar radiculopathy, likely L4–L5 disc involvement. Prescribed NSAID analgesia and muscle relaxant. Referred to physical therapy for core strengthening. MRI of the lumbar spine ordered. Advised to avoid heavy lifting.",
+      },
+      {
+        patientId, doctorId, appointmentId: pastRamon._id,
+        type:     "prescription",
+        issuedAt: pastRamon.scheduledAt,
+        medications: [
+          { name: "Celecoxib (Celebrex)",       dosage: "200mg", frequency: "Once daily after meals",            duration: "2 weeks" },
+          { name: "Methocarbamol (Robaxin)",     dosage: "500mg", frequency: "Three times daily as needed",      duration: "1 week" },
+          { name: "Pregabalin (Lyrica)",         dosage: "75mg",  frequency: "Twice daily for neuropathic pain", duration: "4 weeks" },
+        ],
+      },
+
+      // Luisa Bautista — consultation note + prescription + lab request
+      {
+        patientId, doctorId, appointmentId: pastLuisa._id,
+        type:     "consultation_note",
+        issuedAt: pastLuisa.scheduledAt,
+        notes:    "Patient is a 28-year-old primigravida at 28 weeks AOG here for routine prenatal check-up. Fetal heart tones heard at 148 bpm. Fundic height is 28 cm, appropriate for gestational age. BP 118/76 mmHg. Mild pedal edema noted, advised to elevate feet and reduce salt intake. Patient reports good fetal movement. No vaginal bleeding or leakage. Iron and folic acid supplementation ongoing. Glucose challenge test (GCT) ordered to screen for gestational diabetes. Next visit in 4 weeks.",
+      },
+      {
+        patientId, doctorId, appointmentId: pastLuisa._id,
+        type:     "prescription",
+        issuedAt: pastLuisa.scheduledAt,
+        medications: [
+          { name: "Ferrous Sulfate + Folic Acid (Obimin)", dosage: "1 tablet", frequency: "Once daily after breakfast", duration: "Continue until delivery" },
+          { name: "Calcium Carbonate",                     dosage: "500mg",    frequency: "Twice daily after meals",    duration: "Continue until delivery" },
+        ],
+      },
+      {
+        patientId, doctorId, appointmentId: pastLuisa._id,
+        type:     "lab_request",
+        issuedAt: pastLuisa.scheduledAt,
+        tests: [
+          { name: "Glucose Challenge Test (GCT) — 50g oral glucose load" },
+          { name: "Complete Blood Count (CBC)" },
+          { name: "Urinalysis" },
+          { name: "Obstetric Ultrasound (3rd Trimester)" },
+        ],
+      },
+
+      // Dante Ocampo — consultation note + prescription
+      {
+        patientId, doctorId, appointmentId: pastDante._id,
+        type:     "consultation_note",
+        issuedAt: pastDante.scheduledAt,
+        notes:    "Patient is a 55-year-old male with a 10-year history of hypertension presenting for follow-up. BP today is 148/92 mmHg despite reported compliance with Amlodipine 5mg. Lipid panel from last month showed LDL at 162 mg/dL, above the target of <130. Patient reports mild ankle edema which may be a side effect of the calcium channel blocker. Plan to uptitrate Amlodipine and add Rosuvastatin for dyslipidemia. Discussed cardiovascular risk modification including smoking cessation and a low-sodium diet. Follow-up in 6 weeks with repeat BP monitoring.",
+      },
+      {
+        patientId, doctorId, appointmentId: pastDante._id,
+        type:     "prescription",
+        issuedAt: pastDante.scheduledAt,
+        medications: [
+          { name: "Amlodipine (Norvasc)",      dosage: "10mg", frequency: "Once daily",                                duration: "3 months" },
+          { name: "Rosuvastatin (Crestor)",    dosage: "20mg", frequency: "Once daily at bedtime",                     duration: "3 months" },
+          { name: "Aspirin (low-dose)",         dosage: "80mg", frequency: "Once daily after breakfast",               duration: "Ongoing" },
+        ],
+      },
+    ]);
+
+    // -- Flag today's appointments on Juan (for visible dashboard testing) -----
+    // (already done above via today(10,0) and today(14,0))
+
+    return NextResponse.json({
+      success: true,
+      message: "Seeded doctor@test.com with 2 today + 3 upcoming + 5 past consultations and health records",
+      todayConsultations:    2,
+      upcomingConsultations: 3,
+      pastConsultations:     5,
+      healthRecords:         15,
+      estimatedEarningsThisMonth: `₱${(5 * 800).toLocaleString("en-PH")}`,
+    });
+
+  } catch (err) {
+    console.error("[seed/test-accounts PATCH]", err);
     return NextResponse.json({ error: "Seed failed", detail: String(err) }, { status: 500 });
   }
 }

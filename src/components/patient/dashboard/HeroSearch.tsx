@@ -27,7 +27,11 @@ const CHIPS = [
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export function HeroSearch() {
+interface HeroSearchProps {
+  onSubmit?: (text: string, file?: File | null) => void;
+}
+
+export function HeroSearch({ onSubmit }: HeroSearchProps = {}) {
   const router = useRouter();
 
   const [query,            setQuery]            = useState("");
@@ -83,11 +87,16 @@ export function HeroSearch() {
 
   function handleSubmit(q?: string) {
     const text = (q ?? query).trim();
-    router.push(
-      text
-        ? `/patient/ai-recommend?q=${encodeURIComponent(text)}`
-        : "/patient/ai-recommend"
-    );
+    if (!text && !file) return;
+    if (onSubmit) {
+      onSubmit(text, file);
+    } else {
+      router.push(
+        text
+          ? `/patient/ai-recommend?q=${encodeURIComponent(text)}`
+          : "/patient/ai-recommend"
+      );
+    }
   }
 
   function handleChip(chip: string) {
@@ -103,11 +112,14 @@ export function HeroSearch() {
       if (i < chip.length) {
         setTimeout(typeNext, 16 + Math.random() * 10);
       } else {
-        // Typing done — animate send button then navigate
         setTimeout(() => {
           setIsSending(true);
           setTimeout(() => {
-            router.push(`/patient/ai-recommend?q=${encodeURIComponent(chip)}`);
+            if (onSubmit) {
+              onSubmit(chip, file);
+            } else {
+              router.push(`/patient/ai-recommend?q=${encodeURIComponent(chip)}`);
+            }
           }, 260);
         }, 80);
       }

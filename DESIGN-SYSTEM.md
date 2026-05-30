@@ -166,6 +166,86 @@ import { Pencil, Calendar, Bell } from "lucide-react";
 
 ## Component Guidelines
 
+### Card Layout Rules
+
+All content cards (consultations, health records, dashboard cards) follow this structure:
+
+- `flex flex-col h-full` on the card — fills grid row height for consistent sizing
+- `gap-4` between content sections
+- The divider (`h-px bg-elements/50`) separates the header row from body content — add `mt-2` to give 8px extra breathing room after the header
+- **Action buttons always anchor to bottom right**: use `mt-auto pt-4 flex justify-end gap-2` on the actions container
+- Button order (left → right): least prominent → most prominent. Destructive/ghost on the far left, primary on the far right
+
+```tsx
+{/* Actions — pinned to bottom right */}
+<div className="mt-auto pt-4 flex justify-end gap-2">
+  <button className="... text-error ...">Cancel</button>       {/* ghost, leftmost */}
+  <button className="... border border-elements ...">Secondary</button>
+  <button className="... bg-brand text-white ...">Primary</button>  {/* rightmost */}
+</div>
+```
+
+---
+
+### Modal Sizing
+
+All action modals (confirmation, cancellation, reschedule, success states) use a consistent fixed size:
+
+- **Width:** `w-140` (560px)
+- **Height:** `h-175` (700px)
+- Scrollable body via `flex-1 overflow-y-auto` between the header and sticky footer
+- Content is vertically centered in the body with `flex flex-col items-center justify-center`
+
+```tsx
+<div className="relative w-140 h-175 bg-bg-main rounded-xl shadow-[0_8px_40px_rgba(0,0,0,0.16)] flex flex-col overflow-hidden">
+  {/* Optional header */}
+  <div className="shrink-0 px-6 py-5 border-b border-elements flex items-center justify-between">...</div>
+  {/* Body */}
+  <div className="flex-1 overflow-y-auto px-10 py-6 flex flex-col items-center justify-center">...</div>
+  {/* Sticky footer */}
+  <div className="shrink-0 px-6 py-4 border-t border-elements">...</div>
+</div>
+```
+
+---
+
+### Success Modal State
+
+When a modal transitions to a success/confirmation state:
+
+- Hide the modal header and its divider entirely
+- The scrollable body becomes `flex flex-col items-center justify-center` to vertically and horizontally center the content
+- Use `/illustrations/success.svg` as the illustration (`w-72`)
+- Content layout: `flex flex-col items-center gap-4 text-center`
+- Heading: `text-[20px] font-medium text-text-main tracking-[-0.03em]`
+- Body copy: `text-[16px] text-text-sub`, with key values bolded as `font-medium text-text-main`
+- The primary CTA ("Done") stays anchored in the sticky footer — same position and style as the action button it replaces
+- Increased body padding: `px-10` for breathing room on success screens
+
+```tsx
+{/* Success state */}
+<div className="flex-1 flex flex-col items-center justify-center px-10 py-6">
+  <div className="flex flex-col items-center gap-4 text-center animate-fadeInDown">
+    <img src="/illustrations/success.svg" alt="" aria-hidden className="w-72 max-w-full select-none" />
+    <div className="flex flex-col gap-2">
+      <p className="text-[20px] font-medium text-text-main tracking-[-0.03em]">All set!</p>
+      <p className="text-[16px] text-text-sub">
+        Confirmation copy with <span className="font-medium text-text-main">bold values</span>.
+      </p>
+    </div>
+  </div>
+</div>
+
+{/* Footer — always present */}
+<div className="shrink-0 px-6 py-4 border-t border-elements">
+  <button className="w-full h-11 rounded-lg bg-text-main text-brand-sub text-[16px] font-medium ...">
+    Done
+  </button>
+</div>
+```
+
+---
+
 ### Section Headers
 
 Used wherever a section has a title + supporting subtext (e.g. "Personal Information" / "The basics we use to identify you…").

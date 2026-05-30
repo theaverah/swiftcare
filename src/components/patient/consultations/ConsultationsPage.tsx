@@ -6,8 +6,9 @@ import { toast } from "sonner";
 import type { Consultation, ConsultationDoctor } from "@/types/consultation";
 import type { Doctor, DoctorAvailability } from "@/types/doctor";
 import { ConsultationCard, ConsultationCardSkeleton } from "./ConsultationCard";
-import { CancelModal }    from "./CancelModal";
-import { BookingModal }   from "@/components/patient/booking/BookingModal";
+import { CancelModal }      from "./CancelModal";
+import { BookingModal }     from "@/components/patient/booking/BookingModal";
+import { RescheduleModal }  from "@/components/patient/booking/RescheduleModal";
 
 // ── Tab types ─────────────────────────────────────────────────────────────────
 
@@ -42,9 +43,13 @@ function toDoctorType(cd: ConsultationDoctor): Doctor {
     specializations:   cd.specializations,
     consultationFee:   cd.consultationFee,
     languages:         [],
+    city:              null,
     yearsOfExperience: null,
     licenseNumber:     null,
     bio:               null,
+    education:         null,
+    certifications:    [],
+    affiliations:      [],
     rating:            0,
     totalReviews:      0,
     availability:      cd.availability as DoctorAvailability[],
@@ -110,8 +115,9 @@ export function ConsultationsPage() {
   const [tab,           setTab]           = useState<Tab>("upcoming");
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [loading,       setLoading]       = useState(true);
-  const [cancelTarget,  setCancelTarget]  = useState<Consultation | null>(null);
-  const [booking,       setBooking]       = useState<BookingTarget | null>(null);
+  const [cancelTarget,     setCancelTarget]     = useState<Consultation | null>(null);
+  const [rescheduleTarget, setRescheduleTarget] = useState<Consultation | null>(null);
+  const [booking,          setBooking]          = useState<BookingTarget | null>(null);
   const tabsRef                           = useRef<HTMLDivElement>(null);
   const [indicator,     setIndicator]     = useState({ left: 0, width: 0 });
 
@@ -150,11 +156,7 @@ export function ConsultationsPage() {
   }
 
   function openReschedule(c: Consultation) {
-    setBooking({
-      doctor:         toDoctorType(c.doctor),
-      rescheduleMode: true,
-      appointmentId:  c.id,
-    });
+    setRescheduleTarget(c);
   }
 
   function openBookAgain(c: Consultation) {
@@ -238,7 +240,7 @@ export function ConsultationsPage() {
           filtered.map((c, i) => (
             <div
               key={c.id}
-              className="animate-fadeInDown"
+              className="animate-fadeInDown h-full"
               style={{ animationDelay: `${i * 60}ms`, animationDuration: "400ms" }}
             >
               <ConsultationCard
@@ -261,17 +263,26 @@ export function ConsultationsPage() {
         onRestored={handleRestored}
       />
 
-      {/* Booking/reschedule modal */}
+      {/* Reschedule modal */}
+      {rescheduleTarget && (
+        <RescheduleModal
+          doctor={toDoctorType(rescheduleTarget.doctor)}
+          appointmentId={rescheduleTarget.id}
+          isOpen={true}
+          onClose={() => setRescheduleTarget(null)}
+          onRescheduled={() => fetchConsultations()}
+        />
+      )}
+
+      {/* Book again modal */}
       {booking && (
         <BookingModal
           doctor={booking.doctor}
           isOpen={true}
           onClose={() => setBooking(null)}
-          rescheduleMode={booking.rescheduleMode}
-          appointmentId={booking.appointmentId}
           onRescheduled={() => {
             fetchConsultations();
-            toast.success("Consultation rescheduled.");
+            toast.success("Consultation booked.");
           }}
         />
       )}

@@ -4,42 +4,33 @@ import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import type { Notification } from "@/types/notification";
 
-const DUMMY: Notification[] = [
-  {
-    id: "1",
-    type: "appointment_booked",
-    message: "Your appointment with Dr. Maria Reyes has been confirmed for June 2 at 10:00 AM.",
-    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    read: false,
-    href: "/patient/appointments",
-  },
-  {
-    id: "2",
-    type: "upcoming_reminder",
-    message: "Reminder: You have an appointment tomorrow at 10:00 AM with Dr. Reyes.",
-    timestamp: new Date(Date.now() - 26 * 60 * 60 * 1000),
-    read: true,
-    href: "/patient/appointments",
-  },
-];
-
 export function useNotifications() {
   const { data: session } = useSession();
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
+  // Fetch persisted notifications on mount
   useEffect(() => {
-    // TODO: replace with GET /api/patient/notifications
-    setNotifications(DUMMY);
+    async function load() {
+      try {
+        const res  = await fetch("/api/patient/notifications");
+        if (!res.ok) return;
+        const data = await res.json() as { notifications: (Omit<Notification, "timestamp" | "read"> & { timestamp: string; read: boolean })[] };
+        setNotifications(
+          data.notifications.map(n => ({ ...n, timestamp: new Date(n.timestamp) }))
+        );
+      } catch { /* silent */ }
+    }
+    load();
   }, []);
 
-  // Pusher subscription for real-time notifications
+  // Pusher real-time subscription
   useEffect(() => {
-    const key     = process.env.NEXT_PUBLIC_PUSHER_KEY;
+    const key    = process.env.NEXT_PUBLIC_PUSHER_KEY;
     const cluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER;
-    const userId  = (session?.user as { id?: string } | undefined)?.id;
+    const userId = (session?.user as { id?: string } | undefined)?.id;
     if (!key || !cluster || !userId) return;
 
-    let pusher: import("pusher-js").default | undefined;
+    let pusher:  import("pusher-js").default | undefined;
     let channel: ReturnType<import("pusher-js").default["subscribe"]> | undefined;
 
     (async () => {
@@ -47,7 +38,7 @@ export function useNotifications() {
       pusher  = new Pusher(key, { cluster });
       channel = pusher.subscribe(`patient-${userId}`);
       channel.bind("new-notification", (data: Omit<Notification, "timestamp"> & { timestamp: string }) => {
-        setNotifications((prev) => [
+        setNotifications(prev => [
           { ...data, timestamp: new Date(data.timestamp), read: false },
           ...prev,
         ]);
@@ -60,17 +51,19 @@ export function useNotifications() {
     };
   }, [(session?.user as { id?: string } | undefined)?.id]);
 
-  const markAsRead = useCallback((id: string) => {
-    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
-    // TODO: POST /api/patient/notifications/read { id }
+  const markAsRead = useCallback(async (id: string) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+    try { await fetch("/api/patient/notifications", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) }); }
+    catch { /* silent */ }
   }, []);
 
-  const markAllAsRead = useCallback(() => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-    // TODO: POST /api/patient/notifications/read-all
+  const markAllAsRead = useCallback(async () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    try { await fetch("/api/patient/notifications", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ all: true }) }); }
+    catch { /* silent */ }
   }, []);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   return { notifications, unreadCount, markAsRead, markAllAsRead };
 }

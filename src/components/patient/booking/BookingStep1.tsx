@@ -224,7 +224,7 @@ export function BookingStep1({ doctor, data, onChange, onContinue, rescheduleMod
       {/* Time preference */}
       {data.date && (
         <div className="flex flex-col gap-2 animate-fadeInDown" style={{ animationDuration: "250ms" }}>
-          <p className="text-[14px] font-medium text-text-main">Time preference</p>
+          <p className="text-[16px] font-medium text-text-main">Time preference</p>
           <div className="grid grid-cols-3 gap-2">
             {TIME_PREFS.map(({ key, label, range, Icon }) => {
               const available = availablePrefs.some(p => p.key === key);

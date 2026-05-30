@@ -3,7 +3,7 @@ import { getToken } from "next-auth/jwt";
 import dbConnect from "@/lib/db";
 import Appointment from "@/models/Appointment";
 import User from "@/models/User";
-import pusherServer from "@/lib/pusher-server";
+import { notify } from "@/lib/notify";
 import mongoose from "mongoose";
 
 function parseSlotToDate(dateStr: string, slot: string): Date {
@@ -47,17 +47,18 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
     appointment.status      = "confirmed";
     await appointment.save();
 
-    try {
-      const doctor = await User.findById(appointment.doctorId).select("name").lean();
-      const doctorName = (doctor as { name?: string } | null)?.name ?? "your doctor";
-      const dateLabel = new Date(date + "T12:00:00").toLocaleDateString("en-PH", {
-        weekday: "long", month: "long", day: "numeric",
-      });
-      await pusherServer.trigger(`patient-${token.id}`, "appointment:rescheduled", {
-        appointmentId: String(appointment._id),
-        message: `Your consultation with Dr. ${doctorName} has been rescheduled to ${dateLabel} at ${assignedSlot}.`,
-      });
-    } catch { /* non-blocking */ }
+    const doctor = await User.findById(appointment.doctorId).select("name").lean();
+    const doctorName = (doctor as { name?: string } | null)?.name ?? "your doctor";
+    const dateLabel = new Date(date + "T12:00:00").toLocaleDateString("en-PH", {
+      weekday: "long", month: "long", day: "numeric",
+    });
+    notify({
+      userId:  String(token.id),
+      type:    "appointment_rescheduled",
+      title:   "Consultation rescheduled",
+      message: `Your consultation with Dr. ${doctorName} has been rescheduled to ${dateLabel} at ${assignedSlot}.`,
+      href:    "/patient/consultations",
+    });
 
     return NextResponse.json({ success: true });
   } catch (err) {
@@ -92,17 +93,18 @@ export async function DELETE(req: NextRequest, { params }: RouteContext) {
     appointment.cancelledBy = "patient";
     await appointment.save();
 
-    try {
-      const doctor = await User.findById(doctorId).select("name").lean();
-      const doctorName = (doctor as { name?: string } | null)?.name ?? "your doctor";
-      const dateLabel = scheduledAt.toLocaleDateString("en-PH", {
-        weekday: "long", month: "long", day: "numeric",
-      });
-      await pusherServer.trigger(`patient-${token.id}`, "appointment:cancelled", {
-        appointmentId: String(appointment._id),
-        message: `Your consultation with Dr. ${doctorName} on ${dateLabel} has been cancelled.`,
-      });
-    } catch { /* non-blocking */ }
+    const doctor = await User.findById(doctorId).select("name").lean();
+    const doctorName = (doctor as { name?: string } | null)?.name ?? "your doctor";
+    const dateLabel = scheduledAt.toLocaleDateString("en-PH", {
+      weekday: "long", month: "long", day: "numeric",
+    });
+    notify({
+      userId:  String(token.id),
+      type:    "appointment_cancelled",
+      title:   "Consultation cancelled",
+      message: `Your consultation with Dr. ${doctorName} on ${dateLabel} has been cancelled.`,
+      href:    "/patient/consultations",
+    });
 
     return NextResponse.json({ success: true });
   } catch (err) {

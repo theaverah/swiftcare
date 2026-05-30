@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Calendar, Clock, Video, ArrowRight, RotateCcw, X,
+  Calendar, Clock, Video, ArrowRight, RotateCcw, X, CalendarPlus,
 } from "lucide-react";
 import { format } from "date-fns";
 import type { Consultation, ConsultationDoctor } from "@/types/consultation";
@@ -68,7 +68,7 @@ function StatusBadge({ status }: { status: Consultation["status"] }) {
   };
   const { label, cls } = map[status] ?? { label: status, cls: "bg-bg-sub text-text-sub" };
   return (
-    <span className={`text-[12px] font-medium px-2.5 py-1 rounded-full ${cls}`}>
+    <span className={`text-[14px] font-medium px-2.5 py-1 rounded-full ${cls}`}>
       {label}
     </span>
   );
@@ -76,8 +76,8 @@ function StatusBadge({ status }: { status: Consultation["status"] }) {
 
 function PaymentBadge({ status }: { status: "pending" | "paid" }) {
   return status === "paid"
-    ? <span className="text-[12px] font-medium px-2.5 py-1 rounded-full bg-green-50 text-green-600">Paid</span>
-    : <span className="text-[12px] font-medium px-2.5 py-1 rounded-full bg-amber-50 text-amber-600">Payment pending</span>;
+    ? <span className="text-[14px] font-medium px-2.5 py-1 rounded-full bg-green-50 text-green-600">Paid</span>
+    : <span className="text-[14px] font-medium px-2.5 py-1 rounded-full bg-amber-50 text-amber-600">Payment pending</span>;
 }
 
 // ── Countdown ─────────────────────────────────────────────────────────────────
@@ -110,7 +110,7 @@ function Countdown({ scheduledAt }: { scheduledAt: string }) {
   return (
     <div className="flex items-center gap-2">
       <Clock size={13} className="text-brand shrink-0" strokeWidth={1.75} />
-      <span className="text-[13px] text-brand font-medium">{label}</span>
+      <span className="text-[14px] text-brand font-medium">{label}</span>
     </div>
   );
 }
@@ -141,6 +141,22 @@ export function ConsultationCardSkeleton() {
       </div>
     </div>
   );
+}
+
+// ── Google Calendar link ──────────────────────────────────────────────────────
+
+function buildCalendarUrl(doctorName: string, scheduledAt: string, durationMinutes: number) {
+  const start    = new Date(scheduledAt);
+  const end      = new Date(start.getTime() + durationMinutes * 60_000);
+  const fmt      = (d: Date) => format(d, "yyyyMMdd'T'HHmmss");
+  const params   = new URLSearchParams({
+    action:   "TEMPLATE",
+    text:     `Consultation with Dr. ${doctorName}`,
+    dates:    `${fmt(start)}/${fmt(end)}`,
+    details:  "SwiftCare telehealth consultation",
+    location: "SwiftCare",
+  });
+  return `https://www.google.com/calendar/render?${params.toString()}`;
 }
 
 // ── Main card ─────────────────────────────────────────────────────────────────
@@ -174,30 +190,29 @@ export function ConsultationCard({
   const timeLabel = format(scheduledDate, "h:mm aa");
 
   return (
-    <div className="bg-bg-main rounded-xl border border-elements p-5 flex flex-col gap-4
+    <div className="bg-bg-main rounded-xl border border-elements p-5 flex flex-col h-full
       animate-fadeInDown transition-shadow duration-200 hover:shadow-sm">
 
-      {/* Top row: doctor info + badges */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-center gap-4 min-w-0">
-          <DoctorAvatar doctor={doctor} size={56} />
-          <div className="min-w-0">
-            <p className="text-[16px] font-medium text-text-main truncate">
-              Dr. {doctor.name}
-            </p>
-            <p className="text-[13px] text-text-sub mt-0.5 truncate">
-              {doctor.specializations[0] ?? "General Practitioner"}
-            </p>
-          </div>
-        </div>
+      {/* Badges */}
+      <div className="flex flex-wrap items-center gap-2">
+        <StatusBadge status={status} />
+        {tab === "upcoming" && <PaymentBadge status={paymentStatus} />}
+      </div>
 
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
-          <StatusBadge status={status} />
-          {tab === "upcoming" && <PaymentBadge status={paymentStatus} />}
+      {/* Doctor info */}
+      <div className="flex items-center gap-4 min-w-0 mt-3">
+        <DoctorAvatar doctor={doctor} size={56} />
+        <div className="min-w-0">
+          <p className="text-[16px] font-medium text-text-main truncate">
+            Dr. {doctor.name}
+          </p>
+          <p className="text-[14px] text-text-sub mt-0.5 truncate">
+            {doctor.specializations[0] ?? "General Practitioner"}
+          </p>
         </div>
       </div>
 
-      <div className="h-px bg-elements/50" />
+      <div className="h-px bg-elements/50 my-4" />
 
       {/* Date + time */}
       <div className="flex items-center gap-2">
@@ -205,26 +220,25 @@ export function ConsultationCard({
         <span className="text-[14px] text-text-main">
           {dateLabel}
           <span className="text-text-sub"> · {timeLabel}</span>
-          {durationMinutes && (
-            <span className="text-text-sub"> · {durationMinutes} min</span>
-          )}
         </span>
       </div>
 
       {/* Countdown (only within 24h, upcoming) */}
       {tab === "upcoming" && within24h && (
-        <Countdown scheduledAt={scheduledAt} />
+        <div className="mt-3">
+          <Countdown scheduledAt={scheduledAt} />
+        </div>
       )}
 
-      {/* Actions */}
-      <div className="flex items-center gap-2 flex-wrap">
+      {/* Actions — always pinned to bottom right */}
+      <div className="mt-auto pt-4 flex items-center justify-end gap-2 flex-wrap">
         {tab === "upcoming" && (
           within15min || status === "ongoing" ? (
             <button
               type="button"
               onClick={() => router.push(`/patient/consultations/${consultation.id}/waiting-room`)}
               className="flex items-center gap-2 h-9 px-4 rounded-lg bg-brand text-white
-                text-[13px] font-medium hover:opacity-90 active:scale-[0.99]
+                text-[14px] font-medium hover:opacity-90 active:scale-[0.99]
                 transition-all duration-200"
             >
               <Video size={14} strokeWidth={1.75} />
@@ -234,24 +248,32 @@ export function ConsultationCard({
             <>
               <button
                 type="button"
+                onClick={() => onCancel(consultation)}
+                className="text-[14px] font-medium text-error hover:opacity-70 transition-opacity duration-200 px-2"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
                 onClick={() => onReschedule(consultation)}
                 className="flex items-center gap-2 h-9 px-4 rounded-lg border border-elements
-                  text-[13px] font-medium text-text-main hover:border-text-sub/60
+                  text-[14px] font-medium text-text-main hover:border-text-sub/60
                   hover:bg-bg-sub transition-all duration-200"
               >
                 <RotateCcw size={13} strokeWidth={1.75} />
                 Reschedule
               </button>
-              <button
-                type="button"
-                onClick={() => onCancel(consultation)}
-                className="flex items-center gap-2 h-9 px-4 rounded-lg border border-elements
-                  text-[13px] font-medium text-error hover:border-error/40
-                  hover:bg-red-50 transition-all duration-200"
+              <a
+                href={buildCalendarUrl(doctor.name, scheduledAt, durationMinutes)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 h-9 px-4 rounded-lg bg-brand text-white
+                  text-[14px] font-medium hover:opacity-90 active:scale-[0.99]
+                  transition-all duration-200"
               >
-                <X size={13} strokeWidth={1.75} />
-                Cancel
-              </button>
+                <CalendarPlus size={13} strokeWidth={1.75} />
+                Add to calendar
+              </a>
             </>
           )
         )}
@@ -262,7 +284,7 @@ export function ConsultationCard({
               type="button"
               onClick={() => router.push(`/patient/records`)}
               className="flex items-center gap-2 h-9 px-4 rounded-lg border border-elements
-                text-[13px] font-medium text-text-main hover:border-text-sub/60
+                text-[14px] font-medium text-text-main hover:border-text-sub/60
                 hover:bg-bg-sub transition-all duration-200"
             >
               View records
@@ -272,7 +294,7 @@ export function ConsultationCard({
               type="button"
               onClick={() => onBookAgain(consultation)}
               className="flex items-center gap-2 h-9 px-4 rounded-lg bg-text-main text-brand-sub
-                text-[13px] font-medium hover:opacity-90 active:scale-[0.99]
+                text-[14px] font-medium hover:opacity-90 active:scale-[0.99]
                 transition-all duration-200"
             >
               Book again
@@ -285,7 +307,7 @@ export function ConsultationCard({
             type="button"
             onClick={() => onBookAgain(consultation)}
             className="flex items-center gap-2 h-9 px-4 rounded-lg bg-text-main text-brand-sub
-              text-[13px] font-medium hover:opacity-90 active:scale-[0.99]
+              text-[14px] font-medium hover:opacity-90 active:scale-[0.99]
               transition-all duration-200"
           >
             Book again

@@ -382,6 +382,13 @@
 .duration-slow   { transition-duration: 400ms; }
 .duration-reveal { transition-duration: 600ms; }
 
+/* ─── Cancel toast progress bar ─────────────────────────────────────────── */
+
+@keyframes drain {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+
 /* ─── Scrollbar ──────────────────────────────────────────────────────────── */
 
 .scrollbar-hide {

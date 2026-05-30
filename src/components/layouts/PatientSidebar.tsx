@@ -42,6 +42,11 @@ export function PatientSidebar() {
             <Link
               key={href}
               href={href}
+              onClick={() => {
+                if (href === "/patient/dashboard") {
+                  window.dispatchEvent(new CustomEvent("swiftcare:home"));
+                }
+              }}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[16px] font-medium transition-colors duration-200 ${
                 isActive
                   ? "bg-bg-sub text-text-main"

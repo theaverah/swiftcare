@@ -191,7 +191,7 @@ async function downloadPdf(record: HealthRecord, patientName: string) {
   doc.setFont("helvetica", "bold");
   doc.setTextColor(17, 17, 17);
   doc.text(patientName, margin, y);
-  doc.text(record.doctor.name, margin + half, y);
+  doc.text(`Dr. ${record.doctor.name}`, margin + half, y);
   y += 5;
 
   doc.setFontSize(9);
@@ -297,6 +297,10 @@ function RecordCard({ record, patientName, index }: { record: HealthRecord; pati
   const badge   = BADGE[record.type];
   const preview = contentPreview(record);
   const isNote  = record.type === "consultation_note";
+  const hasMore = isNote && !!record.notes && (
+    record.notes.split(/[.!?]/)[0].trim().length > 120 ||
+    record.notes.split(/[.!?]/).filter(s => s.trim()).length > 1
+  );
 
   async function handleDownload() {
     try {
@@ -313,41 +317,30 @@ function RecordCard({ record, patientName, index }: { record: HealthRecord; pati
 
   return (
     <div
-      className="bg-bg-main rounded-xl border border-elements p-5 flex flex-col gap-4 animate-fadeInDown"
+      className="bg-bg-main rounded-xl border border-elements p-5 flex flex-col gap-4 h-full animate-fadeInDown"
       style={{ animationDelay: `${index * 60}ms`, animationDuration: "400ms" }}
     >
-      {/* Top row */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex flex-col gap-1.5">
-          {/* Badge */}
-          <span className={`self-start text-[12px] font-medium px-2.5 py-0.5 rounded-full ${badge.bg} ${badge.text}`}>
-            {badge.label}
-          </span>
-          {/* Doctor */}
-          <p className="text-[16px] font-medium text-text-main">{record.doctor.name}</p>
-          <p className="text-[14px] text-text-sub">
-            {record.doctor.specializations[0] ?? "Doctor"}
-          </p>
-        </div>
-        {/* Date */}
+      {/* Badge + date row */}
+      <div className="flex items-center justify-between gap-4">
+        <span className={`text-[14px] font-medium px-2.5 py-0.5 rounded-full ${badge.bg} ${badge.text}`}>
+          {badge.label}
+        </span>
         <p className="text-[14px] text-text-sub shrink-0">{formatDate(record.issuedAt)}</p>
       </div>
 
-      <div className="h-px bg-elements/50" />
+      {/* Doctor name + specialty */}
+      <div className="flex items-baseline mt-4">
+        <p className="text-[16px] text-text-main shrink-0">Dr. {record.doctor.name}</p>
+        <p className="text-[16px] text-text-sub truncate">, {record.doctor.specializations[0] ?? "Doctor"}</p>
+      </div>
 
-      {/* Linked consultation */}
-      {record.consultation.scheduledAt && (
-        <p className="text-[14px] text-text-sub">
-          From your consultation on{" "}
-          <span className="text-text-main font-medium">{formatDate(record.consultation.scheduledAt)}</span>
-        </p>
-      )}
+      <div className="h-px bg-elements/50" />
 
       {/* Content preview */}
       {preview && (
         <p className="text-[16px] text-text-main">
           {preview}
-          {isNote && (
+          {hasMore && (
             <span className="ml-1 text-brand cursor-pointer hover:underline text-[14px]">
               {" "}Read more
             </span>
@@ -355,8 +348,8 @@ function RecordCard({ record, patientName, index }: { record: HealthRecord; pati
         </p>
       )}
 
-      {/* Actions */}
-      <div className="flex gap-2">
+      {/* Actions — pinned to bottom right */}
+      <div className="mt-auto pt-4 flex justify-end gap-2">
         <button
           type="button"
           onClick={handleDownload}
@@ -515,7 +508,7 @@ export function HealthRecordsPage() {
       </div>
 
       {/* Content */}
-      <div key={tab} className="flex flex-col gap-3 animate-tabIn">
+      <div key={tab} className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-tabIn">
         {loading ? (
           Array.from({ length: 2 }).map((_, i) => <RecordCardSkeleton key={i} />)
         ) : filtered.length === 0 && search ? (

@@ -3,7 +3,7 @@ import { getToken } from "next-auth/jwt";
 import dbConnect from "@/lib/db";
 import Appointment from "@/models/Appointment";
 import User from "@/models/User";
-import pusherServer from "@/lib/pusher-server";
+import { notify } from "@/lib/notify";
 
 function parseSlotToDate(dateStr: string, slot: string): Date {
   // dateStr: "2026-05-30", slot: "9:00 AM"
@@ -56,29 +56,19 @@ export async function POST(req: NextRequest) {
       relationship:    !forSelf ? relationship : undefined,
     });
 
-    // Fetch doctor name for notification
+    // Notify patient (DB + Pusher)
     const doctor = await User.findById(doctorUserId).select("name").lean();
     const doctorName = (doctor as { name?: string } | null)?.name ?? "your doctor";
     const dateLabel = new Date(date + "T12:00:00").toLocaleDateString("en-PH", {
       weekday: "long", month: "long", day: "numeric",
     });
-
-    // Pusher notification to patient
-    try {
-      await pusherServer.trigger(
-        `patient-${token.id}`,
-        "appointment:confirmed",
-        {
-          appointmentId: String(appointment._id),
-          message: `Your consultation with Dr. ${doctorName} on ${dateLabel} is confirmed.`,
-          doctorName,
-          date: dateLabel,
-          time: assignedSlot,
-        }
-      );
-    } catch {
-      // Non-blocking — notification failure shouldn't fail the booking
-    }
+    notify({
+      userId:  String(token.id),
+      type:    "appointment_confirmed",
+      title:   "Consultation confirmed",
+      message: `Your consultation with Dr. ${doctorName} on ${dateLabel} is confirmed.`,
+      href:    "/patient/consultations",
+    });
 
     return NextResponse.json({ success: true, appointmentId: String(appointment._id) });
 

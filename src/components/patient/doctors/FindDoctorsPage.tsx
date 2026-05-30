@@ -4,6 +4,7 @@ import {
   useState, useEffect, useCallback, useMemo, useRef, useLayoutEffect,
   type ReactNode, type ComponentType,
 } from "react";
+import { useSearchParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import {
   Search, X, ChevronDown, Check,
@@ -290,6 +291,7 @@ function EmptyState({ title, subtitle }: { title: string; subtitle: string }) {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export function FindDoctorsPage() {
+  const searchParams = useSearchParams();
 
   // ── Tabs ───────────────────────────────────────────────────────────────────
   const [activeTab,  setActiveTab]  = useState<"all" | "today" | "saved">("all");
@@ -304,8 +306,14 @@ export function FindDoctorsPage() {
   const [placeholderIdx,   setPlaceholderIdx]   = useState(0);
   const [placeholderFaded, setPlaceholderFaded] = useState(false);
 
-  // ── Filters ────────────────────────────────────────────────────────────────
-  const [filters, setFilters] = useState<FilterState>(INITIAL_FILTERS);
+  // ── Filters — seeded from URL params (e.g. from Swift recommendations) ─────
+  const [filters, setFilters] = useState<FilterState>(() => {
+    const specialties = searchParams.get("specialties")?.split(",").filter(Boolean) ?? [];
+    const languages   = searchParams.get("languages")?.split(",").filter(Boolean) ?? [];
+    const timePref    = searchParams.get("timePref")?.split(",").filter(Boolean) ?? [];
+    const maxFee      = searchParams.get("maxFee") ? Number(searchParams.get("maxFee")) : 5000;
+    return { ...INITIAL_FILTERS, specialties, languages, timePref, maxFee };
+  });
 
   // ── Data ───────────────────────────────────────────────────────────────────
   const [doctors,        setDoctors]        = useState<Doctor[]>([]);

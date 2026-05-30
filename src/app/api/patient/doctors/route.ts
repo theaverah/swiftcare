@@ -5,7 +5,7 @@ import User from "@/models/User";
 import DoctorProfile from "@/models/DoctorProfile";
 import PatientProfile from "@/models/PatientProfile";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// -- Helpers -------------------------------------------------------------------
 
 function parseHour(t: string): number {
   const [time, ampm] = t.split(" ");
@@ -42,7 +42,7 @@ function nextAvailable(availability: AvailSlot[]) {
   return null;
 }
 
-// ── Route ─────────────────────────────────────────────────────────────────────
+// -- Route ---------------------------------------------------------------------
 
 export async function GET(req: NextRequest) {
   try {

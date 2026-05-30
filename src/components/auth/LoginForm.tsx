@@ -59,7 +59,7 @@ export function LoginForm() {
     <div className="min-h-screen bg-white flex items-center justify-center px-6 py-16">
       <div className="flex flex-col gap-4 w-full max-w-lg">
 
-        {/* ── Logo ────────────────────────────────────────────────────── */}
+        {/* -- Logo ------------------------------------------------------ */}
         <div
           className="flex justify-center mb-1 animate-fadeInDown"
           style={{ animationDelay: "0ms" }}
@@ -67,7 +67,7 @@ export function LoginForm() {
           <img src="/logo.png" alt="SwiftCare" className="w-12 h-12 object-contain" />
         </div>
 
-        {/* ── Heading ─────────────────────────────────────────────────── */}
+        {/* -- Heading --------------------------------------------------- */}
         <div
           className="flex flex-col gap-0.5 items-center text-center mb-2 animate-fadeInDown"
           style={{ animationDelay: "60ms" }}
@@ -80,7 +80,7 @@ export function LoginForm() {
           </p>
         </div>
 
-        {/* ── Auth error ──────────────────────────────────────────────── */}
+        {/* -- Auth error ------------------------------------------------ */}
         {authError && (
           <div
             className="rounded-lg border border-error/30 bg-error/5 px-4 py-3 animate-fadeInDown"
@@ -92,7 +92,7 @@ export function LoginForm() {
           </div>
         )}
 
-        {/* ── Email ───────────────────────────────────────────────────── */}
+        {/* -- Email ----------------------------------------------------- */}
         <div
           className="flex flex-col gap-1.5 animate-fadeInDown"
           style={{ animationDelay: "180ms" }}
@@ -125,7 +125,7 @@ export function LoginForm() {
           )}
         </div>
 
-        {/* ── Password ────────────────────────────────────────────────── */}
+        {/* -- Password -------------------------------------------------- */}
         <div
           className="flex flex-col gap-1.5 animate-fadeInDown"
           style={{ animationDelay: "240ms" }}
@@ -172,7 +172,7 @@ export function LoginForm() {
           </div>
         </div>
 
-        {/* ── Button + footer ──────────────────────────────────────────── */}
+        {/* -- Button + footer -------------------------------------------- */}
         <div
           className="flex flex-col gap-3.5 items-center w-full mt-4 animate-fadeInDown"
           style={{ animationDelay: "300ms" }}

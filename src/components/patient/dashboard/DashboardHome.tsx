@@ -45,7 +45,7 @@ export function DashboardHome() {
     setTimeout(() => setHomeVisible(true), 50);
   }
 
-  // ── Chat mode ───────────────────────────────────────────────────────────────
+  // -- Chat mode ---------------------------------------------------------------
   if (chatMode) {
     return (
       <div
@@ -61,13 +61,13 @@ export function DashboardHome() {
     );
   }
 
-  // ── Home mode ───────────────────────────────────────────────────────────────
+  // -- Home mode ---------------------------------------------------------------
   return (
     <div
       className="flex flex-col gap-10 w-full flex-1 transition-opacity duration-350"
       style={{ opacity: homeVisible ? 1 : 0, pointerEvents: homeVisible ? "auto" : "none" }}
     >
-      {/* ── Hero Search ──────────────────────────────────────────────── */}
+      {/* -- Hero Search ------------------------------------------------ */}
       <div
         className="animate-fadeInDown"
         style={{ animationDelay: "100ms", ...ANIM }}
@@ -75,7 +75,7 @@ export function DashboardHome() {
         <HeroSearch onSubmit={handleFirstMessage} />
       </div>
 
-      {/* ── Consultations ────────────────────────────────────────────── */}
+      {/* -- Consultations ---------------------------------------------- */}
       <div
         className="flex flex-col gap-3 animate-fadeInDown mt-10"
         style={{ animationDelay: "150ms", ...ANIM }}
@@ -84,7 +84,7 @@ export function DashboardHome() {
         <UpcomingAppointmentCard />
       </div>
 
-      {/* ── Attribution ──────────────────────────────────────────────── */}
+      {/* -- Attribution ------------------------------------------------ */}
       <p className="mt-auto text-[12px] text-text-sub text-center animate-fadeInDown" style={{ animationDelay: "200ms", ...ANIM }}>
         © 2026 SwiftCare by{" "}
         <a

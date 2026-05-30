@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { User, Activity, FileHeart, CheckCircle, Check, ChevronRight, AlertCircle } from "lucide-react";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// --- Types --------------------------------------------------------------------
 
 interface ProfileStepperProps {
   current: number;
@@ -11,7 +11,7 @@ interface ProfileStepperProps {
   onStepClick: (step: number) => void;
 }
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+// --- Data ---------------------------------------------------------------------
 
 const STEPS = [
   { label: "Profile",  Icon: User },
@@ -20,7 +20,7 @@ const STEPS = [
   { label: "Overview",        Icon: CheckCircle },
 ] as const;
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// --- Component ----------------------------------------------------------------
 
 export function ProfileStepper({ current, maxReached, stepValid, currentValid, onStepClick }: ProfileStepperProps) {
   return (

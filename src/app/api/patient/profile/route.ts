@@ -5,7 +5,7 @@ import User from "@/models/User";
 import PatientProfile from "@/models/PatientProfile";
 import PendingRegistration from "@/models/PendingRegistration";
 
-// ── GET — fetch full profile ───────────────────────────────────────────────────
+// -- GET — fetch full profile ---------------------------------------------------
 
 export async function GET(req: NextRequest) {
   try {
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// ── PATCH — update personal or health fields ──────────────────────────────────
+// -- PATCH — update personal or health fields ----------------------------------
 
 export async function PATCH(req: NextRequest) {
   try {

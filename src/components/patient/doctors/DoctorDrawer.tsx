@@ -84,7 +84,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
             {doctor && (
               <div className="px-8 py-6 flex flex-col gap-6">
 
-                {/* ── Hero ─────────────────────────────────────────────── */}
+                {/* -- Hero ----------------------------------------------- */}
                 <div className="flex flex-col items-center gap-3 text-center">
                   <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-brand/8
                     bg-brand-sub flex items-center justify-center shrink-0">
@@ -104,12 +104,12 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                   </div>
                 </div>
 
-                {/* ── Bio ──────────────────────────────────────────────── */}
+                {/* -- Bio ------------------------------------------------ */}
                 {doctor.bio && (
                   <p className="text-[16px] text-text-sub text-center">{doctor.bio}</p>
                 )}
 
-                {/* ── Info row ─────────────────────────────────────────── */}
+                {/* -- Info row ------------------------------------------- */}
                 <div className="flex divide-x divide-elements border-y border-elements">
                   {doctor.yearsOfExperience != null && (
                     <div className="flex-1 text-center py-4 px-2 flex flex-col justify-center">
@@ -133,7 +133,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                   </div>
                 </div>
 
-                {/* ── Education ────────────────────────────────────────── */}
+                {/* -- Education ------------------------------------------ */}
                 {doctor.education && (
                   <div className="flex flex-col gap-2">
                     <p className="text-[16px] font-medium text-text-main">Education</p>
@@ -144,7 +144,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                   </div>
                 )}
 
-                {/* ── Certifications ───────────────────────────────────── */}
+                {/* -- Certifications ------------------------------------- */}
                 {doctor.certifications.length > 0 && (
                   <div className="flex flex-col gap-2">
                     <p className="text-[16px] font-medium text-text-main">Certifications</p>
@@ -156,7 +156,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                   </div>
                 )}
 
-                {/* ── Affiliations ─────────────────────────────────────── */}
+                {/* -- Affiliations --------------------------------------- */}
                 {doctor.affiliations.length > 0 && (
                   <div className="flex flex-col gap-2">
                     <p className="text-[16px] font-medium text-text-main">Affiliations</p>
@@ -168,7 +168,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                   </div>
                 )}
 
-              {/* ── Weekly schedule ──────────────────────────────────── */}
+              {/* -- Weekly schedule ------------------------------------ */}
                 <div className="flex flex-col gap-2">
                   <p className="text-[16px] font-medium text-text-main">Weekly Schedule</p>
                   <div className="flex flex-col">
@@ -210,7 +210,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
             )}
           </div>
 
-          {/* ── Sticky CTA ───────────────────────────────────────────── */}
+          {/* -- Sticky CTA --------------------------------------------- */}
           <div className="shrink-0 px-8 py-4 border-t border-elements bg-bg-main">
             <button
               type="button"

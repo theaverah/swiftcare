@@ -76,7 +76,7 @@ export async function POST() {
     const spec3 = profileMap.get(String(doc3._id))?.specializations?.[0] ?? "Pulmonology";
 
     const records = [
-      // ── Prescriptions ─────────────────────────────────────────────────────
+      // -- Prescriptions -----------------------------------------------------
       {
         patientId,
         doctorId:      doc0._id,
@@ -99,7 +99,7 @@ export async function POST() {
           { name: "Aspirin",      dosage: "80mg",   frequency: "Once daily",    duration: "Ongoing"  },
         ],
       },
-      // ── Consultation Notes ────────────────────────────────────────────────
+      // -- Consultation Notes ------------------------------------------------
       {
         patientId,
         doctorId:      doc0._id,
@@ -116,7 +116,7 @@ export async function POST() {
         issuedAt:      issued(20),
         notes: `Patient referred for evaluation of elevated blood pressure (152/94 mmHg on 3 readings). ECG shows mild LVH. Lipid panel reveals LDL of 148 mg/dL. Initiated Atorvastatin 20mg nightly and low-dose Aspirin 80mg. Lifestyle modification counseling provided — sodium restriction, regular aerobic exercise. Patient to return in 6 weeks for BP monitoring and repeat lipid panel.`,
       },
-      // ── Lab Requests ──────────────────────────────────────────────────────
+      // -- Lab Requests ------------------------------------------------------
       {
         patientId,
         doctorId:      doc0._id,
@@ -142,7 +142,7 @@ export async function POST() {
           { name: "Urinalysis" },
         ],
       },
-      // ── Medical Certificates ──────────────────────────────────────────────
+      // -- Medical Certificates ----------------------------------------------
       {
         patientId,
         doctorId:      doc2._id,
@@ -159,7 +159,7 @@ export async function POST() {
         issuedAt:      issued(50),
         purpose:       "For travel clearance — patient is in stable health condition and is medically cleared to travel by air.",
       },
-      // ── Referrals ─────────────────────────────────────────────────────────
+      // -- Referrals ---------------------------------------------------------
       {
         patientId,
         doctorId:      doc0._id,

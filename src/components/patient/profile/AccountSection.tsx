@@ -7,7 +7,7 @@ import { signOut } from "next-auth/react";
 import { toast } from "sonner";
 import type { ProfileData } from "./ProfileModal";
 
-// ── Password conditions (same as registration) ────────────────────────────────
+// -- Password conditions (same as registration) --------------------------------
 
 const PASSWORD_CONDITIONS = [
   { label: "At least 8 characters",         test: (pw: string) => pw.length >= 8 },
@@ -17,7 +17,7 @@ const PASSWORD_CONDITIONS = [
   { label: "1 special character (!@#$...)", test: (pw: string) => /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pw) },
 ] as const;
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// -- Types ---------------------------------------------------------------------
 
 interface Props {
   data:          ProfileData;
@@ -25,7 +25,7 @@ interface Props {
   onClose:       () => void;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
+// -- Component -----------------------------------------------------------------
 
 const label = "text-[14px] font-medium text-text-sub";
 

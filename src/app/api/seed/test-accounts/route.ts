@@ -16,7 +16,7 @@ function days(dows: number[], start: string, end: string) {
 }
 
 const SEED_DOCTORS = [
-  // ── 20 original doctors (fees adjusted, city added) ───────────────────────────
+  // -- 20 original doctors (fees adjusted, city added) ---------------------------
   {
     email: "doctor@test.com",
     name:  "Maria Cristina Reyes",
@@ -378,7 +378,7 @@ const SEED_DOCTORS = [
     },
   },
 
-  // ── 7 new doctors ─────────────────────────────────────────────────────────────
+  // -- 7 new doctors -------------------------------------------------------------
   {
     email: "obgyn2@test.com",
     name:  "Rosario Cruz-Bautista",
@@ -514,7 +514,7 @@ export async function GET() {
     const hashedPassword = await bcrypt.hash(PASSWORD, 12);
     const results: Record<string, string> = {};
 
-    // ── Patient ───────────────────────────────────────────────────────────────
+    // -- Patient ---------------------------------------------------------------
     let patient = await User.findOne({ email: "patient@test.com" });
     if (!patient) {
       patient = await User.create({
@@ -531,7 +531,7 @@ export async function GET() {
       results.patient = "already exists";
     }
 
-    // ── Remove non-seed doctor accounts ──────────────────────────────────────
+    // -- Remove non-seed doctor accounts --------------------------------------
     const seedEmails = SEED_DOCTORS.map(d => d.email);
     const staleUsers = await User.find({
       role: "doctor",
@@ -545,7 +545,7 @@ export async function GET() {
       results._cleaned = `removed ${staleUsers.length} stale doctor(s)`;
     }
 
-    // ── Doctors ───────────────────────────────────────────────────────────────
+    // -- Doctors ---------------------------------------------------------------
     for (const seed of SEED_DOCTORS) {
       let user = await User.findOne({ email: seed.email });
       if (!user) {
@@ -584,7 +584,7 @@ export async function GET() {
   }
 }
 
-// ── POST — seed consultations + health records for patient@test.com ────────────
+// -- POST — seed consultations + health records for patient@test.com ------------
 
 export async function POST() {
   try {
@@ -612,7 +612,7 @@ export async function POST() {
 
     const patientId = patient._id;
 
-    // ── Date helpers ──────────────────────────────────────────────────────────
+    // -- Date helpers ----------------------------------------------------------
     function daysFromNow(n: number, hour = 9, minute = 0) {
       const d = new Date();
       d.setDate(d.getDate() + n);
@@ -623,11 +623,11 @@ export async function POST() {
       return new Date(y, m - 1, day, hour, minute, 0, 0);
     }
 
-    // ── Wipe existing test consultations + health records ─────────────────────
+    // -- Wipe existing test consultations + health records ---------------------
     await Appointment.deleteMany({ patientId });
     await HealthRecord.deleteMany({ patientId });
 
-    // ── Consultations ─────────────────────────────────────────────────────────
+    // -- Consultations ---------------------------------------------------------
     const base = {
       patientId,
       forSelf:         true,
@@ -688,7 +688,7 @@ export async function POST() {
       },
     ]);
 
-    // ── Health records ────────────────────────────────────────────────────────
+    // -- Health records --------------------------------------------------------
     await HealthRecord.insertMany([
 
       // Prescriptions

@@ -9,7 +9,7 @@ import { Step2BodyMetrics } from "./Step2BodyMetrics";
 import { Step3MedicalHistory } from "./Step3MedicalHistory";
 import { Step4Overview } from "./Step4Overview";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// --- Types --------------------------------------------------------------------
 
 export interface ProfileData {
   firstName: string;
@@ -25,7 +25,7 @@ export interface ProfileData {
   medications: string[];
 }
 
-// ─── Step validation ──────────────────────────────────────────────────────────
+// --- Step validation ----------------------------------------------------------
 
 function isStep1Valid(d: ProfileData) {
   if (!d.firstName.trim() || !d.lastName.trim() || !d.birthday) return false;
@@ -55,7 +55,7 @@ const INITIAL: ProfileData = {
   medications: [],
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// --- Component ----------------------------------------------------------------
 
 export function ProfileFlow() {
   const router = useRouter();

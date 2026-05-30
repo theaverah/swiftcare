@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Mic, Paperclip, ArrowUp, X, ImagePlus, Stethoscope, UserCheck, ClipboardList, GitCompare, MapPin } from "lucide-react";
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+// --- Constants ----------------------------------------------------------------
 
 const PLACEHOLDERS = [
   "I'm feeling a bit under the weather...",
@@ -25,7 +25,7 @@ const CHIPS = [
   { icon: MapPin,         label: "Find nearby doctors" },
 ];
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// --- Component ----------------------------------------------------------------
 
 interface HeroSearchProps {
   onSubmit?: (text: string, file?: File | null) => void;
@@ -151,7 +151,7 @@ export function HeroSearch({ onSubmit }: HeroSearchProps = {}) {
   return (
     <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto">
 
-      {/* ── Heading ──────────────────────────────────────────────────── */}
+      {/* -- Heading ---------------------------------------------------- */}
       <div className="flex flex-col gap-2 text-center">
         <h2 className="text-[32px] font-medium text-text-main tracking-[-0.03em] leading-tight">
           Good to see you. How are you feeling today?
@@ -161,7 +161,7 @@ export function HeroSearch({ onSubmit }: HeroSearchProps = {}) {
         </p>
       </div>
 
-      {/* ── Card ─────────────────────────────────────────────────────── */}
+      {/* -- Card ------------------------------------------------------- */}
       <div className="relative">
 
       <div
@@ -293,7 +293,7 @@ export function HeroSearch({ onSubmit }: HeroSearchProps = {}) {
       </div>
       </div>
 
-      {/* ── Suggestions ──────────────────────────────────────────────── */}
+      {/* -- Suggestions ------------------------------------------------ */}
       <div className="px-1">
 <div className="flex flex-wrap gap-2 justify-center">
           {CHIPS.map(({ icon: Icon, label }) => (

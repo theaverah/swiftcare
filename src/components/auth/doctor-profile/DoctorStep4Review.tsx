@@ -86,7 +86,7 @@ export function DoctorStep4Review({ data, canFinish, onEdit, onFinish, onBack }:
   return (
     <div className="flex flex-col gap-4">
 
-      {/* ── Heading ─────────────────────────────────────────────────── */}
+      {/* -- Heading --------------------------------------------------- */}
       <div className="flex flex-col gap-0.5 animate-fadeInDown" style={{ animationDelay: "0ms" }}>
         <h1 className="text-[24px] font-medium text-text-main tracking-[-0.264px] leading-normal">
           Almost there!
@@ -96,7 +96,7 @@ export function DoctorStep4Review({ data, canFinish, onEdit, onFinish, onBack }:
         </p>
       </div>
 
-      {/* ── Profile section ─────────────────────────────────────────── */}
+      {/* -- Profile section ------------------------------------------- */}
       <div className="animate-fadeInDown mt-1" style={{ animationDelay: "60ms" }}>
         <Section title="Profile" icon={User} onEdit={() => onEdit(1)} noDivider iconClassName="pb-[1.5px]">
           <div className="flex flex-col gap-2.5">
@@ -107,7 +107,7 @@ export function DoctorStep4Review({ data, canFinish, onEdit, onFinish, onBack }:
         </Section>
       </div>
 
-      {/* ── Professional Details section ─────────────────────────────── */}
+      {/* -- Professional Details section ------------------------------- */}
       <div className="animate-fadeInDown" style={{ animationDelay: "120ms" }}>
         <Section title="Professional Details" icon={Stethoscope} onEdit={() => onEdit(2)}>
           <div className="flex flex-col gap-2.5">
@@ -120,7 +120,7 @@ export function DoctorStep4Review({ data, canFinish, onEdit, onFinish, onBack }:
         </Section>
       </div>
 
-      {/* ── Consultation Setup section ───────────────────────────────── */}
+      {/* -- Consultation Setup section --------------------------------- */}
       <div className="animate-fadeInDown" style={{ animationDelay: "180ms" }}>
         <Section title="Consultation Setup" icon={Calendar} onEdit={() => onEdit(3)}>
           <div className="flex flex-col gap-2.5">
@@ -141,7 +141,7 @@ export function DoctorStep4Review({ data, canFinish, onEdit, onFinish, onBack }:
         </Section>
       </div>
 
-      {/* ── Buttons ─────────────────────────────────────────────────── */}
+      {/* -- Buttons --------------------------------------------------- */}
       <div className="flex gap-3 mt-4 animate-fadeInDown" style={{ animationDelay: "240ms" }}>
         <button
           type="button"

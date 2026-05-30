@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Calendar, Video, ArrowRight } from "lucide-react";
+import { Calendar, Video, CalendarPlus, RotateCcw } from "lucide-react";
 import { format } from "date-fns";
 import type { Consultation, ConsultationDoctor } from "@/types/consultation";
 
-// ── Avatar ────────────────────────────────────────────────────────────────────
+// -- Avatar --------------------------------------------------------------------
 
 const AVATAR_COLORS = [
   { bg: "bg-[#E8F4F8]", text: "text-[#2196A0]" },
@@ -37,7 +37,7 @@ function DoctorAvatar({ doctor }: { doctor: ConsultationDoctor }) {
   );
 }
 
-// ── Skeleton ──────────────────────────────────────────────────────────────────
+// -- Skeleton ------------------------------------------------------------------
 
 function Skeleton() {
   return (
@@ -62,7 +62,7 @@ function Skeleton() {
   );
 }
 
-// ── Empty state ───────────────────────────────────────────────────────────────
+// -- Empty state ---------------------------------------------------------------
 
 function EmptyState() {
   return (
@@ -78,11 +78,25 @@ function EmptyState() {
   );
 }
 
-// ── Card ──────────────────────────────────────────────────────────────────────
+// -- Card ----------------------------------------------------------------------
+
+function buildCalendarUrl(doctorName: string, scheduledAt: string, durationMinutes: number) {
+  const start  = new Date(scheduledAt);
+  const end    = new Date(start.getTime() + durationMinutes * 60_000);
+  const fmt    = (d: Date) => format(d, "yyyyMMdd'T'HHmmss");
+  const params = new URLSearchParams({
+    action:   "TEMPLATE",
+    text:     `Consultation with Dr. ${doctorName}`,
+    dates:    `${fmt(start)}/${fmt(end)}`,
+    details:  "SwiftCare telehealth consultation",
+    location: "SwiftCare",
+  });
+  return `https://www.google.com/calendar/render?${params.toString()}`;
+}
 
 function ConsultationCard({ consultation }: { consultation: Consultation }) {
   const router = useRouter();
-  const { doctor, scheduledAt, status } = consultation;
+  const { doctor, scheduledAt, durationMinutes, status } = consultation;
 
   const scheduledDate = new Date(scheduledAt);
   const diffMs        = scheduledDate.getTime() - Date.now();
@@ -90,69 +104,78 @@ function ConsultationCard({ consultation }: { consultation: Consultation }) {
   const dateLabel     = format(scheduledDate, "EEEE, MMMM d");
   const timeLabel     = format(scheduledDate, "h:mm aa");
 
-  const statusMap: Record<string, { label: string; cls: string }> = {
-    confirmed: { label: "Confirmed", cls: "bg-brand-sub text-brand" },
-    ongoing:   { label: "Ongoing",   cls: "bg-brand-sub text-brand" },
-    pending:   { label: "Pending",   cls: "bg-amber-50 text-amber-600" },
-  };
-  const badge = statusMap[status] ?? statusMap.confirmed;
-
   return (
-    <div className="bg-bg-main rounded-xl border border-elements p-5 flex flex-col h-full
-      hover:shadow-sm transition-shadow duration-200">
+    <div className="bg-bg-main rounded-xl border border-elements flex flex-col h-full
+      overflow-hidden hover:shadow-sm transition-shadow duration-200 animate-fadeInDown">
 
-      {/* Doctor info */}
-      <div className="flex items-center gap-4 min-w-0">
-        <DoctorAvatar doctor={doctor} />
-        <div className="min-w-0">
-          <p className="text-[16px] font-medium text-text-main truncate">Dr. {doctor.name}</p>
-          <p className="text-[13px] text-text-sub mt-0.5 truncate">
-            {doctor.specializations[0] ?? "General Practitioner"}
-          </p>
+      {/* Content */}
+      <div className="p-5 flex flex-col flex-1">
+
+        {/* Doctor info */}
+        <div className="flex items-center gap-4 min-w-0">
+          <DoctorAvatar doctor={doctor} />
+          <div className="min-w-0">
+            <p className="text-[16px] font-medium text-text-main truncate">Dr. {doctor.name}</p>
+            <p className="text-[14px] text-text-sub mt-0.5 truncate">
+              {doctor.specializations[0] ?? "General Practitioner"}
+            </p>
+          </div>
         </div>
-        <span className={`ml-auto shrink-0 text-[11px] font-medium px-2.5 py-1 rounded-full ${badge.cls}`}>
-          {badge.label}
-        </span>
+
+        <div className="h-px bg-elements/50 my-4" />
+
+        {/* Date + time */}
+        <div className="flex items-center gap-2">
+          <Calendar size={14} className="text-text-sub shrink-0" strokeWidth={1.75} />
+          <span className="text-[14px] text-text-main">
+            {dateLabel}
+            <span className="text-text-sub"> · {timeLabel}</span>
+          </span>
+        </div>
       </div>
 
-      <div className="h-px bg-elements/50 my-4" />
-
-      {/* Date + time */}
-      <div className="flex items-center gap-2">
-        <Calendar size={14} className="text-text-sub shrink-0" strokeWidth={1.75} />
-        <span className="text-[14px] text-text-main">
-          {dateLabel}
-          <span className="text-text-sub"> · {timeLabel}</span>
-        </span>
-      </div>
-
-      {/* Action — pinned to bottom right */}
-      <div className="mt-auto pt-4 flex justify-end">
-        <button
-          type="button"
-          onClick={() => canEnter
-            ? router.push(`/patient/consultations/${consultation.id}/waiting-room`)
-            : router.push(`/patient/consultations`)
-          }
-          className={`flex items-center gap-1.5 h-9 px-4 rounded-lg text-[13px] font-medium
-            transition-all duration-200 active:scale-[0.99] ${
-            canEnter
-              ? "bg-brand text-white hover:opacity-90"
-              : "border border-elements text-text-main hover:bg-bg-sub"
-          }`}
-        >
-          {canEnter ? (
-            <><Video size={13} strokeWidth={1.75} /> Join</>
-          ) : (
-            <>View <ArrowRight size={13} strokeWidth={1.75} /></>
-          )}
-        </button>
+      {/* Flush footer */}
+      <div className="flex border-t border-elements">
+        {canEnter ? (
+          <button
+            type="button"
+            onClick={() => router.push(`/patient/consultations/${consultation.id}/waiting-room`)}
+            className="flex-1 py-3 bg-brand text-white flex items-center justify-center gap-2
+              text-[14px] font-medium hover:opacity-90 active:opacity-80 transition-all duration-200"
+          >
+            <Video size={14} strokeWidth={1.75} />
+            Enter waiting room
+          </button>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() => router.push(`/patient/consultations`)}
+              className="flex-1 py-3 flex items-center justify-center gap-2
+                text-[14px] font-medium text-text-main hover:bg-bg-sub
+                transition-colors duration-200 border-r border-elements"
+            >
+              <RotateCcw size={13} strokeWidth={1.75} />
+              Reschedule
+            </button>
+            <a
+              href={buildCalendarUrl(doctor.name, scheduledAt, durationMinutes)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 py-3 bg-brand text-white flex items-center justify-center gap-2
+                text-[14px] font-medium hover:opacity-90 active:opacity-80 transition-all duration-200"
+            >
+              <CalendarPlus size={13} strokeWidth={1.75} />
+              Add to calendar
+            </a>
+          </>
+        )}
       </div>
     </div>
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
+// -- Main component ------------------------------------------------------------
 
 export function UpcomingAppointmentCard() {
   const [loading,       setLoading]       = useState(true);

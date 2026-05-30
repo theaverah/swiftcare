@@ -16,7 +16,7 @@ import { DoctorDrawer } from "./DoctorDrawer";
 import { BookingModal } from "@/components/patient/booking/BookingModal";
 import type { Doctor } from "@/types/doctor";
 
-// ── Constants ─────────────────────────────────────────────────────────────────
+// -- Constants -----------------------------------------------------------------
 
 const SPECIALIZATIONS = [
   "Allergy & Immunology", "Cardiology", "Dermatology", "Emergency Medicine",
@@ -55,7 +55,7 @@ const PH_LOCATIONS = [
 const PAGE_SIZE = 9;
 const PLACEHOLDER_SUFFIXES = ["name...", "specialization...", "doctor..."];
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// -- Types ---------------------------------------------------------------------
 
 interface FilterState {
   specialties: string[];
@@ -75,7 +75,7 @@ const INITIAL_FILTERS: FilterState = {
   location:    [],
 };
 
-// ── Sub-components ────────────────────────────────────────────────────────────
+// -- Sub-components ------------------------------------------------------------
 
 function MultiSelectSearch({
   options,
@@ -288,25 +288,25 @@ function EmptyState({ title, subtitle }: { title: string; subtitle: string }) {
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
+// -- Main component ------------------------------------------------------------
 
 export function FindDoctorsPage() {
   const searchParams = useSearchParams();
 
-  // ── Tabs ───────────────────────────────────────────────────────────────────
+  // -- Tabs -------------------------------------------------------------------
   const [activeTab,  setActiveTab]  = useState<"all" | "today" | "saved">("all");
   const tabsRef                     = useRef<HTMLDivElement>(null);
   const [indicator, setIndicator]   = useState({ left: 0, width: 0 });
   const [gridVisible,setGridVisible]= useState(true);
 
-  // ── Search ─────────────────────────────────────────────────────────────────
+  // -- Search -----------------------------------------------------------------
   const [search,           setSearch]           = useState("");
   const [debouncedSearch,  setDebouncedSearch]  = useState("");
   const [searchFocused,    setSearchFocused]    = useState(false);
   const [placeholderIdx,   setPlaceholderIdx]   = useState(0);
   const [placeholderFaded, setPlaceholderFaded] = useState(false);
 
-  // ── Filters — seeded from URL params (e.g. from Swift recommendations) ─────
+  // -- Filters — seeded from URL params (e.g. from Swift recommendations) -----
   const [filters, setFilters] = useState<FilterState>(() => {
     const specialties = searchParams.get("specialties")?.split(",").filter(Boolean) ?? [];
     const languages   = searchParams.get("languages")?.split(",").filter(Boolean) ?? [];
@@ -315,7 +315,7 @@ export function FindDoctorsPage() {
     return { ...INITIAL_FILTERS, specialties, languages, timePref, maxFee };
   });
 
-  // ── Data ───────────────────────────────────────────────────────────────────
+  // -- Data -------------------------------------------------------------------
   const [doctors,        setDoctors]        = useState<Doctor[]>([]);
   const [loading,        setLoading]        = useState(true);
   const [fetchError,     setFetchError]     = useState(false);
@@ -327,7 +327,7 @@ export function FindDoctorsPage() {
   const [bookingDoctor,  setBookingDoctor]  = useState<Doctor | null>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
-  // ── Tab indicator ──────────────────────────────────────────────────────────
+  // -- Tab indicator ----------------------------------------------------------
 
   useLayoutEffect(() => {
     if (!tabsRef.current) return;
@@ -337,7 +337,7 @@ export function FindDoctorsPage() {
     if (btn) setIndicator({ left: btn.offsetLeft, width: btn.offsetWidth });
   }, [activeTab]);
 
-  // ── Animated placeholder ───────────────────────────────────────────────────
+  // -- Animated placeholder ---------------------------------------------------
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -350,14 +350,14 @@ export function FindDoctorsPage() {
     return () => clearInterval(id);
   }, []);
 
-  // ── Debounce search ────────────────────────────────────────────────────────
+  // -- Debounce search --------------------------------------------------------
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 300);
     return () => clearTimeout(t);
   }, [search]);
 
-  // ── Fetch doctors ──────────────────────────────────────────────────────────
+  // -- Fetch doctors ----------------------------------------------------------
 
   const specialtyParam = filters.specialties.join(",");
   const languageParam  = filters.languages.join(",");
@@ -407,7 +407,7 @@ export function FindDoctorsPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [specialtyParam, languageParam, timePrefParam, filters.maxFee, retryKey]);
 
-  // ── Infinite scroll ────────────────────────────────────────────────────────
+  // -- Infinite scroll --------------------------------------------------------
 
   useEffect(() => { setVisibleCount(PAGE_SIZE); }, [listKey, activeTab]);
 
@@ -422,7 +422,7 @@ export function FindDoctorsPage() {
     return () => obs.disconnect();
   }, [loading]);
 
-  // ── Client-side tab + date + location filter ───────────────────────────────
+  // -- Client-side tab + date + location filter -------------------------------
 
   const displayedDoctors = useMemo(() => {
     let result = doctors;
@@ -455,7 +455,7 @@ export function FindDoctorsPage() {
 
   const visibleDoctors = displayedDoctors.slice(0, visibleCount);
 
-  // ── Actions ────────────────────────────────────────────────────────────────
+  // -- Actions ----------------------------------------------------------------
 
   function handleTabChange(tab: typeof activeTab) {
     if (tab === activeTab) return;
@@ -528,13 +528,13 @@ export function FindDoctorsPage() {
     ? new Date(`${filters.date}T00:00:00`).toLocaleDateString("en-PH", { month: "short", day: "numeric" })
     : undefined;
 
-  // ── Render ─────────────────────────────────────────────────────────────────
+  // -- Render -----------------------------------------------------------------
 
   return (
     <>
       <div className="flex flex-col gap-6 w-full">
 
-        {/* ── Page header ─────────────────────────────────────────── */}
+        {/* -- Page header ------------------------------------------- */}
         <div
           className="flex flex-col gap-1 animate-fadeInDown"
           style={{ animationDelay: "60ms", animationDuration: "400ms" }}
@@ -547,7 +547,7 @@ export function FindDoctorsPage() {
           </p>
         </div>
 
-        {/* ── Tabs ────────────────────────────────────────────────── */}
+        {/* -- Tabs -------------------------------------------------- */}
         <div
           ref={tabsRef}
           className="relative flex border-b border-elements animate-fadeInDown"
@@ -590,10 +590,10 @@ export function FindDoctorsPage() {
           })}
         </div>
 
-        {/* ── Search + Filters ────────────────────────────────────── */}
+        {/* -- Search + Filters -------------------------------------- */}
         <div className="flex flex-col gap-2">
 
-        {/* ── Search ──────────────────────────────────────────────── */}
+        {/* -- Search ------------------------------------------------ */}
         <div
           className="animate-fadeInDown"
           style={{ animationDelay: "140ms", animationDuration: "400ms" }}
@@ -653,7 +653,7 @@ export function FindDoctorsPage() {
           </div>
         </div>
 
-        {/* ── Filter chips ────────────────────────────────────────── */}
+        {/* -- Filter chips ------------------------------------------ */}
         <div
           className="animate-fadeInDown"
           style={{ animationDelay: "170ms", animationDuration: "400ms" }}
@@ -812,7 +812,7 @@ export function FindDoctorsPage() {
 
         </div>{/* end Search + Filters wrapper */}
 
-        {/* ── Doctor grid ─────────────────────────────────────────── */}
+        {/* -- Doctor grid ------------------------------------------- */}
         <div
           className={`transition-opacity duration-150 ease-in-out ${
             gridVisible ? "opacity-100" : "opacity-0"

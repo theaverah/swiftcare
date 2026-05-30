@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import type { Doctor, DoctorAvailability } from "@/types/doctor";
 
-// ── Time helpers ──────────────────────────────────────────────────────────────
+// -- Time helpers --------------------------------------------------------------
 
 function parseHour(t: string): number {
   const [time, ampm] = t.split(" ");
@@ -42,7 +42,7 @@ function assignSlot(slot: DoctorAvailability, window: [number, number]): string 
   return formatHour(Math.max(parseHour(slot.startTime), window[0]));
 }
 
-// ── Props ─────────────────────────────────────────────────────────────────────
+// -- Props ---------------------------------------------------------------------
 
 interface Props {
   doctor:        Doctor;
@@ -52,7 +52,7 @@ interface Props {
   onRescheduled: () => void;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
+// -- Component -----------------------------------------------------------------
 
 export function RescheduleModal({ doctor, appointmentId, isOpen, onClose, onRescheduled }: Props) {
   const [mounted,    setMounted]    = useState(false);
@@ -187,7 +187,7 @@ export function RescheduleModal({ doctor, appointmentId, isOpen, onClose, onResc
           {/* Body */}
           <div className={`flex-1 overflow-y-auto px-10 py-6 ${done ? "flex flex-col items-center justify-center" : ""}`}>
             {done ? (
-              /* ── Success ── */
+              /* -- Success -- */
               <div className="flex flex-col items-center gap-4 text-center animate-fadeInDown">
                 <img src="/illustrations/success.svg" alt="" aria-hidden className="w-72 max-w-full select-none" />
                 <div className="flex flex-col gap-2">
@@ -205,7 +205,7 @@ export function RescheduleModal({ doctor, appointmentId, isOpen, onClose, onResc
                 </div>
               </div>
             ) : (
-              /* ── Picker ── */
+              /* -- Picker -- */
               <div className="flex flex-col gap-6 animate-fadeInDown">
 
                 {/* Heading */}

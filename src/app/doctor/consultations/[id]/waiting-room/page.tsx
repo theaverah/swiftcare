@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Wifi, Mic, Video, ArrowLeft, CheckCircle, AlertCircle, Calendar, Clock } from "lucide-react";
 import { format } from "date-fns";
 
-// ── Consultation type (doctor-side) ───────────────────────────────────────────
+// -- Consultation type (doctor-side) -------------------------------------------
 
 interface DoctorConsultation {
   id: string;
@@ -16,7 +16,7 @@ interface DoctorConsultation {
   chiefComplaint: string | null;
 }
 
-// ── Device status row ─────────────────────────────────────────────────────────
+// -- Device status row ---------------------------------------------------------
 
 type DeviceStatus = "checking" | "ready" | "check";
 
@@ -67,7 +67,7 @@ function formatCountdown(s: number): string {
   return `${sec}s`;
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+// -- Page ----------------------------------------------------------------------
 
 export default function DoctorWaitingRoomPage() {
   const { id }  = useParams<{ id: string }>();

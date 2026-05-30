@@ -7,7 +7,7 @@ import { EditableProfileSection } from "./EditableProfileSection";
 import { AccountSection }         from "./AccountSection";
 import { NotificationsSection }   from "./NotificationsSection";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// -- Types ---------------------------------------------------------------------
 
 export interface ProfileData {
   name:               string;
@@ -40,7 +40,7 @@ interface Props {
   onClose: () => void;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
+// -- Component -----------------------------------------------------------------
 
 export function ProfileModal({ isOpen, onClose }: Props) {
   const [mounted,   setMounted]   = useState(false);
@@ -121,7 +121,7 @@ export function ProfileModal({ isOpen, onClose }: Props) {
             transition:    "opacity 300ms ease, transform 300ms cubic-bezier(0.25,0.46,0.45,0.94)",
           }}
         >
-          {/* ── Left sidebar ─────────────────────────────────────────── */}
+          {/* -- Left sidebar ------------------------------------------- */}
           <div className="w-55 shrink-0 border-r border-elements flex flex-col py-6 bg-bg-main">
             <nav className="flex flex-col gap-0.5 px-2 mt-2">
               {NAV.map(({ key, label, Icon }) => (
@@ -140,7 +140,7 @@ export function ProfileModal({ isOpen, onClose }: Props) {
             </nav>
           </div>
 
-          {/* ── Right content ────────────────────────────────────────── */}
+          {/* -- Right content ------------------------------------------ */}
           <div className="flex-1 flex flex-col overflow-hidden bg-bg-main">
             {/* Header */}
             <div className="shrink-0 flex items-center justify-between px-8 py-5 border-b border-elements">

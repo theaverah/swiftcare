@@ -50,7 +50,7 @@ export function ProfilePopover({ name, email, initials, isOpen, onClose, onViewP
       `}
       aria-hidden={!isOpen}
     >
-      {/* ── Identity ──────────────────────────────────────────────── */}
+      {/* -- Identity ------------------------------------------------ */}
       <div className="flex items-center gap-3 px-4 py-3.5">
         <div className="w-9 h-9 rounded-full bg-brand-sub flex items-center justify-center text-brand text-[13px] font-medium shrink-0">
           {initials}
@@ -63,7 +63,7 @@ export function ProfilePopover({ name, email, initials, isOpen, onClose, onViewP
 
       <div className="h-px bg-elements/50" />
 
-      {/* ── Menu items ────────────────────────────────────────────── */}
+      {/* -- Menu items ---------------------------------------------- */}
       <div className="py-1">
         <button
           type="button"
@@ -77,7 +77,7 @@ export function ProfilePopover({ name, email, initials, isOpen, onClose, onViewP
 
       <div className="h-px bg-elements/50" />
 
-      {/* ── Sign out ──────────────────────────────────────────────── */}
+      {/* -- Sign out ------------------------------------------------ */}
       <div className="py-1">
         <button
           type="button"

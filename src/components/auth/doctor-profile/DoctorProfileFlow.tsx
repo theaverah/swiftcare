@@ -9,7 +9,7 @@ import { DoctorStep2ProfessionalDetails } from "./DoctorStep2ProfessionalDetails
 import { DoctorStep3ConsultationSetup } from "./DoctorStep3ConsultationSetup";
 import { DoctorStep4Review } from "./DoctorStep4Review";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// --- Types --------------------------------------------------------------------
 
 export interface BreakSlot {
   startTime: string;
@@ -38,7 +38,7 @@ export interface DoctorProfileData {
   schedule: Record<string, ScheduleDay>;
 }
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+// --- Constants ----------------------------------------------------------------
 
 export const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -59,7 +59,7 @@ const INITIAL: DoctorProfileData = {
   ),
 };
 
-// ─── Validation ───────────────────────────────────────────────────────────────
+// --- Validation ---------------------------------------------------------------
 
 function timeToMinutes(t: string): number {
   const [time, ampm] = t.split(" ");
@@ -136,7 +136,7 @@ function isStep3Valid(d: DoctorProfileData) {
   });
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// --- Component ----------------------------------------------------------------
 
 export function DoctorProfileFlow() {
   const router = useRouter();

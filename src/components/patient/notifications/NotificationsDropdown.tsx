@@ -8,10 +8,11 @@ import {
   CalendarClock,
   CalendarX,
   BellOff,
+  Bell,
 } from "lucide-react";
 import type { Notification, NotificationType } from "@/types/notification";
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// --- Helpers -----------------------------------------------------------------
 
 const TYPE_ICON: Record<NotificationType, React.ElementType> = {
   appointment_booked: CalendarCheck,
@@ -32,7 +33,7 @@ function relativeTime(date: Date): string {
   return `${days} days ago`;
 }
 
-// ─── Props ────────────────────────────────────────────────────────────────────
+// --- Props --------------------------------------------------------------------
 
 interface NotificationsDropdownProps {
   notifications: Notification[];
@@ -42,7 +43,7 @@ interface NotificationsDropdownProps {
   onMarkAllAsRead: () => void;
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// --- Component ----------------------------------------------------------------
 
 export function NotificationsDropdown({
   notifications,
@@ -100,7 +101,7 @@ export function NotificationsDropdown({
       `}
       aria-hidden={!isOpen}
     >
-      {/* ── Header ─────────────────────────────────────────────────── */}
+      {/* -- Header --------------------------------------------------- */}
       <div className="flex items-center justify-between px-5 py-3.5 border-b border-elements shrink-0">
         <span className="text-[16px] font-medium text-text-main text-left">Notifications</span>
         {hasUnread && (
@@ -114,7 +115,7 @@ export function NotificationsDropdown({
         )}
       </div>
 
-      {/* ── List ───────────────────────────────────────────────────── */}
+      {/* -- List ----------------------------------------------------- */}
       <div className="overflow-y-auto" style={{ maxHeight: "420px" }}>
         {notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 py-12 px-6">
@@ -124,7 +125,7 @@ export function NotificationsDropdown({
         ) : (
           <ul>
             {notifications.map((n, i) => {
-              const Icon = TYPE_ICON[n.type];
+              const Icon = TYPE_ICON[n.type] ?? Bell;
               return (
                 <li key={n.id}>
                   <button

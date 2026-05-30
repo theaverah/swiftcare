@@ -4,11 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { Eye, EyeOff, Check, AlertCircle } from "lucide-react";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// --- Types --------------------------------------------------------------------
 
 type Role = "patient" | "doctor";
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+// --- Constants ----------------------------------------------------------------
 
 const PASSWORD_CONDITIONS = [
   { label: "At least 8 characters",         test: (pw: string) => pw.length >= 8 },
@@ -22,7 +22,7 @@ function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// --- Sub-components -----------------------------------------------------------
 
 // Change 4: bare check, no circle
 function FieldSuccessIcon() {
@@ -86,7 +86,7 @@ function RoleCard({ label, description, selected, error, onClick, paddingClass }
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// --- Main component -----------------------------------------------------------
 
 interface RegisterStep1Props {
   onContinue?: (data: { role: Role; email: string; password: string }) => void;
@@ -162,12 +162,12 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
     <div className="min-h-screen bg-white flex items-center justify-center px-6 py-16">
       <div className="flex flex-col gap-4 w-full max-w-lg">
 
-        {/* ── Logo ────────────────────────────────────────────────────── */}
+        {/* -- Logo ------------------------------------------------------ */}
         <div className="flex justify-center mb-1 animate-fadeInDown" style={{ animationDelay: "0ms" }}>
           <img src="/logo.png" alt="SwiftCare" className="w-12 h-12 object-contain" />
         </div>
 
-        {/* ── Title + role cards ──────────────────────────────────────── */}
+        {/* -- Title + role cards ---------------------------------------- */}
         <div className="flex flex-col gap-6.5 items-center w-full animate-fadeInDown" style={{ animationDelay: "60ms" }}>
           <h1 className="text-[24px] font-medium text-text-main tracking-[-0.264px] leading-normal text-center w-full">
             Let&apos;s get you set up on SwiftCare
@@ -193,10 +193,10 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
           </div>
         </div>
 
-        {/* ── Divider ─────────────────────────────────────────────────── */}
+        {/* -- Divider --------------------------------------------------- */}
         <div className="h-px bg-elements/50 w-full animate-fadeInDown" style={{ animationDelay: "120ms" }} />
 
-        {/* ── Error banner ────────────────────────────────────────────── */}
+        {/* -- Error banner ---------------------------------------------- */}
         {apiError && (
           <div className="flex items-start gap-3 px-4 py-3 rounded-lg bg-error/8 border border-error/20 animate-fadeInDown w-full" style={{ animationDuration: "200ms" }}>
             <AlertCircle size={16} strokeWidth={1.75} className="text-error shrink-0 mt-0.5" />
@@ -204,7 +204,7 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
           </div>
         )}
 
-        {/* ── Email ───────────────────────────────────────────────────── */}
+        {/* -- Email ----------------------------------------------------- */}
         <div className="flex flex-col gap-1.5 w-full animate-fadeInDown" style={{ animationDelay: "180ms" }}>
           <label
             htmlFor="email"
@@ -247,7 +247,7 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
           )}
         </div>
 
-        {/* ── Password ────────────────────────────────────────────────── */}
+        {/* -- Password -------------------------------------------------- */}
         <div className="flex flex-col w-full animate-fadeInDown" style={{ animationDelay: "240ms" }}>
           <div className="flex flex-col gap-1.5 w-full">
             <label
@@ -340,7 +340,7 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
           </div>
         </div>
 
-        {/* ── Continue + footer ────────────────────────────────────────── */}
+        {/* -- Continue + footer ------------------------------------------ */}
         <div className="flex flex-col gap-[14px] items-center w-full mt-4 animate-fadeInDown" style={{ animationDelay: "300ms" }}>
           <button
             type="button"

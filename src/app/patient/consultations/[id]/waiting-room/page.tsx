@@ -6,7 +6,7 @@ import { Wifi, Mic, Video, ArrowLeft, CheckCircle, AlertCircle, Calendar, Clock 
 import { format } from "date-fns";
 import type { Consultation } from "@/types/consultation";
 
-// ── Avatar palette (matches DoctorCard) ───────────────────────────────────────
+// -- Avatar palette (matches DoctorCard) ---------------------------------------
 
 const AVATAR_PALETTES = [
   { bg: "#E8F4FD", color: "#2B7BB9" },
@@ -30,7 +30,7 @@ function avatarPalette(name: string) {
   return AVATAR_PALETTES[Math.abs(hash) % AVATAR_PALETTES.length];
 }
 
-// ── Device status row ─────────────────────────────────────────────────────────
+// -- Device status row ---------------------------------------------------------
 
 type DeviceStatus = "checking" | "ready" | "check";
 
@@ -71,7 +71,7 @@ function DeviceRow({
   );
 }
 
-// ── Countdown formatter ───────────────────────────────────────────────────────
+// -- Countdown formatter -------------------------------------------------------
 
 function formatCountdown(s: number): string {
   if (s <= 0) return "Starting now";
@@ -83,7 +83,7 @@ function formatCountdown(s: number): string {
   return `${sec}s`;
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+// -- Page ----------------------------------------------------------------------
 
 export default function PatientWaitingRoomPage() {
   const { id }  = useParams<{ id: string }>();

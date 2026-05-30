@@ -103,7 +103,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
     return `${data.specializations.length} specializations selected`;
   }
 
-  // ── Years of experience validation ────────────────────────────────────────
+  // -- Years of experience validation ----------------------------------------
 
   function getDoctorAge(): number | null {
     if (!data.birthday) return null;
@@ -145,7 +145,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
   return (
     <div className="flex flex-col gap-4">
 
-      {/* ── Heading ─────────────────────────────────────────────────── */}
+      {/* -- Heading --------------------------------------------------- */}
       <div className="flex flex-col gap-0.5 animate-fadeInDown" style={{ animationDelay: "0ms" }}>
         <h1 className="text-[24px] font-medium text-text-main tracking-[-0.264px] leading-normal">
           Tell us about your practice
@@ -155,7 +155,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
         </p>
       </div>
 
-      {/* ── Specialization ──────────────────────────────────────────── */}
+      {/* -- Specialization -------------------------------------------- */}
       <div className="flex flex-col gap-1.5 mt-3 animate-fadeInDown z-20" style={{ animationDelay: "60ms" }} ref={specRef}>
         <label className="text-[14px] font-medium text-text-main">Specialization</label>
         <div className="relative">
@@ -240,7 +240,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
         )}
       </div>
 
-      {/* ── PRC License ─────────────────────────────────────────────── */}
+      {/* -- PRC License ----------------------------------------------- */}
       <div className="flex flex-col gap-1.5 animate-fadeInDown" style={{ animationDelay: "120ms" }}>
         <label className="text-[14px] font-medium text-text-main">PRC License Number</label>
         <div className="relative">
@@ -266,7 +266,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
         )}
       </div>
 
-      {/* ── Years of Experience ─────────────────────────────────────── */}
+      {/* -- Years of Experience --------------------------------------- */}
       <div className="flex flex-col gap-1.5 animate-fadeInDown" style={{ animationDelay: "180ms" }}>
         <label className="text-[14px] font-medium text-text-main">Years of experience</label>
         <input
@@ -288,7 +288,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
         )}
       </div>
 
-      {/* ── Languages ───────────────────────────────────────────────── */}
+      {/* -- Languages ------------------------------------------------- */}
       <div className="flex flex-col gap-1.5 animate-fadeInDown z-10" style={{ animationDelay: "240ms" }} ref={langRef}>
         <label className="text-[14px] font-medium text-text-main">Languages spoken</label>
         <div className="relative">
@@ -366,7 +366,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
         )}
       </div>
 
-      {/* ── Bio ─────────────────────────────────────────────────────── */}
+      {/* -- Bio ------------------------------------------------------- */}
       <div className="flex flex-col gap-1.5 animate-fadeInDown" style={{ animationDelay: "300ms" }}>
         <div className="flex flex-col gap-0.5">
           <label className="text-[14px] font-medium text-text-main">Bio</label>
@@ -384,7 +384,7 @@ export function DoctorStep2ProfessionalDetails({ data, onChange, onContinue, onB
         </p>
       </div>
 
-      {/* ── Buttons ─────────────────────────────────────────────────── */}
+      {/* -- Buttons --------------------------------------------------- */}
       <div className="flex gap-3 mt-4 animate-fadeInDown" style={{ animationDelay: "360ms" }}>
         <button
           type="button"

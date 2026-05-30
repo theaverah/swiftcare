@@ -4,7 +4,7 @@ import { useState } from "react";
 import { User, Activity, FileHeart } from "lucide-react";
 import type { ProfileData } from "./ProfileFlow";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// --- Types --------------------------------------------------------------------
 
 interface Props {
   data: ProfileData;
@@ -14,7 +14,7 @@ interface Props {
   onBack: () => void;
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// --- Sub-components -----------------------------------------------------------
 
 function Section({
   title,
@@ -60,7 +60,7 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// --- Component ----------------------------------------------------------------
 
 export function Step4Overview({ data, canFinish, onEdit, onFinish, onBack }: Props) {
   const [saving, setSaving] = useState(false);
@@ -79,7 +79,7 @@ export function Step4Overview({ data, canFinish, onEdit, onFinish, onBack }: Pro
   return (
     <div className="flex flex-col gap-4">
 
-      {/* ── Heading ─────────────────────────────────────────────────── */}
+      {/* -- Heading --------------------------------------------------- */}
       <div
         className="flex flex-col gap-0.5 animate-fadeInDown"
         style={{ animationDelay: "0ms" }}
@@ -92,7 +92,7 @@ export function Step4Overview({ data, canFinish, onEdit, onFinish, onBack }: Pro
         </p>
       </div>
 
-      {/* ── Basics card ─────────────────────────────────────────────── */}
+      {/* -- Basics card ----------------------------------------------- */}
       <div
         className="animate-fadeInDown mt-1"
         style={{ animationDelay: "60ms" }}
@@ -106,7 +106,7 @@ export function Step4Overview({ data, canFinish, onEdit, onFinish, onBack }: Pro
         </Section>
       </div>
 
-      {/* ── Body Metrics card ───────────────────────────────────────── */}
+      {/* -- Body Metrics card ----------------------------------------- */}
       <div
         className="animate-fadeInDown"
         style={{ animationDelay: "120ms" }}
@@ -119,7 +119,7 @@ export function Step4Overview({ data, canFinish, onEdit, onFinish, onBack }: Pro
         </Section>
       </div>
 
-      {/* ── Medical History card ─────────────────────────────────────── */}
+      {/* -- Medical History card --------------------------------------- */}
       <div
         className="animate-fadeInDown"
         style={{ animationDelay: "180ms" }}
@@ -135,7 +135,7 @@ export function Step4Overview({ data, canFinish, onEdit, onFinish, onBack }: Pro
         </Section>
       </div>
 
-      {/* ── Buttons ─────────────────────────────────────────────────── */}
+      {/* -- Buttons --------------------------------------------------- */}
       <div
         className="flex gap-3 mt-4 animate-fadeInDown"
         style={{ animationDelay: "240ms" }}

@@ -8,7 +8,7 @@ import {
 import { format } from "date-fns";
 import type { Consultation, ConsultationDoctor } from "@/types/consultation";
 
-// ── Avatar helpers ────────────────────────────────────────────────────────────
+// -- Avatar helpers ------------------------------------------------------------
 
 const AVATAR_COLORS = [
   { bg: "bg-[#E8F4F8]", text: "text-[#2196A0]" },
@@ -54,7 +54,7 @@ function DoctorAvatar({ doctor, size = 44 }: { doctor: ConsultationDoctor; size?
   );
 }
 
-// ── Status badges ─────────────────────────────────────────────────────────────
+// -- Status badges -------------------------------------------------------------
 
 function StatusBadge({ status }: { status: Consultation["status"] }) {
   const map: Record<string, { label: string; cls: string }> = {
@@ -80,7 +80,7 @@ function PaymentBadge({ status }: { status: "pending" | "paid" }) {
     : <span className="text-[14px] font-medium px-2.5 py-1 rounded-full bg-amber-50 text-amber-600">Payment pending</span>;
 }
 
-// ── Countdown ─────────────────────────────────────────────────────────────────
+// -- Countdown -----------------------------------------------------------------
 
 function Countdown({ scheduledAt }: { scheduledAt: string }) {
   const [label, setLabel] = useState("");
@@ -115,7 +115,7 @@ function Countdown({ scheduledAt }: { scheduledAt: string }) {
   );
 }
 
-// ── Skeleton ──────────────────────────────────────────────────────────────────
+// -- Skeleton ------------------------------------------------------------------
 
 export function ConsultationCardSkeleton() {
   return (
@@ -143,7 +143,7 @@ export function ConsultationCardSkeleton() {
   );
 }
 
-// ── Google Calendar link ──────────────────────────────────────────────────────
+// -- Google Calendar link ------------------------------------------------------
 
 function buildCalendarUrl(doctorName: string, scheduledAt: string, durationMinutes: number) {
   const start    = new Date(scheduledAt);
@@ -159,7 +159,7 @@ function buildCalendarUrl(doctorName: string, scheduledAt: string, durationMinut
   return `https://www.google.com/calendar/render?${params.toString()}`;
 }
 
-// ── Main card ─────────────────────────────────────────────────────────────────
+// -- Main card -----------------------------------------------------------------
 
 interface Props {
   consultation: Consultation;

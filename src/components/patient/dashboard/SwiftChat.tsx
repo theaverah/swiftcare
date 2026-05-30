@@ -6,7 +6,7 @@ import {
   ArrowUp, ImagePlus, Paperclip, Mic, X, RotateCcw, Stethoscope,
 } from "lucide-react";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// -- Types ---------------------------------------------------------------------
 
 interface AttachedFile {
   name:       string;
@@ -38,7 +38,7 @@ interface SwiftChatProps {
   onClear:        () => void;
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// -- Helpers -------------------------------------------------------------------
 
 function uid() {
   return Math.random().toString(36).slice(2, 10);
@@ -98,7 +98,7 @@ function buildDoctorUrl(f: SwiftFilters): string {
   return `/patient/doctors?${p.toString()}`;
 }
 
-// ── Sub-components ────────────────────────────────────────────────────────────
+// -- Sub-components ------------------------------------------------------------
 
 function SwiftAvatar() {
   return (
@@ -191,7 +191,7 @@ function MessageBubble({ msg }: { msg: Message }) {
   );
 }
 
-// ── Input bar (mirrors HeroSearch card) ───────────────────────────────────────
+// -- Input bar (mirrors HeroSearch card) ---------------------------------------
 
 interface InputBarProps {
   onSend:    (text: string, file?: File | null) => void;
@@ -339,7 +339,7 @@ function InputBar({ onSend, disabled }: InputBarProps) {
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
+// -- Main component ------------------------------------------------------------
 
 export function SwiftChat({ initialMessage, initialFile, onClear }: SwiftChatProps) {
   const [messages,    setMessages]    = useState<Message[]>([]);

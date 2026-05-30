@@ -10,7 +10,7 @@ import { CancelModal }      from "./CancelModal";
 import { BookingModal }     from "@/components/patient/booking/BookingModal";
 import { RescheduleModal }  from "@/components/patient/booking/RescheduleModal";
 
-// ── Tab types ─────────────────────────────────────────────────────────────────
+// -- Tab types -----------------------------------------------------------------
 
 type Tab = "upcoming" | "past" | "cancelled";
 
@@ -20,7 +20,7 @@ const TABS: { key: Tab; label: string }[] = [
   { key: "cancelled", label: "Cancelled" },
 ];
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// -- Helpers -------------------------------------------------------------------
 
 function filterByTab(consultations: Consultation[], tab: Tab): Consultation[] {
   const upcoming   = ["pending", "confirmed", "ongoing"];
@@ -60,7 +60,7 @@ function toDoctorType(cd: ConsultationDoctor): Doctor {
   };
 }
 
-// ── Empty state ───────────────────────────────────────────────────────────────
+// -- Empty state ---------------------------------------------------------------
 
 function EmptyState({ tab }: { tab: Tab }) {
   if (tab === "upcoming") {
@@ -103,7 +103,7 @@ function EmptyState({ tab }: { tab: Tab }) {
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
+// -- Main component ------------------------------------------------------------
 
 interface BookingTarget {
   doctor:          Doctor;

@@ -9,7 +9,7 @@ import { BookingStep1 } from "./BookingStep1";
 import { BookingStep2 } from "./BookingStep2";
 import { BookingStep3 } from "./BookingStep3";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// -- Types ---------------------------------------------------------------------
 
 export interface BookingData {
   date:            string;
@@ -33,7 +33,7 @@ const INITIAL: BookingData = {
   note:           "",
 };
 
-// ── Props ─────────────────────────────────────────────────────────────────────
+// -- Props ---------------------------------------------------------------------
 
 interface Props {
   doctor:           Doctor;
@@ -44,7 +44,7 @@ interface Props {
   onRescheduled?:   () => void;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
+// -- Component -----------------------------------------------------------------
 
 export function BookingModal({ doctor, isOpen, onClose, rescheduleMode, appointmentId, onRescheduled }: Props) {
   const [step,       setStep]       = useState(1);

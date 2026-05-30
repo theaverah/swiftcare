@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Check } from "lucide-react";
 import type { ProfileData } from "./ProfileFlow";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// --- Types --------------------------------------------------------------------
 
 type WeightUnit = "kg" | "lbs";
 type HeightUnit = "cm" | "ft";
@@ -17,7 +17,7 @@ interface Props {
   triggerValidation: number;
 }
 
-// ─── Validation (always compared against metric internally) ───────────────────
+// --- Validation (always compared against metric internally) -------------------
 
 const WEIGHT_MIN_KG = 20;
 const WEIGHT_MAX_KG = 300;
@@ -34,7 +34,7 @@ function isValidHeight(cm: string) {
   return !isNaN(n) && n >= HEIGHT_MIN_CM && n <= HEIGHT_MAX_CM;
 }
 
-// ─── Unit conversion ──────────────────────────────────────────────────────────
+// --- Unit conversion ----------------------------------------------------------
 
 function kgToLbs(kg: number) { return +(kg  * 2.20462).toFixed(1); }
 function lbsToKg(lbs: number) { return +(lbs / 2.20462).toFixed(1); }
@@ -50,7 +50,7 @@ function ftInToCm(ft: number, inches: number) {
   return +((ft * 30.48) + (inches * 2.54)).toFixed(1);
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// --- Component ----------------------------------------------------------------
 
 export function Step2BodyMetrics({ data, onChange, onContinue, onBack, triggerValidation }: Props) {
   const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
@@ -74,7 +74,7 @@ export function Step2BodyMetrics({ data, onChange, onContinue, onBack, triggerVa
     }
   }, [triggerValidation]);
 
-  // ── Weight ───────────────────────────────────────────────────────────────────
+  // -- Weight -------------------------------------------------------------------
 
   function handleWeightChange(val: string) {
     setWeightInput(val);
@@ -95,7 +95,7 @@ export function Step2BodyMetrics({ data, onChange, onContinue, onBack, triggerVa
     setWeightUnit(unit);
   }
 
-  // ── Height ───────────────────────────────────────────────────────────────────
+  // -- Height -------------------------------------------------------------------
 
   function handleHeightCmChange(val: string) {
     setHeightCmInput(val);
@@ -120,12 +120,12 @@ export function Step2BodyMetrics({ data, onChange, onContinue, onBack, triggerVa
     setHeightUnit(unit);
   }
 
-  // ── Error messages ───────────────────────────────────────────────────────────
+  // -- Error messages -----------------------------------------------------------
 
   const weightError = weightTouched && !weightFocused && !isValidWeight(data.weight);
   const heightError = heightTouched && !heightFocused && !isValidHeight(data.height);
 
-  // ── Border classes ───────────────────────────────────────────────────────────
+  // -- Border classes -----------------------------------------------------------
 
   function weightBorderClass() {
     if (weightError)                               return "border-error";
@@ -152,7 +152,7 @@ export function Step2BodyMetrics({ data, onChange, onContinue, onBack, triggerVa
   return (
     <div className="flex flex-col gap-4">
 
-      {/* ── Heading ─────────────────────────────────────────────────── */}
+      {/* -- Heading --------------------------------------------------- */}
       <div
         className="flex flex-col gap-0.5 animate-fadeInDown"
         style={{ animationDelay: "0ms" }}
@@ -165,7 +165,7 @@ export function Step2BodyMetrics({ data, onChange, onContinue, onBack, triggerVa
         </p>
       </div>
 
-      {/* ── Weight ──────────────────────────────────────────────────── */}
+      {/* -- Weight ---------------------------------------------------- */}
       <div
         className="flex flex-col gap-1.5 mt-3 animate-fadeInDown"
         style={{ animationDelay: "60ms" }}
@@ -217,7 +217,7 @@ export function Step2BodyMetrics({ data, onChange, onContinue, onBack, triggerVa
         )}
       </div>
 
-      {/* ── Height ──────────────────────────────────────────────────── */}
+      {/* -- Height ---------------------------------------------------- */}
       <div
         className="flex flex-col gap-1.5 animate-fadeInDown"
         style={{ animationDelay: "120ms" }}
@@ -305,7 +305,7 @@ export function Step2BodyMetrics({ data, onChange, onContinue, onBack, triggerVa
         )}
       </div>
 
-      {/* ── Buttons ─────────────────────────────────────────────────── */}
+      {/* -- Buttons --------------------------------------------------- */}
       <div
         className="flex gap-3 mt-4 animate-fadeInDown"
         style={{ animationDelay: "180ms" }}

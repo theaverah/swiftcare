@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { Search, Download, Link2 } from "lucide-react";
 import { toast } from "sonner";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// -- Types ---------------------------------------------------------------------
 
 type RecordType = "prescription" | "consultation_note" | "lab_request" | "medical_certificate" | "referral";
 
@@ -33,7 +33,7 @@ interface HealthRecord {
   referralReason?: string;
 }
 
-// ── Tab config ────────────────────────────────────────────────────────────────
+// -- Tab config ----------------------------------------------------------------
 
 type Tab = RecordType;
 
@@ -45,7 +45,7 @@ const TABS: { key: Tab; label: string }[] = [
   { key: "referral",            label: "Referrals"            },
 ];
 
-// ── Badge config ──────────────────────────────────────────────────────────────
+// -- Badge config --------------------------------------------------------------
 
 const BADGE: Record<Tab, { label: string; bg: string; text: string }> = {
   prescription:        { label: "Prescription",        bg: "bg-[#E6F4EF]",  text: "text-[#008786]" },
@@ -55,7 +55,7 @@ const BADGE: Record<Tab, { label: string; bg: string; text: string }> = {
   referral:            { label: "Referral",            bg: "bg-violet-50",  text: "text-violet-600"},
 };
 
-// ── Empty messages ────────────────────────────────────────────────────────────
+// -- Empty messages ------------------------------------------------------------
 
 const EMPTY: Record<Tab, { main: string; sub: string }> = {
   prescription:        { main: "No prescriptions yet.",        sub: "They'll appear here after your consultation."               },
@@ -65,7 +65,7 @@ const EMPTY: Record<Tab, { main: string; sub: string }> = {
   referral:            { main: "No referrals yet.",            sub: "Referrals from your doctor will appear here."               },
 };
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// -- Helpers -------------------------------------------------------------------
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-PH", {
@@ -107,7 +107,7 @@ function matchesSearch(r: HealthRecord, q: string): boolean {
   );
 }
 
-// ── Skeleton ──────────────────────────────────────────────────────────────────
+// -- Skeleton ------------------------------------------------------------------
 
 function RecordCardSkeleton() {
   return (
@@ -130,7 +130,7 @@ function RecordCardSkeleton() {
   );
 }
 
-// ── PDF generator ─────────────────────────────────────────────────────────────
+// -- PDF generator -------------------------------------------------------------
 
 async function downloadPdf(record: HealthRecord, patientName: string) {
   const { jsPDF } = await import("jspdf");
@@ -291,7 +291,7 @@ async function downloadPdf(record: HealthRecord, patientName: string) {
   doc.save(filename);
 }
 
-// ── Record card ───────────────────────────────────────────────────────────────
+// -- Record card ---------------------------------------------------------------
 
 function RecordCard({ record, patientName, index }: { record: HealthRecord; patientName: string; index: number }) {
   const badge   = BADGE[record.type];
@@ -373,7 +373,7 @@ function RecordCard({ record, patientName, index }: { record: HealthRecord; pati
   );
 }
 
-// ── Empty state ───────────────────────────────────────────────────────────────
+// -- Empty state ---------------------------------------------------------------
 
 function EmptyState({ tab }: { tab: Tab }) {
   const msg = EMPTY[tab];
@@ -388,7 +388,7 @@ function EmptyState({ tab }: { tab: Tab }) {
   );
 }
 
-// ── Main page ─────────────────────────────────────────────────────────────────
+// -- Main page -----------------------------------------------------------------
 
 export function HealthRecordsPage() {
   const { data: session }              = useSession();

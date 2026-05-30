@@ -154,7 +154,7 @@ export function DoctorStep1Profile({ data, onChange, onContinue, triggerValidati
 
   return (
     <>
-      {/* ── Crop modal ──────────────────────────────────────────────── */}
+      {/* -- Crop modal ------------------------------------------------ */}
       {cropSrc && createPortal(
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-6"
@@ -219,7 +219,7 @@ export function DoctorStep1Profile({ data, onChange, onContinue, triggerValidati
 
       <div className="flex flex-col gap-4">
 
-        {/* ── Heading ─────────────────────────────────────────────────── */}
+        {/* -- Heading --------------------------------------------------- */}
         <div className="flex flex-col gap-0.5 animate-fadeInDown" style={{ animationDelay: "0ms" }}>
           <h1 className="text-[24px] font-medium text-text-main tracking-[-0.264px] leading-normal">
             Set up your profile
@@ -229,7 +229,7 @@ export function DoctorStep1Profile({ data, onChange, onContinue, triggerValidati
           </p>
         </div>
 
-        {/* ── Profile photo ───────────────────────────────────────────── */}
+        {/* -- Profile photo --------------------------------------------- */}
         <div className="flex flex-col gap-1.5 mt-3 animate-fadeInDown" style={{ animationDelay: "60ms" }}>
           <div className="flex flex-col gap-0.5">
             <label className="text-[14px] font-medium text-text-main">Profile photo</label>
@@ -290,7 +290,7 @@ export function DoctorStep1Profile({ data, onChange, onContinue, triggerValidati
           </div>
         </div>
 
-        {/* ── First name ──────────────────────────────────────────────── */}
+        {/* -- First name ------------------------------------------------ */}
         <div className="flex flex-col gap-1.5 animate-fadeInDown" style={{ animationDelay: "120ms" }}>
           <label className="text-[14px] font-medium text-text-main">First name</label>
           <div className="relative">
@@ -314,7 +314,7 @@ export function DoctorStep1Profile({ data, onChange, onContinue, triggerValidati
           )}
         </div>
 
-        {/* ── Last name ───────────────────────────────────────────────── */}
+        {/* -- Last name ------------------------------------------------- */}
         <div className="flex flex-col gap-1.5 animate-fadeInDown" style={{ animationDelay: "180ms" }}>
           <label className="text-[14px] font-medium text-text-main">Last name</label>
           <div className="relative">
@@ -338,7 +338,7 @@ export function DoctorStep1Profile({ data, onChange, onContinue, triggerValidati
           )}
         </div>
 
-        {/* ── Birthday ────────────────────────────────────────────────── */}
+        {/* -- Birthday -------------------------------------------------- */}
         <div className="flex flex-col gap-1.5 animate-fadeInDown" style={{ animationDelay: "240ms" }}>
           <label className="text-[14px] font-medium text-text-main">Birthday</label>
           <input
@@ -358,7 +358,7 @@ export function DoctorStep1Profile({ data, onChange, onContinue, triggerValidati
           )}
         </div>
 
-        {/* ── Contact number ──────────────────────────────────────────── */}
+        {/* -- Contact number -------------------------------------------- */}
         <div className="flex flex-col gap-1.5 animate-fadeInDown" style={{ animationDelay: "300ms" }}>
           <label className="text-[14px] font-medium text-text-main">Contact number</label>
           <div className={`flex items-center h-10 rounded-lg border overflow-hidden transition-colors duration-200 ${phoneBorderClass()}`}>
@@ -386,7 +386,7 @@ export function DoctorStep1Profile({ data, onChange, onContinue, triggerValidati
           )}
         </div>
 
-        {/* ── Button ──────────────────────────────────────────────────── */}
+        {/* -- Button ---------------------------------------------------- */}
         <div className="flex flex-col mt-4 animate-fadeInDown" style={{ animationDelay: "360ms" }}>
           <button
             type="button"

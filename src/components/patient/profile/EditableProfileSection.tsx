@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { toast } from "sonner";
 import type { ProfileData } from "./ProfileModal";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// -- Helpers -------------------------------------------------------------------
 
 function formatPhone(digits: string): string {
   if (digits.length <= 3) return digits;
@@ -28,7 +28,7 @@ function ftInToCm(ft: number, inches: number) {
 }
 
 
-// ── TagInput ──────────────────────────────────────────────────────────────────
+// -- TagInput ------------------------------------------------------------------
 
 function TagInput({
   tags,
@@ -96,7 +96,7 @@ function TagInput({
   );
 }
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// -- Types ---------------------------------------------------------------------
 
 interface Props {
   data:          ProfileData;
@@ -133,7 +133,7 @@ function toForm(data: ProfileData): FormState {
   };
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
+// -- Component -----------------------------------------------------------------
 
 export function EditableProfileSection({ data, onUpdate, onDirtyChange, warnKey }: Props) {
   const [form,        setForm]        = useState<FormState>(() => toForm(data));
@@ -142,7 +142,7 @@ export function EditableProfileSection({ data, onUpdate, onDirtyChange, warnKey 
   const [bannerWarn,  setBannerWarn]  = useState(false);
   const [shakeCount,  setShakeCount]  = useState(0);
 
-  // ── Metric unit state ────────────────────────────────────────────────────────
+  // -- Metric unit state --------------------------------------------------------
   const [weightUnit,  setWeightUnit]  = useState<"kg" | "lbs">("kg");
   const [heightUnit,  setHeightUnit]  = useState<"cm" | "ft">("cm");
   const [weightInput, setWeightInput] = useState(() => toForm(data).weight);
@@ -259,7 +259,7 @@ export function EditableProfileSection({ data, onUpdate, onDirtyChange, warnKey 
   return (
     <div className="flex flex-col">
 
-      {/* ── Personal info ─────────────────────────────────────────── */}
+      {/* -- Personal info ------------------------------------------- */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-0.5">
           <p className="text-[18px] font-medium text-text-main">Personal Information</p>
@@ -296,14 +296,14 @@ export function EditableProfileSection({ data, onUpdate, onDirtyChange, warnKey 
 
       <div className="h-px bg-elements/50 my-8" />
 
-      {/* ── Health info ───────────────────────────────────────────── */}
+      {/* -- Health info --------------------------------------------- */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-0.5">
           <p className="text-[18px] font-medium text-text-main">Health Profile</p>
           <p className="text-[16px] text-text-sub">Shared with your doctor to help them prepare for your consultation.</p>
         </div>
 
-      {/* ── Weight ──────────────────────────────────────────────────────── */}
+      {/* -- Weight -------------------------------------------------------- */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-end justify-between">
           <label className={label} style={{ marginBottom: 0 }}>Weight</label>
@@ -333,7 +333,7 @@ export function EditableProfileSection({ data, onUpdate, onDirtyChange, warnKey 
         </div>
       </div>
 
-      {/* ── Height ──────────────────────────────────────────────────────── */}
+      {/* -- Height -------------------------------------------------------- */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-end justify-between">
           <label className={label} style={{ marginBottom: 0 }}>Height</label>
@@ -429,7 +429,7 @@ export function EditableProfileSection({ data, onUpdate, onDirtyChange, warnKey 
         />
       </div>
 
-      {/* ── Unsaved changes banner — always in DOM, transitions in/out ── */}
+      {/* -- Unsaved changes banner — always in DOM, transitions in/out -- */}
       {/* Outer: controls slide in/out — never remounts */}
       <div
         className="sticky bottom-6"

@@ -10,7 +10,7 @@ import { ChevronLeft, ChevronRight, Sun, Sunset, Moon } from "lucide-react";
 import type { Doctor, DoctorAvailability } from "@/types/doctor";
 import type { BookingData } from "./BookingModal";
 
-// ── Time helpers ──────────────────────────────────────────────────────────────
+// -- Time helpers --------------------------------------------------------------
 
 function parseHour(t: string): number {
   const [time, ampm] = t.split(" ");
@@ -46,7 +46,7 @@ function assignSlot(slot: DoctorAvailability, window: [number, number]): string 
 
 const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-// ── Props ─────────────────────────────────────────────────────────────────────
+// -- Props ---------------------------------------------------------------------
 
 interface Props {
   doctor:          Doctor;
@@ -56,7 +56,7 @@ interface Props {
   rescheduleMode?: boolean;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
+// -- Component -----------------------------------------------------------------
 
 export function BookingStep1({ doctor, data, onChange, onContinue, rescheduleMode }: Props) {
   const today = startOfDay(new Date());

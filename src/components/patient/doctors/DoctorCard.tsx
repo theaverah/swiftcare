@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Bookmark, Calendar } from "lucide-react";
 import type { Doctor } from "@/types/doctor";
 
-// ── Avatar color palette — soft muted tones ───────────────────────────────────
+// -- Avatar color palette — soft muted tones -----------------------------------
 
 const AVATAR_PALETTES = [
   { bg: "#E8F4FD", color: "#2B7BB9" },
@@ -28,7 +28,7 @@ function avatarPalette(name: string) {
   return AVATAR_PALETTES[Math.abs(hash) % AVATAR_PALETTES.length];
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
+// -- Component -----------------------------------------------------------------
 
 interface DoctorCardProps {
   doctor: Doctor;
@@ -76,7 +76,7 @@ export function DoctorCard({ doctor, onSaveToggle, onOpenDrawer, onBook, animati
         focus-visible:ring-2 focus-visible:ring-brand/40"
       style={{ animationDelay: `${animationIndex * 65}ms`, animationDuration: "420ms" }}
     >
-      {/* ── Content ──────────────────────────────────────────────── */}
+      {/* -- Content ------------------------------------------------ */}
       <div className="flex flex-col gap-4 p-5 flex-1">
 
         {/* Top row */}
@@ -155,7 +155,7 @@ export function DoctorCard({ doctor, onSaveToggle, onOpenDrawer, onBook, animati
 
       </div>
 
-      {/* ── Button footer ─────────────────────────────────────────── */}
+      {/* -- Button footer ------------------------------------------- */}
       <div className="flex border-t border-elements">
         <button
           type="button"

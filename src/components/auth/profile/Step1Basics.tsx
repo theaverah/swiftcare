@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Check } from "lucide-react";
 import type { ProfileData } from "./ProfileFlow";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// --- Types --------------------------------------------------------------------
 
 interface Props {
   data: ProfileData;
@@ -13,7 +13,7 @@ interface Props {
   triggerValidation: number;
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// --- Helpers ------------------------------------------------------------------
 
 function toTitleCase(str: string) {
   return str.replace(/\b\w/g, (c) => c.toUpperCase());
@@ -42,7 +42,7 @@ function isValidPhone(n: string) {
   return n.length === 10 && n.startsWith("9");
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// --- Component ----------------------------------------------------------------
 
 export function Step1Basics({ data, onChange, onContinue, triggerValidation }: Props) {
   const [phoneFocused,      setPhoneFocused]      = useState(false);
@@ -90,7 +90,7 @@ export function Step1Basics({ data, onChange, onContinue, triggerValidation }: P
   return (
     <div className="flex flex-col gap-4">
 
-      {/* ── Heading ─────────────────────────────────────────────────── */}
+      {/* -- Heading --------------------------------------------------- */}
       <div
         className="flex flex-col gap-0.5 animate-fadeInDown"
         style={{ animationDelay: "0ms" }}
@@ -103,7 +103,7 @@ export function Step1Basics({ data, onChange, onContinue, triggerValidation }: P
         </p>
       </div>
 
-      {/* ── First name ──────────────────────────────────────────────── */}
+      {/* -- First name ------------------------------------------------ */}
       <div
         className="flex flex-col gap-1.5 mt-3 animate-fadeInDown"
         style={{ animationDelay: "60ms" }}
@@ -130,7 +130,7 @@ export function Step1Basics({ data, onChange, onContinue, triggerValidation }: P
         )}
       </div>
 
-      {/* ── Last name ───────────────────────────────────────────────── */}
+      {/* -- Last name ------------------------------------------------- */}
       <div
         className="flex flex-col gap-1.5 animate-fadeInDown"
         style={{ animationDelay: "120ms" }}
@@ -157,7 +157,7 @@ export function Step1Basics({ data, onChange, onContinue, triggerValidation }: P
         )}
       </div>
 
-      {/* ── Birthday ────────────────────────────────────────────────── */}
+      {/* -- Birthday -------------------------------------------------- */}
       <div
         className="flex flex-col gap-1.5 animate-fadeInDown"
         style={{ animationDelay: "180ms" }}
@@ -182,7 +182,7 @@ export function Step1Basics({ data, onChange, onContinue, triggerValidation }: P
         )}
       </div>
 
-      {/* ── Contact number ──────────────────────────────────────────── */}
+      {/* -- Contact number -------------------------------------------- */}
       <div
         className="flex flex-col gap-1.5 animate-fadeInDown"
         style={{ animationDelay: "240ms" }}
@@ -215,7 +215,7 @@ export function Step1Basics({ data, onChange, onContinue, triggerValidation }: P
         )}
       </div>
 
-      {/* ── Button ──────────────────────────────────────────────────── */}
+      {/* -- Button ---------------------------------------------------- */}
       <div
         className="flex flex-col mt-4 animate-fadeInDown"
         style={{ animationDelay: "300ms" }}

@@ -2,14 +2,14 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// --- Types --------------------------------------------------------------------
 
 interface RegisterStep2Props {
   email: string;
   onVerified?: () => void;
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// --- Component ----------------------------------------------------------------
 
 export function RegisterStep2({ email, onVerified }: RegisterStep2Props) {
   const [code, setCode]           = useState<string[]>(Array(6).fill(""));
@@ -128,7 +128,7 @@ export function RegisterStep2({ email, onVerified }: RegisterStep2Props) {
     <div className="min-h-screen bg-white flex items-center justify-center px-6 py-16">
       <div className="flex flex-col gap-4 w-full max-w-lg">
 
-        {/* ── Heading ─────────────────────────────────────────────────── */}
+        {/* -- Heading --------------------------------------------------- */}
         <div
           className="flex flex-col gap-2.5 items-center text-center w-full animate-fadeInDown"
           style={{ animationDelay: "0ms" }}
@@ -144,7 +144,7 @@ export function RegisterStep2({ email, onVerified }: RegisterStep2Props) {
           </p>
         </div>
 
-        {/* ── Code input ──────────────────────────────────────────────── */}
+        {/* -- Code input ------------------------------------------------ */}
         <div
           className="flex flex-col gap-1.5 w-full animate-fadeInDown mt-2"
           style={{ animationDelay: "120ms" }}
@@ -197,7 +197,7 @@ export function RegisterStep2({ email, onVerified }: RegisterStep2Props) {
           </p>
         </div>
 
-        {/* ── Verify button ────────────────────────────────────────────── */}
+        {/* -- Verify button ---------------------------------------------- */}
         <div
           className="flex flex-col gap-2 items-center w-full mt-4 animate-fadeInDown"
           style={{ animationDelay: "240ms" }}

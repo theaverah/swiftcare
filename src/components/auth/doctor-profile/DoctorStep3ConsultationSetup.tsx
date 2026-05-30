@@ -13,7 +13,7 @@ interface Props {
   triggerValidation: number;
 }
 
-// ─── Time slots ───────────────────────────────────────────────────────────────
+// --- Time slots ---------------------------------------------------------------
 
 function generateTimeSlots(): string[] {
   const slots: string[] = [];
@@ -38,7 +38,7 @@ function timeToMinutes(t: string): number {
   return h * 60 + m;
 }
 
-// ─── TimeSelect ───────────────────────────────────────────────────────────────
+// --- TimeSelect ---------------------------------------------------------------
 
 function TimeSelect({ value, onChange, borderClass, height = "h-9" }: {
   value: string;
@@ -90,7 +90,7 @@ function TimeSelect({ value, onChange, borderClass, height = "h-9" }: {
   );
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// --- Component ----------------------------------------------------------------
 
 export function DoctorStep3ConsultationSetup({ data, onChange, onContinue, onBack, triggerValidation }: Props) {
   const [feeFocused,  setFeeFocused]  = useState(false);
@@ -104,7 +104,7 @@ export function DoctorStep3ConsultationSetup({ data, onChange, onContinue, onBac
     }
   }, [triggerValidation]);
 
-  // ── Schedule helpers ────────────────────────────────────────────────────────
+  // -- Schedule helpers --------------------------------------------------------
 
   function updateDay(day: string, patch: Partial<ScheduleDay>) {
     onChange({
@@ -172,7 +172,7 @@ export function DoctorStep3ConsultationSetup({ data, onChange, onContinue, onBac
     return true;
   }
 
-  // ── Derived state ───────────────────────────────────────────────────────────
+  // -- Derived state -----------------------------------------------------------
 
   const feeNum   = parseFloat(data.consultationFee);
   const feeValid = !isNaN(feeNum) && feeNum >= 100 && feeNum <= 5000;
@@ -214,7 +214,7 @@ export function DoctorStep3ConsultationSetup({ data, onChange, onContinue, onBac
   return (
     <div className="flex flex-col gap-4">
 
-      {/* ── Heading ─────────────────────────────────────────────────── */}
+      {/* -- Heading --------------------------------------------------- */}
       <div className="flex flex-col gap-0.5 animate-fadeInDown" style={{ animationDelay: "0ms" }}>
         <h1 className="text-[24px] font-medium text-text-main tracking-[-0.264px] leading-normal">
           Set your availability
@@ -224,7 +224,7 @@ export function DoctorStep3ConsultationSetup({ data, onChange, onContinue, onBac
         </p>
       </div>
 
-      {/* ── Consultation fee ────────────────────────────────────────── */}
+      {/* -- Consultation fee ------------------------------------------ */}
       <div className="flex flex-col gap-1.5 mt-3 animate-fadeInDown" style={{ animationDelay: "60ms" }}>
         <div className="flex flex-col gap-0.5">
           <label className="text-[14px] font-medium text-text-main">Consultation fee</label>
@@ -260,7 +260,7 @@ export function DoctorStep3ConsultationSetup({ data, onChange, onContinue, onBac
         )}
       </div>
 
-      {/* ── Weekly schedule ─────────────────────────────────────────── */}
+      {/* -- Weekly schedule ------------------------------------------- */}
       <div className="flex flex-col gap-3 animate-fadeInDown" style={{ animationDelay: "120ms" }}>
         <div className="flex flex-col gap-0.5">
           <label className="text-[14px] font-medium text-text-main">Weekly schedule</label>
@@ -387,7 +387,7 @@ export function DoctorStep3ConsultationSetup({ data, onChange, onContinue, onBac
 
       </div>
 
-      {/* ── Buttons ─────────────────────────────────────────────────── */}
+      {/* -- Buttons --------------------------------------------------- */}
       <div className="flex gap-3 mt-4 animate-fadeInDown" style={{ animationDelay: "180ms" }}>
         <button
           type="button"

@@ -8,7 +8,7 @@ export function LandingPage() {
   return (
     <div className="bg-white flex flex-col">
 
-      {/* ── Sticky nav ──────────────────────────────────────────────────────── */}
+      {/* -- Sticky nav -------------------------------------------------------- */}
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-elements/60">
         <div className="w-full px-8 h-17 flex items-center justify-between">
 
@@ -75,7 +75,7 @@ export function LandingPage() {
         </div>
       </header>
 
-      {/* ── Hero + screenshot ────────────────────────────────────────────────── */}
+      {/* -- Hero + screenshot -------------------------------------------------- */}
       <main className="flex flex-col items-center overflow-hidden">
 
         {/* Hero text */}

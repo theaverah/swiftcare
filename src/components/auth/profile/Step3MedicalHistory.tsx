@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Check, X } from "lucide-react";
 import type { ProfileData } from "./ProfileFlow";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// --- Types --------------------------------------------------------------------
 
 interface Props {
   data: ProfileData;
@@ -13,7 +13,7 @@ interface Props {
   onBack: () => void;
 }
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+// --- Data ---------------------------------------------------------------------
 
 const CONDITIONS = [
   "Diabetes",
@@ -38,7 +38,7 @@ const ALLERGIES = [
   "No known allergies",
 ];
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// --- Sub-components -----------------------------------------------------------
 
 function CheckboxItem({
   label,
@@ -143,7 +143,7 @@ function TagInput({
   );
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// --- Component ----------------------------------------------------------------
 
 export function Step3MedicalHistory({ data, onChange, onContinue, onBack }: Props) {
   function toggleCondition(c: string) {
@@ -191,7 +191,7 @@ export function Step3MedicalHistory({ data, onChange, onContinue, onBack }: Prop
   return (
     <div className="flex flex-col gap-4">
 
-      {/* ── Heading ─────────────────────────────────────────────────── */}
+      {/* -- Heading --------------------------------------------------- */}
       <div
         className="flex flex-col gap-0.5 animate-fadeInDown"
         style={{ animationDelay: "0ms" }}
@@ -205,7 +205,7 @@ export function Step3MedicalHistory({ data, onChange, onContinue, onBack }: Prop
         </p>
       </div>
 
-      {/* ── Existing conditions ─────────────────────────────────────── */}
+      {/* -- Existing conditions --------------------------------------- */}
       <div
         className="flex flex-col gap-2 mt-3 animate-fadeInDown"
         style={{ animationDelay: "60ms" }}
@@ -235,7 +235,7 @@ export function Step3MedicalHistory({ data, onChange, onContinue, onBack }: Prop
 
       <div className="h-px bg-elements/50 w-full" />
 
-      {/* ── Allergies ───────────────────────────────────────────────── */}
+      {/* -- Allergies ------------------------------------------------- */}
       <div
         className="flex flex-col gap-2 animate-fadeInDown"
         style={{ animationDelay: "120ms" }}
@@ -262,7 +262,7 @@ export function Step3MedicalHistory({ data, onChange, onContinue, onBack }: Prop
 
       <div className="h-px bg-elements/50 w-full" />
 
-      {/* ── Current medications ─────────────────────────────────────── */}
+      {/* -- Current medications --------------------------------------- */}
       <div
         className="flex flex-col gap-1.5 animate-fadeInDown"
         style={{ animationDelay: "180ms" }}
@@ -278,7 +278,7 @@ export function Step3MedicalHistory({ data, onChange, onContinue, onBack }: Prop
         />
       </div>
 
-      {/* ── Buttons ─────────────────────────────────────────────────── */}
+      {/* -- Buttons --------------------------------------------------- */}
       <div
         className="flex gap-3 mt-4 animate-fadeInDown"
         style={{ animationDelay: "240ms" }}

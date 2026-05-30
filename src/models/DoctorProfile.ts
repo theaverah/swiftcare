@@ -16,6 +16,11 @@ export interface IBlockedSlot {
   reason?: string;
 }
 
+export interface IEducation {
+  medicalSchool: string;
+  residency:     string;
+}
+
 export interface IDoctorProfile extends Document {
   _id: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
@@ -26,6 +31,10 @@ export interface IDoctorProfile extends Document {
   yearsOfExperience?: number;
   consultationFee?: number;
   languages: string[];
+  city?: string;
+  education?: IEducation;
+  certifications: string[];
+  affiliations: string[];
   availability: IAvailabilitySlot[];
   blockedSlots: IBlockedSlot[];
   rating: number;
@@ -77,6 +86,13 @@ const DoctorProfileSchema = new Schema<IDoctorProfile>(
     yearsOfExperience: { type: Number, min: 0 },
     consultationFee: { type: Number, min: 0 },
     languages: { type: [String], default: ["English"] },
+    city:       { type: String },
+    education: {
+      type: new Schema<IEducation>({ medicalSchool: String, residency: String }, { _id: false }),
+      default: undefined,
+    },
+    certifications: { type: [String], default: [] },
+    affiliations:   { type: [String], default: [] },
     availability: { type: [AvailabilitySlotSchema], default: [] },
     blockedSlots: { type: [BlockedSlotSchema], default: [] },
     rating: { type: Number, default: 0, min: 0, max: 5 },

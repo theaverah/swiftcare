@@ -44,7 +44,7 @@ function assignSlot(slot: DoctorAvailability, window: [number, number]): string 
   return formatHour(start);
 }
 
-const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 // -- Props ---------------------------------------------------------------------
 
@@ -105,53 +105,28 @@ export function BookingStep1({ doctor, data, onChange, onContinue, rescheduleMod
     onChange({ timePreference: key, assignedSlot: slot });
   }
 
-  const canContinue = !!data.date && !!data.timePreference;
+  const canContinue = !!data.date && !!data.timePreference && !!data.reason.trim();
 
   return (
     <div className="flex flex-col gap-6">
 
-      {/* Doctor context */}
-      <div className="flex items-center gap-3 p-3 bg-bg-sub rounded-lg border border-elements">
-        <div className="w-10 h-10 rounded-full bg-brand-sub flex items-center justify-center shrink-0">
-          {doctor.profileImage ? (
-            <img src={doctor.profileImage} alt="" className="w-full h-full rounded-full object-cover" />
-          ) : (
-            <span className="text-[13px] font-medium text-brand select-none">
-              {doctor.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
-            </span>
-          )}
-        </div>
-        <div className="min-w-0">
-          <p className="text-[14px] font-medium text-text-main leading-tight truncate">Dr. {doctor.name}</p>
-          {specs && <p className="text-[12px] text-text-sub leading-tight truncate">{specs}</p>}
-        </div>
-      </div>
-
-      {/* Reschedule note */}
-      {rescheduleMode && (
-        <div className="px-3.5 py-2.5 rounded-lg bg-brand-sub border border-brand/20">
-          <p className="text-[13px] text-brand leading-relaxed">
-            You&apos;re rescheduling your consultation with{" "}
-            <span className="font-medium">Dr. {doctor.name}</span>. Pick a new date and time.
-          </p>
-        </div>
-      )}
-
       {/* Heading */}
       <div className="flex flex-col gap-1">
-        <h3 className="text-[20px] font-medium text-text-main tracking-[-0.03em]">
+        <p className="text-[18px] font-medium text-text-main">
           {rescheduleMode ? "Pick a new date and time" : "When would you like to meet?"}
-        </h3>
+        </p>
         <p className="text-[14px] text-text-sub">
-          Pick a date and your preferred time of day. We&apos;ll find you the best available slot.
+          Pick a date and your preferred time of day.
         </p>
       </div>
 
       {/* Calendar */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2">
+        <p className="text-[16px] font-medium text-text-main">Date</p>
+        <div className="flex flex-col gap-3 p-4 rounded-xl bg-elements/20 border border-elements/60">
         {/* Month nav */}
         <div className="flex items-center justify-between">
-          <p className="text-[14px] font-medium text-text-main">
+          <p className="text-[16px] font-medium text-text-main">
             {format(month, "MMMM yyyy")}
           </p>
           <div className="flex items-center gap-1">
@@ -177,18 +152,18 @@ export function BookingStep1({ doctor, data, onChange, onContinue, rescheduleMod
         </div>
 
         {/* Day headers */}
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7">
           {WEEKDAYS.map(d => (
-            <div key={d} className="h-7 flex items-center justify-center text-[11px] font-medium text-text-sub">
+            <div key={d} className="h-6 flex items-center justify-center text-[14px] text-text-sub">
               {d}
             </div>
           ))}
         </div>
 
         {/* Day cells */}
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7 gap-y-0.5">
           {Array.from({ length: calDays.prefixCount }).map((_, i) => (
-            <div key={`pre-${i}`} />
+            <div key={`pre-${i}`} className="h-7" />
           ))}
           {calDays.days.map(date => {
             const avail    = isAvailable(date);
@@ -202,30 +177,35 @@ export function BookingStep1({ doctor, data, onChange, onContinue, rescheduleMod
                 disabled={!avail}
                 onClick={() => selectDate(date)}
                 className={`
-                  h-8 w-full flex items-center justify-center rounded-lg text-[13px] font-medium
-                  transition-all duration-150 relative
+                  h-7 w-full flex items-center justify-center rounded-lg text-[14px] font-medium
+                  transition-all duration-150
                   ${selected
                     ? "bg-text-main text-white"
-                    : avail
-                      ? "text-text-main hover:bg-bg-sub cursor-pointer"
-                      : "text-text-sub/30 cursor-not-allowed"}
+                    : isToday && avail
+                      ? "bg-brand/15 text-text-main hover:bg-brand/25 cursor-pointer"
+                      : isToday
+                        ? "bg-brand/15 text-text-sub/30 cursor-not-allowed"
+                        : avail
+                          ? "text-text-main hover:bg-bg-sub cursor-pointer"
+                          : "text-text-sub/30 cursor-not-allowed"}
                 `}
               >
                 {format(date, "d")}
-                {isToday && !selected && (
-                  <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-brand" />
-                )}
               </button>
             );
           })}
+        </div>
         </div>
       </div>
 
       {/* Time preference */}
       {data.date && (
         <div className="flex flex-col gap-2 animate-fadeInDown" style={{ animationDuration: "250ms" }}>
-          <p className="text-[16px] font-medium text-text-main">Time preference</p>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="flex flex-col gap-0.5">
+            <p className="text-[16px] font-medium text-text-main">Preferred time</p>
+            <p className="text-[14px] text-text-sub">Your exact slot will be confirmed based on availability within your preferred window.</p>
+          </div>
+          <div className="grid grid-cols-3 gap-2 mt-2 mb-1">
             {TIME_PREFS.map(({ key, label, range, Icon }) => {
               const available = availablePrefs.some(p => p.key === key);
               const selected  = data.timePreference === key;
@@ -246,29 +226,18 @@ export function BookingStep1({ doctor, data, onChange, onContinue, rescheduleMod
                   `}
                 >
                   <Icon size={16} className={selected ? "text-text-main" : "text-text-sub"} strokeWidth={1.75} />
-                  <p className={`text-[13px] font-medium leading-none ${selected ? "text-text-main" : "text-text-sub"}`}>{label}</p>
-                  <p className={`text-[10px] leading-tight ${selected ? "text-text-sub" : "text-text-sub/60"}`}>{range}</p>
+                  <p className={`text-[14px] font-medium leading-none ${available ? "text-text-main" : "text-text-sub"}`}>{label}</p>
+                  <p className={`text-[14px] leading-tight ${available ? "text-text-sub" : "text-text-sub/60"}`}>{range}</p>
                 </button>
               );
             })}
           </div>
-          {data.timePreference && data.assignedSlot && (
-            <p className="text-[12px] text-text-sub animate-fadeInDown" style={{ animationDuration: "200ms" }}>
-              Your assigned slot: <span className="font-medium text-text-main">{data.assignedSlot}</span> on{" "}
-              <span className="font-medium text-text-main">
-                {format(new Date(data.date + "T12:00:00"), "MMMM d, yyyy")}
-              </span>
-            </p>
-          )}
-          <p className="text-[11px] text-text-sub/70">
-            Your exact slot will be confirmed based on availability within your preferred window.
-          </p>
         </div>
       )}
 
       {/* Who is this for */}
       <div className="flex flex-col gap-2">
-        <p className="text-[14px] font-medium text-text-main">Who is this for?</p>
+        <p className="text-[16px] font-medium text-text-main">Booking for</p>
         <div className="grid grid-cols-2 gap-2">
           {(["myself", "someone_else"] as const).map(opt => {
             const selected = data.forSelf ? opt === "myself" : opt === "someone_else";
@@ -324,8 +293,8 @@ export function BookingStep1({ doctor, data, onChange, onContinue, rescheduleMod
 
       {/* Reason */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-[14px] font-medium text-text-main">
-          Reason for visit <span className="text-text-sub font-normal">(optional)</span>
+        <label className="text-[16px] font-medium text-text-main">
+          Reason for visit
         </label>
         <textarea
           rows={3}
@@ -338,17 +307,6 @@ export function BookingStep1({ doctor, data, onChange, onContinue, rescheduleMod
         />
       </div>
 
-      {/* CTA */}
-      <button
-        type="button"
-        onClick={onContinue}
-        disabled={!canContinue}
-        className="w-full h-11 rounded-lg bg-text-main text-brand-sub text-[14px] font-medium
-          hover:opacity-90 active:scale-[0.99] transition-all duration-200
-          disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        Continue to review
-      </button>
     </div>
   );
 }

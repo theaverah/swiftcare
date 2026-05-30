@@ -80,7 +80,7 @@ export function DashboardHome() {
         className="flex flex-col gap-3 animate-fadeInDown mt-10"
         style={{ animationDelay: "150ms", ...ANIM }}
       >
-        <p className="text-[16px] font-medium text-text-main">Your consultations</p>
+        <p className="text-[16px] font-medium text-text-main">Your upcoming consultations</p>
         <UpcomingAppointmentCard />
       </div>
 

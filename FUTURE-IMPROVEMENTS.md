@@ -44,4 +44,22 @@ Things we scoped out of the MVP on purpose. Each one has a clear path forward.
 
 ---
 
+## 6. Booking & Scheduling Conflict Validation
+
+**Now:** The booking flow accepts any date and time preference without checking for conflicts. A patient can book multiple appointments with the same doctor, reschedule to their current slot, or create overlapping consultations.
+
+**Next:** Add proper conflict detection at both the API and UI layer:
+
+- **Duplicate booking guard** — prevent a patient from booking a second appointment with the same doctor if an active (confirmed or pending) one already exists
+- **Reschedule conflict check** — when rescheduling, validate that the new date/time is different from the existing one before allowing submission
+- **Overlapping appointment check** — prevent a patient from booking two consultations that overlap in time, regardless of doctor
+- **Doctor-side conflict check** — prevent a doctor's calendar from double-booking two patients in the same time slot
+- **Same-day cancellation window** — block cancellations or reschedules within a minimum time window (e.g. 1 hour before the session)
+- **Past date guard** — reject bookings for dates that have already passed, both client-side and server-side
+- **Max concurrent booking limit** — optionally cap the number of active upcoming bookings per patient
+
+All of these should return clear, user-facing error messages — not silent failures or generic 500 errors.
+
+---
+
 *Last updated: May 2026*

@@ -31,7 +31,7 @@ const TIME_PREFS = [
   { key: "afternoon" as const, label: "Afternoon",  range: "12 PM – 6 PM",  window: [12, 18] as [number,number], Icon: Sunset },
   { key: "evening"   as const, label: "Evening",    range: "6 PM – 10 PM",  window: [18, 22] as [number,number], Icon: Moon   },
 ];
-const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 function getAvailablePrefs(slot: DoctorAvailability) {
   const s = parseHour(slot.startTime);
@@ -161,7 +161,7 @@ export function RescheduleModal({ doctor, appointmentId, isOpen, onClose, onResc
           role="dialog"
           aria-modal="true"
           aria-label="Reschedule consultation"
-          className="relative w-140 h-175 bg-bg-main rounded-xl shadow-[0_8px_40px_rgba(0,0,0,0.16)]
+          className="relative w-full max-w-2xl h-[96vh] max-h-[96vh] bg-bg-main rounded-xl shadow-[0_8px_40px_rgba(0,0,0,0.16)]
             flex flex-col pointer-events-auto"
           style={{
             opacity:   isOpen ? 1 : 0,
@@ -240,6 +240,7 @@ export function RescheduleModal({ doctor, appointmentId, isOpen, onClose, onResc
                 <div className="flex flex-col gap-2">
                 <p className="text-[16px] font-medium text-text-main">Choose a date</p>
                 <div className="flex flex-col gap-3 p-4 rounded-xl bg-elements/20 border border-elements/60">
+                  {/* Month nav */}
                   <div className="flex items-center justify-between">
                     <p className="text-[16px] font-medium text-text-main">{format(month, "MMMM yyyy")}</p>
                     <div className="flex items-center gap-1">
@@ -254,26 +255,23 @@ export function RescheduleModal({ doctor, appointmentId, isOpen, onClose, onResc
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-7 gap-1">
+                  <div className="grid grid-cols-7">
                     {WEEKDAYS.map(d => (
-                      <div key={d} className="h-7 flex items-center justify-center text-[14px] font-medium text-text-sub">{d}</div>
+                      <div key={d} className="h-6 flex items-center justify-center text-[14px] text-text-sub">{d}</div>
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-7 gap-x-1 gap-y-2">
-                    {Array.from({ length: calDays.prefixCount }).map((_, i) => <div key={`pre-${i}`} />)}
+                  <div className="grid grid-cols-7 gap-y-0.5">
+                    {Array.from({ length: calDays.prefixCount }).map((_, i) => <div key={`pre-${i}`} className="h-7" />)}
                     {calDays.days.map(d => {
                       const avail    = isAvailable(d);
                       const selected = date === format(d, "yyyy-MM-dd");
                       const isToday  = isSameDay(d, today);
                       return (
                         <button key={d.toISOString()} type="button" disabled={!avail} onClick={() => selectDate(d)}
-                          className={`h-8 w-full flex items-center justify-center rounded-lg text-[14px] font-medium transition-all duration-150 relative
-                            ${selected ? "bg-text-main text-white" : avail ? "text-text-main hover:bg-bg-sub cursor-pointer" : "text-text-sub/30 cursor-not-allowed"}`}>
+                          className={`h-7 w-full flex items-center justify-center rounded-lg text-[14px] font-medium transition-all duration-150
+                            ${selected ? "bg-text-main text-white" : isToday && avail ? "bg-brand/15 text-text-main hover:bg-brand/25 cursor-pointer" : isToday ? "bg-brand/15 text-text-sub/30 cursor-not-allowed" : avail ? "text-text-main hover:bg-bg-sub cursor-pointer" : "text-text-sub/30 cursor-not-allowed"}`}>
                           {format(d, "d")}
-                          {isToday && !selected && (
-                            <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-brand" />
-                          )}
                         </button>
                       );
                     })}

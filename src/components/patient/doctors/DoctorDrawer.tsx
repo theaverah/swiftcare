@@ -82,7 +82,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
           {/* Scrollable body */}
           <div className="flex-1 overflow-y-auto">
             {doctor && (
-              <div className="px-8 py-6 flex flex-col gap-6">
+              <div className="px-8 py-6 flex flex-col gap-10">
 
                 {/* -- Hero ----------------------------------------------- */}
                 <div className="flex flex-col items-center gap-3 text-center">

@@ -3,9 +3,12 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Calendar, Video, CalendarPlus, RotateCcw } from "lucide-react";
+import { Calendar, Clock, Video, CalendarPlus, RotateCcw, X, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
 import type { Consultation, ConsultationDoctor } from "@/types/consultation";
+import type { Doctor, DoctorAvailability } from "@/types/doctor";
+import { RescheduleModal } from "@/components/patient/booking/RescheduleModal";
+import { CancelModal }     from "@/components/patient/consultations/CancelModal";
 
 // -- Avatar --------------------------------------------------------------------
 
@@ -37,12 +40,40 @@ function DoctorAvatar({ doctor }: { doctor: ConsultationDoctor }) {
   );
 }
 
+// -- toDoctorType helper -------------------------------------------------------
+
+function toDoctorType(cd: ConsultationDoctor): Doctor {
+  return {
+    doctorProfileId:   cd.doctorProfileId,
+    userId:            cd.userId,
+    name:              cd.name,
+    profileImage:      cd.profileImage,
+    specializations:   cd.specializations,
+    consultationFee:   cd.consultationFee,
+    languages:         [],
+    city:              null,
+    yearsOfExperience: null,
+    licenseNumber:     null,
+    bio:               null,
+    education:         null,
+    certifications:    [],
+    affiliations:      [],
+    rating:            0,
+    totalReviews:      0,
+    availability:      cd.availability as DoctorAvailability[],
+    nextAvailableLabel:"",
+    isAvailableToday:  false,
+    todayHours:        null,
+    isSaved:           false,
+  };
+}
+
 // -- Skeleton ------------------------------------------------------------------
 
 function Skeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {[0, 1].map(i => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {[0, 1, 2].map(i => (
         <div key={i} className="bg-bg-main rounded-xl border border-elements p-5 flex flex-col min-h-50 animate-pulse">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-full bg-elements/60 shrink-0" />
@@ -51,7 +82,7 @@ function Skeleton() {
               <div className="h-3 w-24 rounded bg-elements/40" />
             </div>
           </div>
-          <div className="h-px bg-elements/50 my-4" />
+          <div className="h-px bg-elements/50 my-3" />
           <div className="h-4 w-48 rounded bg-elements/40" />
           <div className="mt-auto pt-4 flex justify-end">
             <div className="h-9 w-24 rounded-lg bg-elements/40" />
@@ -94,13 +125,22 @@ function buildCalendarUrl(doctorName: string, scheduledAt: string, durationMinut
   return `https://www.google.com/calendar/render?${params.toString()}`;
 }
 
-function ConsultationCard({ consultation }: { consultation: Consultation }) {
+function ConsultationCard({
+  consultation,
+  onReschedule,
+  onCancel,
+}: {
+  consultation: Consultation;
+  onReschedule: (c: Consultation) => void;
+  onCancel:     (c: Consultation) => void;
+}) {
   const router = useRouter();
   const { doctor, scheduledAt, durationMinutes, status } = consultation;
 
   const scheduledDate = new Date(scheduledAt);
   const diffMs        = scheduledDate.getTime() - Date.now();
   const canEnter      = status === "ongoing" || diffMs <= 15 * 60_000;
+  const isMissed      = diffMs < 0 && (status === "pending" || status === "confirmed");
   const dateLabel     = format(scheduledDate, "EEEE, MMMM d");
   const timeLabel     = format(scheduledDate, "h:mm aa");
 
@@ -116,22 +156,30 @@ function ConsultationCard({ consultation }: { consultation: Consultation }) {
           <DoctorAvatar doctor={doctor} />
           <div className="min-w-0">
             <p className="text-[16px] font-medium text-text-main truncate">Dr. {doctor.name}</p>
-            <p className="text-[14px] text-text-sub mt-0.5 truncate">
+            <p className="text-[16px] text-text-sub mt-0.5 truncate">
               {doctor.specializations[0] ?? "General Practitioner"}
             </p>
           </div>
         </div>
 
-        <div className="h-px bg-elements/50 my-4" />
+        <div className="h-px bg-elements/50 my-3" />
 
         {/* Date + time */}
         <div className="flex items-center gap-2">
-          <Calendar size={14} className="text-text-sub shrink-0" strokeWidth={1.75} />
-          <span className="text-[14px] text-text-main">
-            {dateLabel}
-            <span className="text-text-sub"> · {timeLabel}</span>
+          <Calendar size={14} className="text-text-sub shrink-0" strokeWidth={2} />
+          <span className="text-[14px]">
+            <span className="text-text-main">{dateLabel}</span>
+            <span className="text-text-sub"> at </span>
+            <span className="text-text-main">{timeLabel}</span>
           </span>
         </div>
+
+        {isMissed && (
+          <div className="flex items-center gap-2">
+            <Clock size={13} className="text-text-sub shrink-0" strokeWidth={2} />
+            <span className="text-[14px] text-error">Missed</span>
+          </div>
+        )}
       </div>
 
       {/* Flush footer */}
@@ -143,19 +191,29 @@ function ConsultationCard({ consultation }: { consultation: Consultation }) {
             className="flex-1 py-3 bg-brand text-white flex items-center justify-center gap-2
               text-[14px] font-medium hover:opacity-90 active:opacity-80 transition-all duration-200"
           >
-            <Video size={14} strokeWidth={1.75} />
+            <Video size={14} strokeWidth={2} />
             Enter waiting room
           </button>
         ) : (
           <>
             <button
               type="button"
-              onClick={() => router.push(`/patient/consultations`)}
+              onClick={() => onCancel(consultation)}
               className="flex-1 py-3 flex items-center justify-center gap-2
                 text-[14px] font-medium text-text-main hover:bg-bg-sub
                 transition-colors duration-200 border-r border-elements"
             >
-              <RotateCcw size={13} strokeWidth={1.75} />
+              <X size={13} strokeWidth={2} />
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => onReschedule(consultation)}
+              className="flex-1 py-3 flex items-center justify-center gap-2
+                text-[14px] font-medium text-text-main hover:bg-bg-sub
+                transition-colors duration-200 border-r border-elements"
+            >
+              <RotateCcw size={13} strokeWidth={2} />
               Reschedule
             </button>
             <a
@@ -165,7 +223,7 @@ function ConsultationCard({ consultation }: { consultation: Consultation }) {
               className="flex-1 py-3 bg-brand text-white flex items-center justify-center gap-2
                 text-[14px] font-medium hover:opacity-90 active:opacity-80 transition-all duration-200"
             >
-              <CalendarPlus size={13} strokeWidth={1.75} />
+              <CalendarPlus size={13} strokeWidth={2} />
               Add to calendar
             </a>
           </>
@@ -178,51 +236,82 @@ function ConsultationCard({ consultation }: { consultation: Consultation }) {
 // -- Main component ------------------------------------------------------------
 
 export function UpcomingAppointmentCard() {
-  const [loading,       setLoading]       = useState(true);
-  const [consultations, setConsultations] = useState<Consultation[]>([]);
+  const [loading,          setLoading]          = useState(true);
+  const [consultations,    setConsultations]    = useState<Consultation[]>([]);
+  const [rescheduleTarget, setRescheduleTarget] = useState<Consultation | null>(null);
+  const [cancelTarget,     setCancelTarget]     = useState<Consultation | null>(null);
 
-  useEffect(() => {
-    async function fetchConsultations() {
-      try {
-        const res = await fetch("/api/patient/consultations");
-        if (!res.ok) throw new Error();
-        const data = await res.json() as { consultations: Consultation[] };
+  async function fetchConsultations() {
+    try {
+      const res = await fetch("/api/patient/consultations");
+      if (!res.ok) throw new Error();
+      const data = await res.json() as { consultations: Consultation[] };
 
-        const now      = Date.now();
-        const upcoming = (data.consultations ?? [])
-          .filter(c =>
-            (c.status === "confirmed" || c.status === "ongoing") &&
-            new Date(c.scheduledAt).getTime() > now - 30 * 60_000
-          )
-          .sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime())
-          .slice(0, 4);
+      const now      = Date.now();
+      const upcoming = (data.consultations ?? [])
+        .filter(c =>
+          (c.status === "confirmed" || c.status === "ongoing") &&
+          new Date(c.scheduledAt).getTime() > now - 30 * 60_000
+        )
+        .sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime())
+        .slice(0, 4);
 
-        setConsultations(upcoming);
-      } catch {
-        setConsultations([]);
-      } finally {
-        setLoading(false);
-      }
+      setConsultations(upcoming);
+    } catch {
+      setConsultations([]);
+    } finally {
+      setLoading(false);
     }
-    fetchConsultations();
-  }, []);
+  }
+
+  useEffect(() => { fetchConsultations(); }, []);
 
   if (loading) return <Skeleton />;
   if (consultations.length === 0) return <EmptyState />;
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {consultations.map(c => (
-          <ConsultationCard key={c.id} consultation={c} />
-        ))}
+    <>
+      <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {consultations.map(c => (
+            <ConsultationCard key={c.id} consultation={c} onReschedule={setRescheduleTarget} onCancel={setCancelTarget} />
+          ))}
+        </div>
+
+        {/* View all — outline button with animated arrow */}
+        <div className="flex justify-end">
+          <Link
+            href="/patient/consultations"
+            className="group inline-flex items-center gap-1.5 h-9 px-4 rounded-lg
+              border border-elements text-[16px] font-medium text-text-main
+              hover:border-text-sub/60 hover:bg-bg-sub active:scale-[0.98]
+              transition-all duration-200"
+          >
+            View all consultations
+            <ArrowRight
+              size={14}
+              strokeWidth={2}
+              className="group-hover:animate-arrow-slide"
+            />
+          </Link>
+        </div>
       </div>
-      <Link
-        href="/patient/consultations"
-        className="text-[13px] text-text-sub hover:text-text-main transition-colors duration-200 text-right"
-      >
-        View all consultations →
-      </Link>
-    </div>
+
+      {rescheduleTarget && (
+        <RescheduleModal
+          doctor={toDoctorType(rescheduleTarget.doctor)}
+          appointmentId={rescheduleTarget.id}
+          isOpen={true}
+          onClose={() => setRescheduleTarget(null)}
+          onRescheduled={() => { setRescheduleTarget(null); fetchConsultations(); }}
+        />
+      )}
+
+      <CancelModal
+        consultation={cancelTarget}
+        onClose={() => setCancelTarget(null)}
+        onCancelled={() => { setCancelTarget(null); fetchConsultations(); }}
+      />
+    </>
   );
 }

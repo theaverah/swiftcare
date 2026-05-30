@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef, useLayoutEffect } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { ArrowUpDown, Check, ChevronDown } from "lucide-react";
 import type { Consultation, ConsultationDoctor } from "@/types/consultation";
 import type { Doctor, DoctorAvailability } from "@/types/doctor";
 import { ConsultationCard, ConsultationCardSkeleton } from "./ConsultationCard";
@@ -12,25 +13,92 @@ import { RescheduleModal }  from "@/components/patient/booking/RescheduleModal";
 
 // -- Tab types -----------------------------------------------------------------
 
-type Tab = "upcoming" | "past" | "cancelled";
+type Tab = "upcoming" | "past" | "cancelled" | "all";
+type SortOrder = "desc" | "asc";
 
 const TABS: { key: Tab; label: string }[] = [
   { key: "upcoming",  label: "Upcoming" },
   { key: "past",      label: "Past" },
   { key: "cancelled", label: "Cancelled" },
+  { key: "all",       label: "All" },
 ];
 
 // -- Helpers -------------------------------------------------------------------
 
 function filterByTab(consultations: Consultation[], tab: Tab): Consultation[] {
-  const upcoming   = ["pending", "confirmed", "ongoing"];
-  const past       = ["completed", "no_show"];
-  const cancelled  = ["cancelled", "rescheduled"];
-
+  if (tab === "all") return consultations;
+  const upcoming  = ["pending", "confirmed", "ongoing"];
+  const past      = ["completed", "no_show"];
+  const cancelled = ["cancelled", "rescheduled"];
   return consultations.filter(c =>
     tab === "upcoming"  ? upcoming.includes(c.status)  :
     tab === "past"      ? past.includes(c.status)       :
     cancelled.includes(c.status)
+  );
+}
+
+// -- Sort chip -----------------------------------------------------------------
+
+function SortChip({ order, onChange, isUpcoming }: { order: SortOrder; onChange: (v: SortOrder) => void; isUpcoming: boolean }) {
+  const [open, setOpen] = useState(false);
+  const ref             = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const isActive = isUpcoming ? order === "desc" : order === "asc";
+  const label    = isUpcoming
+    ? (order === "asc" ? "Soonest first" : "Latest first")
+    : (order === "desc" ? "Newest first" : "Oldest first");
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(v => !v)}
+        className={`h-8.5 px-3.5 flex items-center gap-2 rounded-lg text-[14px] font-normal
+          transition-all duration-200 whitespace-nowrap border select-none
+          ${isActive
+            ? "bg-brand-sub border-brand text-brand"
+            : "border-transparent text-text-main"
+          }`}
+      >
+        <ArrowUpDown size={13} strokeWidth={1.75} className="shrink-0" />
+        {label}
+        <ChevronDown size={11} strokeWidth={1.75}
+          className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-1 z-50 bg-bg-main border border-elements
+          rounded-xl shadow-lg overflow-hidden w-44">
+          {(["asc", "desc"] as SortOrder[]).map(opt => {
+            const optLabel = isUpcoming
+              ? (opt === "asc" ? "Soonest first" : "Latest first")
+              : (opt === "desc" ? "Newest first" : "Oldest first");
+            return (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => { onChange(opt); setOpen(false); }}
+                className="w-full px-4 py-2.5 text-left text-[14px] flex items-center justify-between
+                  hover:bg-bg-sub transition-colors duration-150"
+              >
+                <span className={opt === order ? "text-brand font-medium" : "text-text-main"}>
+                  {optLabel}
+                </span>
+                {opt === order && <Check size={13} strokeWidth={1.75} className="text-brand shrink-0" />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -63,6 +131,14 @@ function toDoctorType(cd: ConsultationDoctor): Doctor {
 // -- Empty state ---------------------------------------------------------------
 
 function EmptyState({ tab }: { tab: Tab }) {
+  if (tab === "all") {
+    return (
+      <div className="flex flex-col items-center gap-4 py-16 text-center">
+        <img src="/illustrations/no-data.svg" alt="" aria-hidden className="w-66 max-w-full select-none opacity-90" />
+        <p className="text-[16px] font-medium text-text-main">No consultations yet.</p>
+      </div>
+    );
+  }
   if (tab === "upcoming") {
     return (
       <div className="flex flex-col items-center gap-4 py-16 text-center">
@@ -113,6 +189,13 @@ interface BookingTarget {
 
 export function ConsultationsPage() {
   const [tab,           setTab]           = useState<Tab>("upcoming");
+  // upcoming → soonest first (asc); everything else → most recently completed first (desc)
+  const [sortOrder,     setSortOrder]     = useState<SortOrder>("asc");
+
+  function handleTabChange(t: Tab) {
+    setTab(t);
+    setSortOrder(t === "upcoming" ? "asc" : "desc");
+  }
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [loading,       setLoading]       = useState(true);
   const [cancelTarget,     setCancelTarget]     = useState<Consultation | null>(null);
@@ -166,11 +249,15 @@ export function ConsultationsPage() {
     });
   }
 
-  const filtered = filterByTab(consultations, tab);
+  const filtered = filterByTab(consultations, tab).slice().sort((a, b) => {
+    const diff = new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime();
+    return sortOrder === "desc" ? -diff : diff;
+  });
   const tabCounts: Record<Tab, number> = {
     upcoming:  filterByTab(consultations, "upcoming").length,
     past:      filterByTab(consultations, "past").length,
     cancelled: filterByTab(consultations, "cancelled").length,
+    all:       consultations.length,
   };
 
   return (
@@ -189,41 +276,46 @@ export function ConsultationsPage() {
         </p>
       </div>
 
-      {/* Tabs */}
+      {/* Tabs + Sort */}
       <div
-        ref={tabsRef}
-        className="relative flex border-b border-elements animate-fadeInDown"
+        className="relative z-10 flex items-end justify-between border-b border-elements animate-fadeInDown"
         style={{ animationDelay: "60ms", animationDuration: "400ms" }}
       >
-        {/* Sliding indicator */}
-        <div
-          className="absolute bottom-0 h-0.5 bg-brand transition-all duration-200 ease-out"
-          style={{ left: indicator.left, width: indicator.width }}
-        />
+        {/* Tabs with sliding indicator */}
+        <div ref={tabsRef} className="relative flex">
+          <div
+            className="absolute bottom-0 h-0.5 bg-brand transition-all duration-200 ease-out"
+            style={{ left: indicator.left, width: indicator.width }}
+          />
+          {TABS.map(({ key, label }) => {
+            const count    = tabCounts[key];
+            const isActive = tab === key;
+            return (
+              <button
+                key={key}
+                data-tab={key}
+                type="button"
+                onClick={() => handleTabChange(key)}
+                className={`px-4 py-2.5 text-[16px] font-medium transition-colors duration-200
+                  flex items-center gap-2
+                  ${isActive ? "text-text-main" : "text-text-sub hover:text-text-main"}`}
+              >
+                {label}
+                {!loading && count > 0 && (
+                  <span className={`text-[11px] font-medium px-1.5 py-0.5 rounded-full
+                    ${isActive ? "bg-brand text-white" : "bg-elements text-text-sub"}`}>
+                    {count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
 
-        {TABS.map(({ key, label }) => {
-          const count    = tabCounts[key];
-          const isActive = tab === key;
-          return (
-            <button
-              key={key}
-              data-tab={key}
-              type="button"
-              onClick={() => setTab(key)}
-              className={`px-4 py-2.5 text-[16px] font-medium transition-colors duration-200
-                flex items-center gap-2
-                ${isActive ? "text-text-main" : "text-text-sub hover:text-text-main"}`}
-            >
-              {label}
-              {!loading && count > 0 && (
-                <span className={`text-[11px] font-medium px-1.5 py-0.5 rounded-full
-                  ${isActive ? "bg-brand text-white" : "bg-elements text-text-sub"}`}>
-                  {count}
-                </span>
-              )}
-            </button>
-          );
-        })}
+        {/* Sort chip */}
+        <div className="pb-2">
+          <SortChip order={sortOrder} onChange={setSortOrder} isUpcoming={tab === "upcoming"} />
+        </div>
       </div>
 
       {/* Content */}
@@ -245,7 +337,11 @@ export function ConsultationsPage() {
             >
               <ConsultationCard
                 consultation={c}
-                tab={tab}
+                tab={tab === "all"
+                  ? (["pending","confirmed","ongoing"].includes(c.status) ? "upcoming"
+                    : ["completed","no_show"].includes(c.status) ? "past"
+                    : "cancelled")
+                  : tab}
                 onReschedule={openReschedule}
                 onCancel={setCancelTarget}
                 onBookAgain={openBookAgain}

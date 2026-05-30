@@ -71,7 +71,7 @@ function LivePreview({ form }: { form: DoctorFormState }) {
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-bg-sub">
       {/* Header */}
-      <div className="shrink-0 px-6 pt-6 pb-4 border-b border-elements">
+      <div className="shrink-0 h-18.25 flex flex-col justify-center px-6 border-b border-elements bg-bg-main">
         <p className="text-[15px] font-medium text-text-main">Your public profile</p>
         <p className="text-[13px] text-text-sub mt-0.5">This is exactly how patients see you on SwiftCare. It updates as you make changes.</p>
       </div>
@@ -120,7 +120,7 @@ function LivePreview({ form }: { form: DoctorFormState }) {
             </div>
 
             <div className="flex border-t border-elements">
-              <div className="flex-1 py-2 text-center text-[13px] font-medium text-text-main border-r border-elements">
+              <div className="flex-1 py-2 flex items-center justify-center text-[13px] font-medium text-text-main border-r border-elements">
                 View profile
               </div>
               <div className="flex-1 py-2 bg-brand flex flex-col items-center justify-center gap-0">
@@ -416,15 +416,15 @@ export function DoctorProfileModal({ isOpen, onClose }: Props) {
       />
 
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-6 pointer-events-none">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 pointer-events-none">
         <div
           role="dialog"
           aria-modal
           className={`relative w-full bg-bg-main rounded-xl shadow-[0_16px_60px_rgba(0,0,0,0.20)]
             flex overflow-hidden ${shaking ? "animate-shake" : ""}`}
           style={{
-            maxWidth:      "1140px",
-            height:        "min(780px, 92vh)",
+            maxWidth:      "min(1600px, calc(100vw - 24px))",
+            height:        "96vh",
             opacity:       isOpen ? 1 : 0,
             pointerEvents: isOpen ? "auto" : "none",
             transform:     isOpen ? "scale(1) translateY(0)" : "scale(0.97) translateY(8px)",
@@ -454,10 +454,10 @@ export function DoctorProfileModal({ isOpen, onClose }: Props) {
           {/* -- Center editing ----------------------------------------- */}
           <div
             className="flex flex-col overflow-hidden bg-bg-main border-r border-elements"
-            style={{ width: 460, flexShrink: 0 }}
+            style={{ flex: 1, minWidth: 0 }}
           >
             {/* Header */}
-            <div className="shrink-0 flex items-center justify-between px-8 py-5 border-b border-elements">
+            <div className="shrink-0 h-18.25 flex items-center justify-between px-8 border-b border-elements">
               <p className="text-[16px] font-medium text-text-main">
                 {NAV.find((n) => n.key === section)?.label}
               </p>

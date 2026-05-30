@@ -10,7 +10,7 @@ export function LandingPage() {
 
       {/* -- Sticky nav -------------------------------------------------------- */}
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-elements/60">
-        <div className="w-full px-8 h-17 flex items-center justify-between">
+        <div className="w-full px-10 h-19 flex items-center justify-between">
 
           {/* Left: logo + nav links */}
           <div className="flex items-center gap-8">

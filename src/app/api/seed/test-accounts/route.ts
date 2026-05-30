@@ -505,6 +505,50 @@ const SEED_DOCTORS = [
       affiliations:     ["Philippine College of Physicians", "Cebu Medical Society", "Philippine Medical Association"],
     },
   },
+
+  // -- 2 new OB-GYN doctors available Saturday evenings (May 30 = Sat, day 6) ---
+  {
+    email: "obgyn6@test.com",
+    name:  "Analiza Mendoza-Reyes",
+    profile: {
+      specializations:   ["Obstetrics & Gynecology"],
+      bio:               "Dr. Mendoza-Reyes is an OB-GYN with 11 years of experience in reproductive health, prenatal care, and minimally invasive gynecologic surgery. She holds evening clinics on weekends at St. Luke's Medical Center BGC to accommodate working patients.",
+      licenseNumber:     "0289012",
+      yearsOfExperience: 11,
+      consultationFee:   650,
+      languages:         ["English", "Filipino (Tagalog)"],
+      city:              "Taguig City",
+      availability:      [
+        ...days([1,2,3,4,5], "9:00 AM", "5:00 PM"),
+        { dayOfWeek: 6 as DayOfWeek, startTime: "6:00 PM", endTime: "10:00 PM", isAvailable: true },
+      ],
+      rating: 4.8, totalReviews: 152,
+      education:        { medicalSchool: "UST Faculty of Medicine and Surgery", residency: "Obstetrics and Gynecology, St. Luke's Medical Center BGC" },
+      certifications:   ["Philippine Board of Obstetrics and Gynecology", "Fellow of the Philippine Obstetrical and Gynecological Society", "Laparoscopic Surgery Certification (POGS)"],
+      affiliations:     ["Philippine Obstetrical and Gynecological Society", "Philippine Medical Association", "Society of Laparoendoscopic Surgeons of the Philippines"],
+    },
+  },
+  {
+    email: "obgyn7@test.com",
+    name:  "Patricia Chua-Delos Reyes",
+    profile: {
+      specializations:   ["Obstetrics & Gynecology", "Reproductive Endocrinology"],
+      bio:               "Dr. Chua-Delos Reyes specializes in reproductive endocrinology and infertility, polycystic ovarian syndrome, and complex OB-GYN cases. A graduate of UP College of Medicine, she offers weekend evening consultations at Makati Medical Center to serve patients with busy weekday schedules.",
+      licenseNumber:     "0290123",
+      yearsOfExperience: 9,
+      consultationFee:   750,
+      languages:         ["English", "Filipino (Tagalog)", "Mandarin"],
+      city:              "Makati City",
+      availability:      [
+        ...days([2,4], "10:00 AM", "6:00 PM"),
+        { dayOfWeek: 6 as DayOfWeek, startTime: "6:00 PM", endTime: "10:00 PM", isAvailable: true },
+      ],
+      rating: 4.9, totalReviews: 118,
+      education:        { medicalSchool: "UP College of Medicine", residency: "Obstetrics and Gynecology, Makati Medical Center · Fellowship, Reproductive Endocrinology and Infertility, UST Hospital" },
+      certifications:   ["Philippine Board of Obstetrics and Gynecology", "Fellow of the Philippine Obstetrical and Gynecological Society", "Certificate in Reproductive Endocrinology and Infertility (PSREI)"],
+      affiliations:     ["Philippine Obstetrical and Gynecological Society", "Philippine Society for Reproductive Endocrinology and Infertility", "Philippine Medical Association"],
+    },
+  },
 ];
 
 export async function GET() {

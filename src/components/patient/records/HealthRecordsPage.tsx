@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef, useLayoutEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useSession } from "next-auth/react";
-import { Search, Download, Link2 } from "lucide-react";
+import { Search, Download, Eye, X } from "lucide-react";
 import { toast } from "sonner";
 
 // -- Types ---------------------------------------------------------------------
@@ -291,16 +292,151 @@ async function downloadPdf(record: HealthRecord, patientName: string) {
   doc.save(filename);
 }
 
+// -- Preview modal -------------------------------------------------------------
+
+function PreviewModal({ record, patientName, onClose, onDownload }: {
+  record:      HealthRecord;
+  patientName: string;
+  onClose:     () => void;
+  onDownload:  () => void;
+}) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+  useEffect(() => {
+    function handler(e: KeyboardEvent) { if (e.key === "Escape") onClose(); }
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  if (!mounted) return null;
+
+  const badge = BADGE[record.type];
+
+  return createPortal(
+    <>
+      <div aria-hidden className="fixed inset-0 z-50 bg-black/40"
+        style={{ transition: "opacity 300ms ease" }} onClick={onClose} />
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-6 pointer-events-none">
+        <div
+          role="dialog" aria-modal
+          className="relative w-full max-w-2xl h-[96vh] max-h-[96vh] bg-bg-main rounded-xl
+            shadow-[0_16px_60px_rgba(0,0,0,0.20)] flex flex-col overflow-hidden pointer-events-auto
+            animate-fadeInDown"
+          style={{ animationDuration: "200ms" }}
+        >
+          {/* Header */}
+          <div className="shrink-0 flex items-center justify-between px-7 py-5 border-b border-elements">
+            <div className="flex items-center gap-3">
+              <span className={`text-[13px] font-medium px-2.5 py-0.5 rounded-full ${badge.bg} ${badge.text}`}>
+                {badge.label}
+              </span>
+              <p className="text-[14px] text-text-sub">{formatDate(record.issuedAt)}</p>
+            </div>
+            <button type="button" onClick={onClose}
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-text-sub
+                hover:bg-bg-sub hover:text-text-main transition-colors duration-200">
+              <X size={16} strokeWidth={1.75} />
+            </button>
+          </div>
+
+          {/* Body */}
+          <div className="flex-1 overflow-y-auto px-7 py-6 flex flex-col gap-5">
+
+            {/* Doctor + patient */}
+            <div className="flex gap-8">
+              <div className="flex flex-col gap-0.5">
+                <p className="text-[12px] font-medium text-text-sub uppercase tracking-wider">Doctor</p>
+                <p className="text-[15px] font-medium text-text-main">Dr. {record.doctor.name}</p>
+                <p className="text-[13px] text-text-sub">{record.doctor.specializations[0] ?? ""}</p>
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <p className="text-[12px] font-medium text-text-sub uppercase tracking-wider">Patient</p>
+                <p className="text-[15px] font-medium text-text-main">{patientName}</p>
+                {record.consultation.scheduledAt && (
+                  <p className="text-[13px] text-text-sub">{formatDate(record.consultation.scheduledAt)}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="h-px bg-elements/50" />
+
+            {/* Content */}
+            {record.type === "prescription" && record.medications?.length ? (
+              <div className="flex flex-col gap-3">
+                <p className="text-[13px] font-medium text-text-sub uppercase tracking-wider">Medications</p>
+                {record.medications.map((m, i) => (
+                  <div key={i} className="flex flex-col gap-0.5 bg-bg-sub rounded-lg p-3.5">
+                    <p className="text-[15px] font-medium text-text-main">
+                      {m.name}{m.dosage ? ` ${m.dosage}` : ""}
+                    </p>
+                    {(m.frequency || m.duration) && (
+                      <p className="text-[13px] text-text-sub">
+                        {[m.frequency, m.duration].filter(Boolean).join(" · ")}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : record.type === "consultation_note" && record.notes ? (
+              <div className="flex flex-col gap-3">
+                <p className="text-[13px] font-medium text-text-sub uppercase tracking-wider">Doctor&rsquo;s Notes</p>
+                <p className="text-[15px] text-text-main leading-relaxed whitespace-pre-wrap">{record.notes}</p>
+              </div>
+            ) : record.type === "lab_request" && record.tests?.length ? (
+              <div className="flex flex-col gap-3">
+                <p className="text-[13px] font-medium text-text-sub uppercase tracking-wider">Tests Ordered</p>
+                {record.tests.map((t, i) => (
+                  <div key={i} className="flex items-center gap-2.5 bg-bg-sub rounded-lg p-3.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-text-sub shrink-0" />
+                    <p className="text-[15px] text-text-main">{t.name}</p>
+                  </div>
+                ))}
+              </div>
+            ) : record.type === "medical_certificate" && record.purpose ? (
+              <div className="flex flex-col gap-3">
+                <p className="text-[13px] font-medium text-text-sub uppercase tracking-wider">Purpose</p>
+                <p className="text-[15px] text-text-main leading-relaxed">{record.purpose}</p>
+              </div>
+            ) : record.type === "referral" ? (
+              <div className="flex flex-col gap-3">
+                <p className="text-[13px] font-medium text-text-sub uppercase tracking-wider">Referred To</p>
+                <p className="text-[15px] text-text-main">{record.referredTo}</p>
+                {record.referralReason && (
+                  <p className="text-[14px] text-text-sub leading-relaxed">{record.referralReason}</p>
+                )}
+              </div>
+            ) : null}
+          </div>
+
+          {/* Footer */}
+          <div className="shrink-0 px-7 py-5 border-t border-elements">
+            <button
+              type="button"
+              onClick={onDownload}
+              className="w-full h-11 rounded-xl bg-text-main text-brand-sub text-[15px] font-medium
+                flex items-center justify-center gap-2 hover:opacity-90 transition-opacity duration-150"
+            >
+              <Download size={15} strokeWidth={1.75} />
+              Download PDF
+            </button>
+          </div>
+        </div>
+      </div>
+    </>,
+    document.body
+  );
+}
+
 // -- Record card ---------------------------------------------------------------
 
 function RecordCard({ record, patientName, index }: { record: HealthRecord; patientName: string; index: number }) {
+  const [previewOpen, setPreviewOpen] = useState(false);
   const badge   = BADGE[record.type];
   const preview = contentPreview(record);
-  const isNote  = record.type === "consultation_note";
-  const hasMore = isNote && !!record.notes && (
-    record.notes.split(/[.!?]/)[0].trim().length > 120 ||
-    record.notes.split(/[.!?]/).filter(s => s.trim()).length > 1
-  );
 
   async function handleDownload() {
     try {
@@ -310,66 +446,70 @@ function RecordCard({ record, patientName, index }: { record: HealthRecord; pati
     }
   }
 
-  function handleShare() {
-    const url = `${window.location.origin}/patient/records?id=${record.id}`;
-    navigator.clipboard.writeText(url).then(() => toast.success("Link copied."));
-  }
-
   return (
-    <div
-      className="bg-bg-main rounded-xl border border-elements p-5 flex flex-col gap-4 h-full animate-fadeInDown"
-      style={{ animationDelay: `${index * 60}ms`, animationDuration: "400ms" }}
-    >
-      {/* Badge + date row */}
-      <div className="flex items-center justify-between gap-4">
-        <span className={`text-[14px] font-medium px-2.5 py-0.5 rounded-full ${badge.bg} ${badge.text}`}>
-          {badge.label}
-        </span>
-        <p className="text-[14px] text-text-sub shrink-0">{formatDate(record.issuedAt)}</p>
-      </div>
-
-      {/* Doctor name + specialty */}
-      <div className="flex items-baseline mt-4">
-        <p className="text-[16px] text-text-main shrink-0">Dr. {record.doctor.name}</p>
-        <p className="text-[16px] text-text-sub truncate">, {record.doctor.specializations[0] ?? "Doctor"}</p>
-      </div>
-
-      <div className="h-px bg-elements/50" />
-
-      {/* Content preview */}
-      {preview && (
-        <p className="text-[16px] text-text-main">
-          {preview}
-          {hasMore && (
-            <span className="ml-1 text-brand cursor-pointer hover:underline text-[14px]">
-              {" "}Read more
+    <>
+      <div
+        className="bg-bg-main rounded-xl border border-elements flex flex-col h-full overflow-hidden
+          transition-shadow duration-200 hover:shadow-sm animate-fadeInDown"
+        style={{ animationDelay: `${index * 60}ms`, animationDuration: "400ms" }}
+      >
+        {/* Card body */}
+        <div className="p-5 flex flex-col gap-4 flex-1">
+          {/* Badge + date */}
+          <div className="flex items-center justify-between gap-4">
+            <span className={`text-[14px] font-medium px-2.5 py-0.5 rounded-full ${badge.bg} ${badge.text}`}>
+              {badge.label}
             </span>
-          )}
-        </p>
-      )}
+            <p className="text-[14px] text-text-sub shrink-0">{formatDate(record.issuedAt)}</p>
+          </div>
 
-      {/* Actions — pinned to bottom right */}
-      <div className="mt-auto pt-4 flex justify-end gap-2">
-        <button
-          type="button"
-          onClick={handleDownload}
-          className="flex items-center gap-1.5 h-9 px-4 rounded-lg bg-text-main text-brand-sub
-            text-[14px] font-medium hover:opacity-90 transition-opacity duration-150"
-        >
-          <Download size={14} strokeWidth={1.75} />
-          Download
-        </button>
-        <button
-          type="button"
-          onClick={handleShare}
-          className="flex items-center gap-1.5 h-9 px-4 rounded-lg border border-elements
-            text-[14px] font-medium text-text-main hover:bg-bg-sub transition-colors duration-150"
-        >
-          <Link2 size={14} strokeWidth={1.75} />
-          Share
-        </button>
+          {/* Doctor name + specialty */}
+          <div className="flex items-baseline mt-2">
+            <p className="text-[16px] text-text-main shrink-0">Dr. {record.doctor.name}</p>
+            <p className="text-[16px] text-text-sub truncate">, {record.doctor.specializations[0] ?? "Doctor"}</p>
+          </div>
+
+          <div className="h-px bg-elements/50" />
+
+          {/* Content preview */}
+          {preview && (
+            <p className="text-[16px] text-text-sub">{preview}</p>
+          )}
+        </div>
+
+        {/* Footer — same pattern as ConsultationCard */}
+        <div className="flex border-t border-elements">
+          <button
+            type="button"
+            onClick={handleDownload}
+            className="flex-1 py-3 flex items-center justify-center gap-2
+              text-[14px] font-medium text-text-main hover:bg-bg-sub
+              transition-colors duration-200 border-r border-elements"
+          >
+            <Download size={14} strokeWidth={1.75} />
+            Download
+          </button>
+          <button
+            type="button"
+            onClick={() => setPreviewOpen(true)}
+            className="flex-1 py-3 bg-text-main text-brand-sub flex items-center justify-center gap-2
+              text-[14px] font-medium hover:opacity-90 active:opacity-80 transition-all duration-200"
+          >
+            <Eye size={14} strokeWidth={1.75} />
+            Open file
+          </button>
+        </div>
       </div>
-    </div>
+
+      {previewOpen && (
+        <PreviewModal
+          record={record}
+          patientName={patientName}
+          onClose={() => setPreviewOpen(false)}
+          onDownload={handleDownload}
+        />
+      )}
+    </>
   );
 }
 
@@ -426,8 +566,11 @@ export function HealthRecordsPage() {
 
   useEffect(() => { fetchRecords(); }, [fetchRecords]);
 
-  const byTab      = records.filter(r => r.type === tab);
-  const filtered   = byTab.filter(r => matchesSearch(r, search));
+  const byTab    = records
+    .filter(r => r.type === tab)
+    .slice()
+    .sort((a, b) => new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime());
+  const filtered = byTab.filter(r => matchesSearch(r, search));
   const tabCounts  = Object.fromEntries(
     TABS.map(t => [t.key, records.filter(r => r.type === t.key).length])
   ) as Record<Tab, number>;
@@ -508,25 +651,29 @@ export function HealthRecordsPage() {
       </div>
 
       {/* Content */}
-      <div key={tab} className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-tabIn">
-        {loading ? (
-          Array.from({ length: 2 }).map((_, i) => <RecordCardSkeleton key={i} />)
-        ) : filtered.length === 0 && search ? (
-          <div className="flex flex-col items-center gap-4 py-16 text-center">
-            <img src="/illustrations/file-searching.svg" alt="" aria-hidden className="w-66 max-w-full select-none opacity-90" />
-            <div className="flex flex-col gap-0.5">
-              <p className="text-[16px] font-medium text-text-main">No records match your search.</p>
-              <p className="text-[16px] text-text-sub">Try a different doctor name, date, or document type.</p>
-            </div>
+      {loading ? (
+        <div key={tab} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-tabIn">
+          {Array.from({ length: 2 }).map((_, i) => <RecordCardSkeleton key={i} />)}
+        </div>
+      ) : filtered.length === 0 && search ? (
+        <div key={tab} className="flex flex-col items-center gap-4 py-16 text-center animate-tabIn">
+          <img src="/illustrations/file-searching.svg" alt="" aria-hidden className="w-66 max-w-full select-none opacity-90" />
+          <div className="flex flex-col gap-0.5">
+            <p className="text-[16px] font-medium text-text-main">No records match your search.</p>
+            <p className="text-[16px] text-text-sub">Try a different doctor name, date, or document type.</p>
           </div>
-        ) : filtered.length === 0 ? (
+        </div>
+      ) : filtered.length === 0 ? (
+        <div key={tab} className="animate-tabIn">
           <EmptyState tab={tab} />
-        ) : (
-          filtered.map((r, i) => (
+        </div>
+      ) : (
+        <div key={tab} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-tabIn">
+          {filtered.map((r, i) => (
             <RecordCard key={r.id} record={r} patientName={patientName} index={i} />
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
     </div>
   );

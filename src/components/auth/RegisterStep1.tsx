@@ -215,9 +215,10 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
           <div className="relative">
             <input
               id="email"
-              type="email"
+              type="text"
+              inputMode="email"
               value={email}
-              autoComplete="email"
+              autoComplete="off"
               onChange={(e) => setEmail(e.target.value)}
               onFocus={() => setEmailFocused(true)}
               onBlur={() => setEmailFocused(false)}

@@ -518,7 +518,14 @@ export function FindDoctorsPage() {
 
   function openDrawer(doctor: Doctor)  { setSelectedDoctor(doctor); setDrawerOpen(true); }
   function closeDrawer()               { setDrawerOpen(false); setTimeout(() => setSelectedDoctor(null), 420); }
-  function openBooking(doctor: Doctor) { setBookingDoctor(doctor); }
+  function openBooking(doctor: Doctor) {
+    if (drawerOpen) {
+      setDrawerOpen(false);
+      setTimeout(() => setBookingDoctor(doctor), 300);
+    } else {
+      setBookingDoctor(doctor);
+    }
+  }
   function closeBooking()              { setBookingDoctor(null); }
 
   const savedCount = doctors.filter(d => d.isSaved).length;

@@ -110,7 +110,7 @@ export function CancelModal({ consultation, onClose, onCancelled, onRestored }: 
       {/* Modal */}
       <div className="fixed inset-0 z-200 flex items-center justify-center p-4 pointer-events-none">
         <div
-          className="relative w-140 h-175 bg-bg-main rounded-xl
+          className="relative w-full max-w-2xl h-[96vh] max-h-[96vh] bg-bg-main rounded-xl
             shadow-[0_8px_40px_rgba(0,0,0,0.16)] animate-fadeInDown flex flex-col pointer-events-auto overflow-hidden"
           style={{ animationDuration: "150ms" }}
           onClick={e => e.stopPropagation()}

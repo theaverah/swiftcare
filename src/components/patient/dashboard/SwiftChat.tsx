@@ -164,7 +164,7 @@ function MessageBubble({ msg }: { msg: Message }) {
     <div className="flex items-start gap-3 animate-fadeInDown">
       <SwiftAvatar />
       <div className="flex flex-col gap-3 max-w-[72%]">
-        <div className="bg-bg-main border border-elements text-text-main text-[16px] leading-relaxed px-4 py-2.5 rounded-2xl rounded-tl-sm">
+        <div className="w-full bg-bg-main border border-elements text-text-main text-[16px] leading-relaxed px-4 py-2.5 rounded-2xl rounded-tl-sm wrap-break-word">
           {isEmpty ? (
             <TypingDots />
           ) : (

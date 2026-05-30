@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
+import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import type { Doctor } from "@/types/doctor";
 import { BookingStepper } from "./BookingStepper";
@@ -47,6 +48,7 @@ interface Props {
 // -- Component -----------------------------------------------------------------
 
 export function BookingModal({ doctor, isOpen, onClose, rescheduleMode, appointmentId, onRescheduled }: Props) {
+  const router = useRouter();
   const [step,       setStep]       = useState(1);
   const [data,       setData]       = useState<BookingData>(INITIAL);
   const [direction,  setDirection]  = useState<"forward" | "back">("forward");
@@ -129,6 +131,8 @@ export function BookingModal({ doctor, isOpen, onClose, rescheduleMode, appointm
 
   const animClass = direction === "forward" ? "animate-stepForward" : "animate-stepBack";
 
+  const canContinue = !!data.date && !!data.timePreference && !!data.reason.trim();
+
   if (!mounted) return null;
 
   const panel = (
@@ -136,7 +140,7 @@ export function BookingModal({ doctor, isOpen, onClose, rescheduleMode, appointm
       {/* Backdrop */}
       <div
         aria-hidden
-        className="fixed inset-0 z-50 bg-black/30 backdrop-blur-[2px]"
+        className="fixed inset-0 z-50 bg-black/30"
         style={{
           opacity:       isOpen ? 1 : 0,
           pointerEvents: isOpen ? "auto" : "none",
@@ -153,8 +157,8 @@ export function BookingModal({ doctor, isOpen, onClose, rescheduleMode, appointm
         className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
       >
         <div
-          className="relative w-full max-w-lg bg-bg-main rounded-xl shadow-[0_8px_40px_rgba(0,0,0,0.16)]
-            flex flex-col max-h-[92vh] pointer-events-auto"
+          className="relative w-full max-w-2xl bg-bg-main rounded-xl shadow-[0_8px_40px_rgba(0,0,0,0.16)]
+            flex flex-col h-[96vh] max-h-[96vh] pointer-events-auto"
           style={{
             opacity:   isOpen ? 1 : 0,
             transform: isOpen ? "scale(1) translateY(0)" : "scale(0.96) translateY(8px)",
@@ -177,8 +181,8 @@ export function BookingModal({ doctor, isOpen, onClose, rescheduleMode, appointm
           </div>
 
           {/* Scrollable content */}
-          <div className="flex-1 overflow-y-auto px-6 py-6">
-            <div key={`step-${step}`} className={animClass}>
+          <div className={`flex-1 overflow-y-auto px-6 py-6 ${step === 3 ? "flex items-center justify-center" : ""}`}>
+            <div key={`step-${step}`} className={`${animClass} w-full`}>
               {step === 1 && (
                 <BookingStep1
                   doctor={doctor}
@@ -207,6 +211,55 @@ export function BookingModal({ doctor, isOpen, onClose, rescheduleMode, appointm
                 />
               )}
             </div>
+          </div>
+
+          {/* Sticky footer — always anchored to bottom with divider */}
+          <div className="shrink-0 px-6 py-4 border-t border-elements">
+            {step === 1 && (
+              <button
+                type="button"
+                onClick={() => goTo(2, "forward")}
+                disabled={!canContinue}
+                className="w-full h-11 rounded-lg bg-text-main text-brand-sub text-[14px] font-medium
+                  hover:opacity-90 active:scale-[0.99] transition-all duration-200
+                  disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Continue to review
+              </button>
+            )}
+            {step === 2 && (
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => goTo(1, "back")}
+                  disabled={submitting}
+                  className="flex-1 h-11 rounded-lg border border-elements text-[14px] font-medium text-text-main
+                    hover:border-text-sub/60 transition-all duration-200"
+                >
+                  Go back
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirm}
+                  disabled={submitting}
+                  className="flex-1 h-11 rounded-lg bg-text-main text-brand-sub text-[14px] font-medium
+                    hover:opacity-90 active:scale-[0.99] transition-all duration-200
+                    disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submitting ? "Confirming…" : "Confirm booking"}
+                </button>
+              </div>
+            )}
+            {step === 3 && (
+              <button
+                type="button"
+                onClick={() => { onClose(); router.push("/patient/consultations"); }}
+                className="w-full h-11 rounded-lg bg-text-main text-brand-sub text-[14px] font-medium
+                  hover:opacity-90 active:scale-[0.99] transition-all duration-200"
+              >
+                View my consultations
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -224,7 +224,14 @@
     background-color: var(--background-main);
     color: var(--text-main);
     line-height: 1.4;
-    text-wrap: balance;
+  }
+
+  input, textarea, select {
+    text-wrap: nowrap;
+  }
+
+  textarea {
+    text-wrap: wrap;
   }
 
   h1, h2, h3, h4, h5, h6 {

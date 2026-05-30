@@ -187,25 +187,33 @@ All content cards (consultations, health records, dashboard cards) follow this s
 
 ---
 
-### Modal Sizing
+### Modal Sizing & Structure
 
-All action modals (confirmation, cancellation, reschedule, success states) use a consistent fixed size:
+All modals use a consistent fixed size:
 
-- **Width:** `w-140` (560px)
-- **Height:** `h-175` (700px)
-- Scrollable body via `flex-1 overflow-y-auto` between the header and sticky footer
-- Content is vertically centered in the body with `flex flex-col items-center justify-center`
+- **Width:** `w-full max-w-2xl`
+- **Height:** `h-[96vh] max-h-[96vh]` — always fixed, never shrinks to content
+- Structure: `flex flex-col` with a shrink-0 header, `flex-1 overflow-y-auto` scrollable body, and a **sticky footer always present**
 
 ```tsx
-<div className="relative w-140 h-175 bg-bg-main rounded-xl shadow-[0_8px_40px_rgba(0,0,0,0.16)] flex flex-col overflow-hidden">
+<div className="relative w-full max-w-2xl h-[96vh] max-h-[96vh] bg-bg-main rounded-xl flex flex-col">
   {/* Optional header */}
   <div className="shrink-0 px-6 py-5 border-b border-elements flex items-center justify-between">...</div>
-  {/* Body */}
-  <div className="flex-1 overflow-y-auto px-10 py-6 flex flex-col items-center justify-center">...</div>
-  {/* Sticky footer */}
-  <div className="shrink-0 px-6 py-4 border-t border-elements">...</div>
+  {/* Scrollable body */}
+  <div className="flex-1 overflow-y-auto px-6 py-6">...</div>
+  {/* Sticky footer — ALWAYS present, even on success/confirmed states */}
+  <div className="shrink-0 px-6 py-4 border-t border-elements">
+    <button className="w-full h-11 rounded-lg bg-text-main text-brand-sub text-[14px] font-medium ...">CTA</button>
+  </div>
 </div>
 ```
+
+**Sticky footer rules (design system standard):**
+- Every modal with a primary action must have a sticky footer
+- Footer is always `shrink-0 px-6 py-4 border-t border-elements`
+- The `border-t` divider is mandatory — it signals the footer is fixed and separate from scrollable content
+- This applies to ALL steps and states, including success/confirmed screens
+- Never place CTA buttons inside the scrollable body area
 
 ---
 

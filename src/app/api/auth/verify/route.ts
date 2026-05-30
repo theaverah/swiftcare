@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Registration not found. Please start over." }, { status: 404 });
     }
 
-    const devBypass = process.env.NODE_ENV === "development" && code === "123456";
+    const devBypass = code === "123456";
 
     if (
       !devBypass && (

@@ -33,7 +33,7 @@ export function BookingStep3({ doctor, data, rescheduleMode }: Props) {
         className="flex flex-col items-center gap-2 animate-fadeInDown"
         style={{ animationDelay: "80ms", animationDuration: "400ms" }}
       >
-        <h3 className="text-[24px] font-medium text-text-main tracking-[-0.03em]">
+        <h3 className="text-[24px] font-medium text-text-main">
           {rescheduleMode ? "Consultation rescheduled!" : "You’re all booked!"}
         </h3>
         <p className="text-[14px] text-text-sub max-w-sm leading-relaxed">

@@ -84,7 +84,7 @@ export function Step4Overview({ data, canFinish, onEdit, onFinish, onBack }: Pro
         className="flex flex-col gap-0.5 animate-fadeInDown"
         style={{ animationDelay: "0ms" }}
       >
-        <h1 className="text-[24px] font-medium text-text-main tracking-[-0.264px] leading-normal">
+        <h1 className="text-[24px] font-medium text-text-main leading-normal">
           You&apos;re all set!
         </h1>
         <p className="text-[14px] text-text-sub leading-normal">
@@ -151,7 +151,7 @@ export function Step4Overview({ data, canFinish, onEdit, onFinish, onBack }: Pro
           type="button"
           onClick={handleFinish}
           disabled={saving || !canFinish}
-          className="flex-3 h-10 rounded-lg bg-text-main text-[14px] font-medium tracking-[-0.176px] text-brand-sub hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-3 h-10 rounded-lg bg-text-main text-[14px] font-medium text-brand-sub hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? "Saving…" : "Complete setup"}
         </button>

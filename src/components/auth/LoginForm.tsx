@@ -72,7 +72,7 @@ export function LoginForm() {
           className="flex flex-col gap-0.5 items-center text-center mb-2 animate-fadeInDown"
           style={{ animationDelay: "60ms" }}
         >
-          <h1 className="text-[24px] font-medium text-text-main tracking-[-0.264px] leading-normal">
+          <h1 className="text-[24px] font-medium text-text-main leading-normal">
             Good to have you back.
           </h1>
           <p className="text-[14px] text-text-sub leading-normal">
@@ -99,7 +99,7 @@ export function LoginForm() {
         >
           <label
             htmlFor="email"
-            className="text-[14px] font-medium text-text-main tracking-[-0.176px] leading-normal"
+            className="text-[14px] font-medium text-text-main leading-normal"
           >
             Email
           </label>
@@ -132,7 +132,7 @@ export function LoginForm() {
         >
           <label
             htmlFor="password"
-            className="text-[14px] font-medium text-text-main tracking-[-0.176px] leading-normal"
+            className="text-[14px] font-medium text-text-main leading-normal"
           >
             Password
           </label>
@@ -181,12 +181,12 @@ export function LoginForm() {
             type="button"
             onClick={handleLogin}
             disabled={loading}
-            className="w-full h-10 rounded-lg text-[14px] font-medium tracking-[-0.176px] text-brand-sub bg-text-main hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="w-full h-10 rounded-lg text-[14px] font-medium text-brand-sub bg-text-main hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {loading ? "Logging in…" : "Log in"}
           </button>
 
-          <p className="text-[14px] text-center tracking-[-0.132px] leading-normal w-full">
+          <p className="text-[14px] text-center leading-normal w-full">
             <span className="text-text-sub">Don&apos;t have an account?</span>
             {" "}
             <Link href="/register" className="font-medium text-brand hover:underline">

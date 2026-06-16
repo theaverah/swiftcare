@@ -82,7 +82,7 @@ export function LandingPage() {
         <section className="w-full flex flex-col items-center text-center px-6 pt-20 pb-12 md:pt-28 md:pb-14">
           <h1
             className="text-[42px] sm:text-[54px] lg:text-[68px] font-medium text-text-main
-              tracking-[-0.04em] leading-tight text-wrap animate-fadeInDown"
+              leading-tight text-wrap animate-fadeInDown"
             style={{ animationDelay: "0ms", animationDuration: "600ms" }}
           >
             Healthcare that comes to you.

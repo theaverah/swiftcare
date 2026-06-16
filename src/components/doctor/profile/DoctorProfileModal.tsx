@@ -80,7 +80,7 @@ function LivePreview({ form }: { form: DoctorFormState }) {
 
         {/* -- Doctor card preview ------------------------------------------ */}
         <div>
-          <p className="text-[12px] font-medium text-text-sub uppercase tracking-wider mb-3">Card view</p>
+          <p className="text-[12px] font-medium text-text-sub uppercaser mb-3">Card view</p>
           <div className="bg-bg-main border border-elements rounded-xl overflow-hidden shadow-sm">
             <div className="flex flex-col gap-3 p-4">
               <div className="flex items-center gap-3">
@@ -135,7 +135,7 @@ function LivePreview({ form }: { form: DoctorFormState }) {
 
         {/* -- Profile drawer preview --------------------------------------- */}
         <div>
-          <p className="text-[12px] font-medium text-text-sub uppercase tracking-wider mb-3">Profile drawer</p>
+          <p className="text-[12px] font-medium text-text-sub uppercaser mb-3">Profile drawer</p>
           <div className="bg-bg-main border border-elements rounded-xl overflow-hidden shadow-sm">
             <div className="flex flex-col gap-4 p-5">
 
@@ -154,7 +154,7 @@ function LivePreview({ form }: { form: DoctorFormState }) {
                   )}
                 </div>
                 <div>
-                  <h3 className="text-[16px] font-medium text-text-main tracking-[-0.04em]">
+                  <h3 className="text-[16px] font-medium text-text-main">
                     Dr. {form.name || "Your Name"}
                   </h3>
                   <p className="text-[13px] text-text-sub mt-0.5">

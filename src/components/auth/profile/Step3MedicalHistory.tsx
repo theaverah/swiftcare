@@ -196,7 +196,7 @@ export function Step3MedicalHistory({ data, onChange, onContinue, onBack }: Prop
         className="flex flex-col gap-0.5 animate-fadeInDown"
         style={{ animationDelay: "0ms" }}
       >
-        <h1 className="text-[24px] font-medium text-text-main tracking-[-0.264px] leading-normal">
+        <h1 className="text-[24px] font-medium text-text-main leading-normal">
           Your medical background
         </h1>
         <p className="text-[14px] text-text-sub leading-normal">
@@ -293,7 +293,7 @@ export function Step3MedicalHistory({ data, onChange, onContinue, onBack }: Prop
         <button
           type="button"
           onClick={onContinue}
-          className="flex-3 h-10 rounded-lg bg-text-main text-[14px] font-medium tracking-[-0.176px] text-brand-sub hover:opacity-90 transition-all duration-200"
+          className="flex-3 h-10 rounded-lg bg-text-main text-[14px] font-medium text-brand-sub hover:opacity-90 transition-all duration-200"
         >
           Continue
         </button>

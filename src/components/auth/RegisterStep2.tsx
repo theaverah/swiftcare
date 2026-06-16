@@ -133,7 +133,7 @@ export function RegisterStep2({ email, onVerified }: RegisterStep2Props) {
           className="flex flex-col gap-2.5 items-center text-center w-full animate-fadeInDown"
           style={{ animationDelay: "0ms" }}
         >
-          <h1 className="text-[24px] font-medium text-text-main tracking-[-0.264px] leading-normal w-full">
+          <h1 className="text-[24px] font-medium text-text-main leading-normal w-full">
             Check your email
           </h1>
           <p className="text-[14px] text-text-sub leading-normal w-full">
@@ -208,7 +208,7 @@ export function RegisterStep2({ email, onVerified }: RegisterStep2Props) {
             disabled={!codeComplete || isVerifying}
             className={`
               w-full h-10 rounded-lg
-              text-[14px] font-medium tracking-[-0.176px] text-brand-sub
+              text-[14px] font-medium text-brand-sub
               transition-all duration-200
               ${codeComplete && !isVerifying
                 ? "bg-text-main hover:opacity-90 cursor-pointer"

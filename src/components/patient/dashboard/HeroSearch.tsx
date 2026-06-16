@@ -153,7 +153,7 @@ export function HeroSearch({ onSubmit }: HeroSearchProps = {}) {
 
       {/* -- Heading ---------------------------------------------------- */}
       <div className="flex flex-col gap-2 text-center">
-        <h2 className="text-[32px] font-medium text-text-main tracking-[-0.03em] leading-tight">
+        <h2 className="text-[32px] font-medium text-text-main leading-tight">
           Good to see you. How are you feeling today?
         </h2>
         <p className="text-[16px] text-text-main">

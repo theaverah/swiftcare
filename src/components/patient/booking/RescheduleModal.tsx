@@ -191,7 +191,7 @@ export function RescheduleModal({ doctor, appointmentId, isOpen, onClose, onResc
               <div className="flex flex-col items-center gap-4 text-center animate-fadeInDown">
                 <img src="/illustrations/success.svg" alt="" aria-hidden className="w-72 max-w-full select-none" />
                 <div className="flex flex-col gap-2">
-                  <p className="text-[20px] font-medium text-text-main tracking-[-0.03em]">All set!</p>
+                  <p className="text-[20px] font-medium text-text-main">All set!</p>
                   <p className="text-[16px] text-text-sub">
                     Your consultation with Dr. {doctor.name} has been rescheduled to{" "}
                     <span className="text-text-main font-medium">
@@ -210,7 +210,7 @@ export function RescheduleModal({ doctor, appointmentId, isOpen, onClose, onResc
 
                 {/* Heading */}
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-[20px] font-medium text-text-main tracking-[-0.03em]">Pick a new date and time</h3>
+                  <h3 className="text-[20px] font-medium text-text-main">Pick a new date and time</h3>
                   <p className="text-[14px] text-text-sub">Choose when you'd like to reschedule to.</p>
                 </div>
 

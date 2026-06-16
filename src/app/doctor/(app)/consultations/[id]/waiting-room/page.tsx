@@ -183,7 +183,7 @@ export default function DoctorWaitingRoomPage() {
 
         {/* Heading */}
         <div className="text-center flex flex-col gap-2">
-          <h1 className="text-[26px] font-medium text-text-main tracking-[-0.03em]">
+          <h1 className="text-[26px] font-medium text-text-main">
             Your patient is waiting.
           </h1>
           <p className="text-[15px] text-text-sub leading-relaxed">
@@ -199,7 +199,7 @@ export default function DoctorWaitingRoomPage() {
         {secondsLeft !== null && secondsLeft > 0 && (
           <div className="bg-bg-main rounded-xl border border-elements p-5 text-center">
             <p className="text-[14px] text-text-sub mb-2">Starting in</p>
-            <p className="text-[40px] font-medium text-text-main tracking-tight tabular-nums leading-none">
+            <p className="text-[40px] font-medium text-text-main tabular-nums leading-none">
               {formatCountdown(secondsLeft)}
             </p>
           </div>

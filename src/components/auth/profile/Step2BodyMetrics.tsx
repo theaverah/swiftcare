@@ -157,7 +157,7 @@ export function Step2BodyMetrics({ data, onChange, onContinue, onBack, triggerVa
         className="flex flex-col gap-0.5 animate-fadeInDown"
         style={{ animationDelay: "0ms" }}
       >
-        <h1 className="text-[24px] font-medium text-text-main tracking-[-0.264px] leading-normal">
+        <h1 className="text-[24px] font-medium text-text-main leading-normal">
           A few health details
         </h1>
         <p className="text-[14px] text-text-sub leading-normal">
@@ -323,7 +323,7 @@ export function Step2BodyMetrics({ data, onChange, onContinue, onBack, triggerVa
           disabled={!canContinue}
           className={`
             flex-3 h-10 rounded-lg
-            text-[14px] font-medium tracking-[-0.176px] text-brand-sub
+            text-[14px] font-medium text-brand-sub
             transition-all duration-200
             ${canContinue
               ? "bg-text-main hover:opacity-90 cursor-pointer"

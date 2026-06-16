@@ -19,7 +19,7 @@ export default function DoctorWelcomePage() {
         style={{ animationDelay: "150ms", animationDuration: "500ms" }}
       >
         <div className="flex flex-col items-center gap-2">
-          <h1 className="text-[32px] font-bold text-text-main tracking-[-0.03em] leading-tight">
+          <h1 className="text-[32px] font-bold text-text-main leading-tight">
             You&apos;re all set!
           </h1>
           <p className="text-[16px] text-text-sub max-w-lg">
@@ -28,7 +28,7 @@ export default function DoctorWelcomePage() {
         </div>
         <Link
           href="/doctor/dashboard"
-          className="inline-flex items-center justify-center h-11 px-8 rounded-lg bg-text-main text-brand-sub text-[14px] font-medium tracking-[-0.176px] hover:opacity-90 transition-all duration-200"
+          className="inline-flex items-center justify-center h-11 px-8 rounded-lg bg-text-main text-brand-sub text-[14px] font-medium hover:opacity-90 transition-all duration-200"
         >
           Go to my dashboard
         </Link>

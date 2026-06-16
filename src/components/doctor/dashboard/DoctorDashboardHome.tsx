@@ -71,7 +71,7 @@ function StatCard({
       {loading ? (
         <div className="h-8 w-24 rounded-lg bg-elements/60 animate-pulse" />
       ) : (
-        <p className="text-[32px] font-medium text-text-main tracking-[-0.04em] leading-none">
+        <p className="text-[32px] font-medium text-text-main leading-none">
           {value}
         </p>
       )}
@@ -191,7 +191,7 @@ export function DoctorDashboardHome() {
 
       {/* -- Greeting -------------------------------------------------------- */}
       <div className="animate-fadeInDown" style={{ animationDelay: "50ms", ...ANIM }}>
-        <h1 className="text-[28px] font-medium text-text-main tracking-[-0.04em]">{line}</h1>
+        <h1 className="text-[28px] font-medium text-text-main">{line}</h1>
         <p className="text-[16px] text-text-sub mt-1">{sub}</p>
       </div>
 

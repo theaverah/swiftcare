@@ -221,7 +221,7 @@ export function DoctorStep1Profile({ data, onChange, onContinue, triggerValidati
 
         {/* -- Heading --------------------------------------------------- */}
         <div className="flex flex-col gap-0.5 animate-fadeInDown" style={{ animationDelay: "0ms" }}>
-          <h1 className="text-[24px] font-medium text-text-main tracking-[-0.264px] leading-normal">
+          <h1 className="text-[24px] font-medium text-text-main leading-normal">
             Set up your profile
           </h1>
           <p className="text-[14px] text-text-sub leading-normal">
@@ -392,7 +392,7 @@ export function DoctorStep1Profile({ data, onChange, onContinue, triggerValidati
             type="button"
             onClick={onContinue}
             disabled={!canContinue}
-            className={`w-full h-10 rounded-lg text-[14px] font-medium tracking-[-0.176px] text-brand-sub transition-all duration-200 ${canContinue ? "bg-text-main hover:opacity-90 cursor-pointer" : "bg-text-main/40 cursor-not-allowed"}`}
+            className={`w-full h-10 rounded-lg text-[14px] font-medium text-brand-sub transition-all duration-200 ${canContinue ? "bg-text-main hover:opacity-90 cursor-pointer" : "bg-text-main/40 cursor-not-allowed"}`}
           >
             Continue
           </button>

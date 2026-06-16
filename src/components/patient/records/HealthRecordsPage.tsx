@@ -349,12 +349,12 @@ function PreviewModal({ record, patientName, onClose, onDownload }: {
             {/* Doctor + patient */}
             <div className="flex gap-8">
               <div className="flex flex-col gap-0.5">
-                <p className="text-[12px] font-medium text-text-sub uppercase tracking-wider">Doctor</p>
+                <p className="text-[12px] font-medium text-text-sub uppercaser">Doctor</p>
                 <p className="text-[15px] font-medium text-text-main">Dr. {record.doctor.name}</p>
                 <p className="text-[13px] text-text-sub">{record.doctor.specializations[0] ?? ""}</p>
               </div>
               <div className="flex flex-col gap-0.5">
-                <p className="text-[12px] font-medium text-text-sub uppercase tracking-wider">Patient</p>
+                <p className="text-[12px] font-medium text-text-sub uppercaser">Patient</p>
                 <p className="text-[15px] font-medium text-text-main">{patientName}</p>
                 {record.consultation.scheduledAt && (
                   <p className="text-[13px] text-text-sub">{formatDate(record.consultation.scheduledAt)}</p>
@@ -367,7 +367,7 @@ function PreviewModal({ record, patientName, onClose, onDownload }: {
             {/* Content */}
             {record.type === "prescription" && record.medications?.length ? (
               <div className="flex flex-col gap-3">
-                <p className="text-[13px] font-medium text-text-sub uppercase tracking-wider">Medications</p>
+                <p className="text-[13px] font-medium text-text-sub uppercaser">Medications</p>
                 {record.medications.map((m, i) => (
                   <div key={i} className="flex flex-col gap-0.5 bg-bg-sub rounded-lg p-3.5">
                     <p className="text-[15px] font-medium text-text-main">
@@ -383,12 +383,12 @@ function PreviewModal({ record, patientName, onClose, onDownload }: {
               </div>
             ) : record.type === "consultation_note" && record.notes ? (
               <div className="flex flex-col gap-3">
-                <p className="text-[13px] font-medium text-text-sub uppercase tracking-wider">Doctor&rsquo;s Notes</p>
+                <p className="text-[13px] font-medium text-text-sub uppercaser">Doctor&rsquo;s Notes</p>
                 <p className="text-[15px] text-text-main leading-relaxed whitespace-pre-wrap">{record.notes}</p>
               </div>
             ) : record.type === "lab_request" && record.tests?.length ? (
               <div className="flex flex-col gap-3">
-                <p className="text-[13px] font-medium text-text-sub uppercase tracking-wider">Tests Ordered</p>
+                <p className="text-[13px] font-medium text-text-sub uppercaser">Tests Ordered</p>
                 {record.tests.map((t, i) => (
                   <div key={i} className="flex items-center gap-2.5 bg-bg-sub rounded-lg p-3.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-text-sub shrink-0" />
@@ -398,12 +398,12 @@ function PreviewModal({ record, patientName, onClose, onDownload }: {
               </div>
             ) : record.type === "medical_certificate" && record.purpose ? (
               <div className="flex flex-col gap-3">
-                <p className="text-[13px] font-medium text-text-sub uppercase tracking-wider">Purpose</p>
+                <p className="text-[13px] font-medium text-text-sub uppercaser">Purpose</p>
                 <p className="text-[15px] text-text-main leading-relaxed">{record.purpose}</p>
               </div>
             ) : record.type === "referral" ? (
               <div className="flex flex-col gap-3">
-                <p className="text-[13px] font-medium text-text-sub uppercase tracking-wider">Referred To</p>
+                <p className="text-[13px] font-medium text-text-sub uppercaser">Referred To</p>
                 <p className="text-[15px] text-text-main">{record.referredTo}</p>
                 {record.referralReason && (
                   <p className="text-[14px] text-text-sub leading-relaxed">{record.referralReason}</p>
@@ -583,7 +583,7 @@ export function HealthRecordsPage() {
         className="flex flex-col gap-0.5 animate-fadeInDown"
         style={{ animationDelay: "0ms", animationDuration: "400ms" }}
       >
-        <h1 className="text-[32px] font-medium text-text-main tracking-tighter leading-tight">
+        <h1 className="text-[32px] font-medium text-text-mainer leading-tight">
           Health Records
         </h1>
         <p className="text-[16px] text-text-sub">

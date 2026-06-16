@@ -73,7 +73,7 @@ function RoleCard({ label, description, selected, error, onClick, paddingClass }
               />
             </div>
           </div>
-          <span className="text-[14px] font-medium text-text-main leading-normal tracking-[-0.176px]">
+          <span className="text-[14px] font-medium text-text-main leading-normal">
             {label}
           </span>
         </div>
@@ -169,7 +169,7 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
 
         {/* -- Title + role cards ---------------------------------------- */}
         <div className="flex flex-col gap-6.5 items-center w-full animate-fadeInDown" style={{ animationDelay: "60ms" }}>
-          <h1 className="text-[24px] font-medium text-text-main tracking-[-0.264px] leading-normal text-center w-full">
+          <h1 className="text-[24px] font-medium text-text-main leading-normal text-center w-full">
             Let&apos;s get you set up on SwiftCare
           </h1>
 
@@ -208,7 +208,7 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
         <div className="flex flex-col gap-1.5 w-full animate-fadeInDown" style={{ animationDelay: "180ms" }}>
           <label
             htmlFor="email"
-            className="text-[14px] font-medium text-text-main tracking-[-0.176px] leading-normal"
+            className="text-[14px] font-medium text-text-main leading-normal"
           >
             Email
           </label>
@@ -253,7 +253,7 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
           <div className="flex flex-col gap-1.5 w-full">
             <label
               htmlFor="password"
-              className="text-[14px] font-medium text-text-main tracking-[-0.176px] leading-normal"
+              className="text-[14px] font-medium text-text-main leading-normal"
             >
               Password
             </label>
@@ -349,7 +349,7 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
             disabled={submitting}
             className={`
               w-full h-10 rounded-lg
-              text-[14px] font-medium tracking-[-0.176px] text-brand-sub
+              text-[14px] font-medium text-brand-sub
               transition-all duration-200
               ${canContinue && !submitting
                 ? "bg-text-main hover:opacity-90 cursor-pointer"
@@ -360,12 +360,12 @@ export function RegisterStep1({ onContinue }: RegisterStep1Props) {
             {submitting ? "Sending code…" : "Continue"}
           </button>
 
-          <p className="text-[14px] text-text-sub text-center tracking-[-0.132px] leading-normal w-full">
+          <p className="text-[14px] text-text-sub text-center leading-normal w-full">
             We&apos;ll send a verification code to confirm your email.
           </p>
 
 
-          <p className="text-[14px] text-center tracking-[-0.132px] leading-normal w-full">
+          <p className="text-[14px] text-center leading-normal w-full">
             <span className="text-text-sub">Already have an account?</span>
             {" "}
             {/* Change 7: Log in → font-bold */}

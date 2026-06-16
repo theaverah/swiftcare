@@ -118,7 +118,7 @@ export function CancelModal({ consultation, onClose, onCancelled, onRestored }: 
           {/* Scrollable body */}
           <div className="flex-1 flex flex-col items-center justify-center px-10 py-8 text-center">
             <img src="/illustrations/thinking.svg" alt="" aria-hidden className="w-66 max-w-full select-none mb-4" />
-            <p className="text-[20px] font-medium text-text-main tracking-[-0.03em] mb-2">
+            <p className="text-[20px] font-medium text-text-main mb-2">
               Cancel your consultation?
             </p>
             <p className="text-[16px] text-text-sub">

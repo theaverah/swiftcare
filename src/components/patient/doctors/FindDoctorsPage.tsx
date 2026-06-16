@@ -546,7 +546,7 @@ export function FindDoctorsPage() {
           className="flex flex-col gap-1 animate-fadeInDown"
           style={{ animationDelay: "60ms", animationDuration: "400ms" }}
         >
-          <h1 className="text-[32px] font-medium text-text-main tracking-tighter leading-tight">
+          <h1 className="text-[32px] font-medium text-text-mainer leading-tight">
             Find a doctor
           </h1>
           <p className="text-[16px] text-text-sub">

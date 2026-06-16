@@ -95,7 +95,7 @@ export function DoctorDrawer({ doctor, isOpen, onClose, onBook }: DoctorDrawerPr
                     )}
                   </div>
                   <div>
-                    <h3 className="text-[20px] font-medium text-text-main tracking-[-0.04em]">
+                    <h3 className="text-[20px] font-medium text-text-main">
                       Dr. {doctor.name}
                     </h3>
                     <p className="text-[16px] text-text-sub mt-1">
